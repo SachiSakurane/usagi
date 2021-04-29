@@ -1,0 +1,83 @@
+constraints
+- width
+- height
+- padding
+  - positionが定義される
+
+// 今回の実装
+view { 
+  size { 320, 568 },
+  surface { udonge }, 
+  children {
+    header {
+      top { parent }, horizontal{ parent }, 
+      surface { back_blur }, 
+      children {
+        button { 
+          left_header_action, 
+          left { parent }, vertical { parent },
+          children { view { surface { left_header }, padding { parent, 16 }, size{16} } }
+        },
+        button { 
+          right_header_action, 
+          right { parent }, vertical { parent },
+          children { view { surface { right_header }, padding { parent, 16 }, size{16} } }
+        },
+        button {
+          header_logo_action,
+          center { parent }
+          surface { logo },
+          size { logo_x, logo_y }
+        }
+      }
+    },
+    footer {
+      bottom { parent }, horizontal{ parent }, 
+      surface { back_blur }
+    }
+  }
+}
+
+// こういう
+button left_button { 
+  on_click { left_header_action }, 
+  left { parent }, vertical { parent },
+  children { view { surface { left_header }, padding { parent, 16 }, size{16} } }
+};
+
+button right_button { 
+  on_click { right_header_action }, 
+  right { parent }, vertical { parent },
+  children { view { surface { right_header }, padding { parent, 16 }, size{16} } }
+};
+
+button center_logo {
+  header_logo_action,
+  center { parent }
+  surface { logo },
+  size { logo_x, logo_y }
+};
+
+view header { 
+  top { parent }, 
+  horizontal{ parent }, 
+  surface { back_blur }, 
+  children { left_button, right_button, center_logo }
+};
+
+scroll<horizontal, center> app_docker {
+  padding { parent },
+  contains {}
+};
+
+view footer {
+  bottom { parent }, horizontal{ parent }, 
+  surface { back_blur },
+  children { app_docker }
+}
+
+view main_viewer {
+  surface { udonge }
+}
+
+view main { size { 320, 568 }, children { main_viewer, header, footer } };

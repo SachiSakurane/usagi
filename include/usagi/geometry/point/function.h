@@ -1,9 +1,10 @@
 #pragma once
 
 #include <cmath>
-#include "point.h"
 
-namespace udon::components
+#include <usagi/geometry/point/point.h>
+
+namespace usagi
 {
   template <class PointType>
   inline constexpr decltype(auto) distance(const PointType &a, const PointType &b)

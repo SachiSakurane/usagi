@@ -2,9 +2,9 @@
 
 #include <cassert>
 
-#include "../point.h"
+#include <usagi/geometry/point.h>
 
-namespace udon::components
+namespace usagi
 {
   template <class Type>
   struct rect

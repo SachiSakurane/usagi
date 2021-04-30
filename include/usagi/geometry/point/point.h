@@ -1,8 +1,6 @@
 #pragma once
 
-#include <cmath>
-
-namespace udon::components
+namespace usagi
 {
   template <class Type>
   struct point

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "point.h"
+#include <usagi/geometry/point/point.h>
 
-namespace udon::components
+namespace usagi
 {
   template <class Type>
   inline constexpr decltype(auto) operator+(const point<Type> &lhs, const point<Type> &rhs)

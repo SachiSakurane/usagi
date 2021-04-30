@@ -1,8 +1,8 @@
 #pragma once
 
-#include "rect.h"
+#include <usagi/geometry/rect/rect.h>
 
-namespace udon::components
+namespace usagi
 {
   template <class Type>
   inline constexpr bool contain(const rect<Type> &r, const point<Type> &p)

@@ -1,9 +1,8 @@
 #pragma once
 
-#include <chrono>
-#include "geometry/rect.h"
+#include <usagi/geometry/rect.h>
 
-namespace udon::components
+namespace usagi::components
 {
   // centering
   // horizontal

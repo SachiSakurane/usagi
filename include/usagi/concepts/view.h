@@ -1,9 +1,8 @@
 #pragma once
 
 #include <concepts>
-#include "../geometry.h"
 
-namespace udon::components
+namespace usagi
 {
   template <class Type>
   concept event = requires()

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace udon::components
+namespace usagi
 {
   class stack_content
   {

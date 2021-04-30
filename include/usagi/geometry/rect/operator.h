@@ -1,8 +1,8 @@
 #pragma once
 
-#include "rect.h"
+#include <usagi/geometry/rect/rect.h>
 
-namespace udon::components
+namespace usagi
 {
   template <class Type>
   inline constexpr decltype(auto) operator+(const rect<Type> &lhs, const point<Type> &rhs)

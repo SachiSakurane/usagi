@@ -53,7 +53,7 @@ button right_button {
 
 button center_logo {
   header_logo_action,
-  center { parent }
+  center { parent },
   surface { logo },
   size { logo_x, logo_y }
 };
@@ -77,7 +77,8 @@ view footer {
 }
 
 view main_viewer {
+  padding { parent },
   surface { udonge }
 }
 
-view main { size { 320, 568 }, children { main_viewer, header, footer } };
+app main { size { 320, 568 }, children { main_viewer, header, footer } };

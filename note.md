@@ -60,18 +60,98 @@ bounds(child_view); // placeholder が解決されているので取得可能
 // on_click は invocable<position> を満たす concept
 // view は top-level な concept
 
-// xy軸に constraints の状態が存在する
-completed: 値が確定した状態
-runtime-complete: ランタイム時に値が確定する状態(Textなど)
--- errorの壁(上の状態でなければassert) --
-lazy-complete: 後天的に値が確定(completed)する状態(例えば, parent を placeholder にしていた場合は lazy-incomplete、 parent が解決された場合はcomplete)
-undefined: 知らない
+// xy軸に size の状態が存在する
+- completed-concepts
+  - `confirm`: size が確定した状態
+  - `controlled`: 自身の size 依存関係が解決され、size が確定した状態
+- incomplete-concepts
+  - `uncontrolled`: 後天的に size が確定する状態(依存先の placeholder が解決されていない)
+  - `undefined`: size が確定していない
 
-// parent placeholder は子から親にstrong制約をかける
-// A -> B{position(parent)} -> C{horizontal(parent)}
-// C からRectを順に追ってく
-// B は C に対して先端、終端の制約を持つ。これを、強い(strong)関係とする
-// A は B に対して先端の制約を持つ。これを、弱い(weak)関係とする
+こういう関係
+- completed-concepts != incomplete-concepts
+  - 状態を複数持ったり、状態を持たない`view`はない
+- incomplete-concepts な値を呼ばれると assert
+
+## 以上から考える view-concepts
+```(C++)
+concept view = requires(ViewType view) {
+  { view.frame() } -> rect<value_type>;
+  { view.bounds() } -> rect<value_type>;
+  { view.transform() } -> ???
+};
+```
+viewを型化したものが
+local_bounds と affine から frame() を取得する
+local_bounds が bounds()
+
+## padding の仕様から考える relation
+
+### 前提
+`view`には`frame`と`bounds`の2つの座標が存在する
+- `view.frame`
+  - `frame`は客観的な座標
+- `view.bounds`
+  - `bounds`は主観的な座標
+
+どれよ？
+1. `local_bounds`と`transform`から`frame()`、`bounds()`にアクセスできる？
+  - C++的にはこっち
+2. `view`の`frame`と`bounds`は`relation`が組まれている？
+  - getter, setterあったらなぁ
+
+### 並列関係
+```
+padding(From, To, (optional)Size)
+```
+
+- `padding` は `From.bounds` と `To.frame` を(`Size`に依存して)一致させる `relation` を構築する
+  - `relation`は型で決定したい
+- `padding` は `From` か `To` のいずれか一方が `completed` でなければならない(お互い`completed`、`incomplete`は許可されない)
+- `padding` は `incomplete` 側を `controlled` に昇格
+
+#### 実例 A(undefined), B(confirm)
+```
+padding(A, B{size{32}}, 16)
+```
+
+- `A` は `undefined`(サイズが確定していない)
+- `B{size{32}}` は `confirm`
+
+`padding(A, B{size{32}}, 16)` 後の `A` と `B`
+- `A` は `controlled`
+- `B` は `confirm`
+
+後天的に型確定できないから辛い
+親子関係にすると解決できそう
+
+```
+A{ children{ B{size{32}, padding(parent, 16)} } }
+```
+
+- `A` は `undefined`(サイズが確定していない)
+- `B{size{32}, padding(parent, 16)}` は `completed`
+
+この場合の `padding(To)` は？
+
+- `padding` は children の bounds と parent の frame を complete 側と一致させる `relation` を構築する
+- `padding` は children か parent のいずれか一方が completed でなければならない
+- `padding` は completed でない側を controlled にする
+
+つまり、この `relation`
+
+- A は controlled
+- B は completed
+
+// A{size(100)} -> B{padding{parent, 16}}
+// A は completed
+// B は undefined
+// padding は children の bounds と parent の frame を complete 側に一致させる relation を構築する
+// padding は children か parent のいずれか一方が completed でなければならない
+// A は completed
+// B は controlled
+
+## うい
 
 view は2つの座標系を持つ
 親との相対座標系(topなどで操作)
@@ -80,8 +160,8 @@ view は2つの座標系を持つ
 関係性とはx軸でいうとleft, rightの2点で制御ならstrong？
 
 // strong 関係
-// strong 関係は親の constraints 状態を子が付与する
-// strong 関係は一致する必要がある
+// strong 関係は親子お互いの状態を強い方にできる
+// 複数の strong 関係は一致しなくてはならない
 
 // x(position-completed, size-completed), y(position-completed, size-completed)
 // make_view(surfacer { left_header }, size {16}, margin{parent, 16})

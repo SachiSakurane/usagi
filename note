@@ -38,42 +38,94 @@ view {
   }
 }
 
-// こういう
-button left_button { 
+// parent で completed になる
+view parent_view { size{100, 100} };
+view child_view { padding{parent, 16} }; // parent は placeholder, この時点ではデータメンバを持たない
+
+bounds(parent_view);
+bounds(child_view); // データメンバを持たないので assert
+
+parent_view.push(child_view);
+
+bounds(child_view); // placeholder が解決されているので取得可能
+
+// child で completed になる(一旦考えない方向でいく)
+
+(const completed_rect& rect) {
+  return padding(rect, 16);
+}
+
+// function でよくね？
+// surface は invocable<graphic, bounds> を満たす concept
+// on_click は invocable<position> を満たす concept
+// view は top-level な concept
+
+// xy軸に constraints の状態が存在する
+completed: 値が確定した状態
+runtime-complete: ランタイム時に値が確定する状態(Textなど)
+-- errorの壁(上の状態でなければassert) --
+lazy-complete: 後天的に値が確定(completed)する状態(例えば, parent を placeholder にしていた場合は lazy-incomplete、 parent が解決された場合はcomplete)
+undefined: 知らない
+
+// parent placeholder は子から親にstrong制約をかける
+// A -> B{position(parent)} -> C{horizontal(parent)}
+// C からRectを順に追ってく
+// B は C に対して先端、終端の制約を持つ。これを、強い(strong)関係とする
+// A は B に対して先端の制約を持つ。これを、弱い(weak)関係とする
+
+view は2つの座標系を持つ
+親との相対座標系(topなどで操作)
+自身の座標系
+
+関係性とはx軸でいうとleft, rightの2点で制御ならstrong？
+
+// strong 関係
+// strong 関係は親の constraints 状態を子が付与する
+// strong 関係は一致する必要がある
+
+// x(position-completed, size-completed), y(position-completed, size-completed)
+// make_view(surfacer { left_header }, size {16}, margin{parent, 16})
+
+// children が parent の制約を確定させる例
+// child前
+// x(position-undefined, size-undefined), y(position-undefined, size-undefined)
+// child後
+// x(position-completed, size-completed), y(position-completed, size-completed)
+auto lb = left_button { 
   on_click { left_header_action }, 
-  left { parent }, vertical { parent },
-  children { view { surface { left_header }, padding { parent, 16 }, size{16} } }
+  children { 
+    make_view(surfacer {left_header}, size {16}, margin{parent, 16}) // make_view した view に対して padding 制約をつける
+  }
 };
 
-button right_button { 
+auto rb = right_button { 
   on_click { right_header_action }, 
-  right { parent }, vertical { parent },
-  children { view { surface { right_header }, padding { parent, 16 }, size{16} } }
+  children { 
+    padding(make_view(surfacer {right_header}, size { 16 }), 16) 
+  }
 };
 
-button center_logo {
-  header_logo_action,
-  center { parent },
+// x(position-undefined, size-completed), y(position-undefined, size-completed)
+auto logo = center_logo {
+  on_click { header_logo_action },
   surface { logo },
   size { logo_x, logo_y }
 };
 
+// x(position-lazy-complete, size-undefined), y(position-completed, size-completed)
 view header { 
-  top { parent }, 
-  horizontal{ parent }, 
   surface { back_blur }, 
-  children { left_button, right_button, center_logo }
-};
-
-scroll<horizontal, center> app_docker {
-  padding { parent },
-  contains {}
+  top {parent}, // 前置placeholder
+  children { 
+    lb.constraints(left(parent)), // horizontal は header を制約する
+    parent (rb, horizontal),
+    center (logo)
+  }
 };
 
 view footer {
   bottom { parent }, horizontal{ parent }, 
   surface { back_blur },
-  children { app_docker }
 }
 
 view main_viewer {
@@ -81,4 +133,4 @@ view main_viewer {
   surface { udonge }
 }
 
-app main { size { 320, 568 }, children { main_viewer, header, footer } };
+main = make_app( size { 320, 568 }, children { main_viewer, header, footer } );

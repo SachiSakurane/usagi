@@ -17,8 +17,8 @@ struct MissViewConcepts
 
 bool ViweStaticTest()
 {
-  static_assert(usagi::concepts::view<ViewConcepts<int>>, "ViewConcepts<int> has view concept");
-  static_assert(!usagi::concepts::view<ViewConcepts<void>>, "ViewConcepts<void> hasn't view concept");
+  static_assert(usagi::concepts::view<ViewConcepts<float>>, "ViewConcepts<int> has view concept");
+  static_assert(!usagi::concepts::view<ViewConcepts<int>>, "ViewConcepts<void> hasn't view concept");
   static_assert(!usagi::concepts::view<MissViewConcepts>, "MissViewConcepts hasn't view concept");
 
   return true;

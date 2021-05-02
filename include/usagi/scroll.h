@@ -54,6 +54,12 @@ namespace usagi::components
       }
     }
 
+    void on_cancel(const point<float> &p)
+    {
+      is_scroll = false;
+      content.on_cancel(p);
+    }
+
   private:
     const FrameType &frame;
     ViewType content;

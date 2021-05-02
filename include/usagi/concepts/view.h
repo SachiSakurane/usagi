@@ -16,6 +16,7 @@ namespace usagi::concepts
   concept view = requires()
   {
     typename ViewType::value_type;
+    typename ViewType::affine_type;
     {
       std::declval<std::add_const_t<ViewType>>().width()
     }
@@ -27,7 +28,7 @@ namespace usagi::concepts
     {
       std::declval<std::add_const_t<ViewType>>().affine()
     }
-    ->std::convertible_to<usagi::affine<typename Type::value_type>>;
+    ->std::convertible_to<typename ViewType::affine_type>;
   };
 #else
   namespace detail

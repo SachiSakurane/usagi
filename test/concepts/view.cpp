@@ -5,9 +5,10 @@ template <class Type>
 struct View
 {
   using value_type = Type;
+  using affine_type = usagi::affine<value_type>;
   decltype(auto) width() const { return value_type{}; }
   decltype(auto) height() const { return value_type{}; }
-  decltype(auto) affine() const { return usagi::affine<value_type>{}; }
+  decltype(auto) affine() const { return affine_type{}; }
 };
 
 struct MissViewConcepts

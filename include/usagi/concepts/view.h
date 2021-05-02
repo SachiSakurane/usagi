@@ -14,11 +14,25 @@ namespace usagi::concepts
   concept view = requires()
   {
     typename ViewType::value_type;
-    std::enable_if_t<std::is_arithmetic_v<typename ViewType::value_type>>();
+    {
+      std::declval<ViewType::value_type>()
+    }
+    ->std::integral || std::floating_point;
 
-    std::declval<ViewType>().width;
-    std::declval<ViewType>().height;
-    std::declval<ViewType>().affine;
+    {
+      std::declval<ViewType>().width
+    }
+    ->std::convertible_to<typename ViewType::value_type>;
+
+    {
+      std::declval<ViewType>().height
+    }
+    ->std::convertible_to<typename ViewType::value_type>;
+    
+    {
+      std::declval<ViewType>().affine
+    }
+    ->std::convertible_to<affine<typename ViewType::value_type>>;
   };
 #else
   namespace detail

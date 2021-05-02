@@ -15,7 +15,7 @@ namespace usagi::concepts
   {
     typename ViewType::value_type;
     {
-      std::declval<ViewType>().width
+      std::declval<std::add_const<ViewType>>.width()
     }
     ->std::floating_point;
   };
@@ -23,11 +23,11 @@ namespace usagi::concepts
   namespace detail
   {
     USAGI_CONCEPT(has_width,
-                  (std::is_same_v<typename Type::value_type, decltype(std::declval<Type>().width)>))
+                  (std::is_same_v<typename Type::value_type, decltype(std::declval<Type>().width())>))
     USAGI_CONCEPT(has_height,
-                  (std::is_same_v<typename Type::value_type, decltype(std::declval<Type>().height)>))
+                  (std::is_same_v<typename Type::value_type, decltype(std::declval<Type>().height())>))
     USAGI_CONCEPT(has_affine,
-                  (std::is_same_v<affine<typename Type::value_type>, decltype(std::declval<Type>().affine)>))
+                  (std::is_same_v<affine<typename Type::value_type>, decltype(std::declval<Type>().affine())>))
   }
 
   template <class ViewType>

@@ -17,7 +17,7 @@ namespace usagi::concepts
     {
       std::declval<ViewType::value_type>()
     }
-    ->std::integral || std::floating_point;
+    ->std::floating_point;
 
     {
       std::declval<ViewType>().width
@@ -46,7 +46,7 @@ namespace usagi::concepts
   }
 
   template <class ViewType>
-  concept view = std::is_arithmetic_v<typename ViewType::value_type> &&
+  concept view = std::is_floating_point_v<typename ViewType::value_type> &&
       detail::has_width_v<ViewType> &&detail::has_height_v<ViewType> &&detail::has_affine_v<ViewType>;
 #endif
 }

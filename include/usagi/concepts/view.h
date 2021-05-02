@@ -1,7 +1,9 @@
 #pragma once
 
 #include <usagi/geometry.h>
-#ifndef __cpp_lib_concepts
+#ifdef __cpp_lib_concepts
+#include <concepts>
+#else
 #include <usagi/legacy/concept_wrapper.h>
 #endif
 
@@ -16,15 +18,15 @@ namespace usagi::concepts
     {
       std::declval<ViewType>().width
     }
-    ->value_type;
+    ->std::same_as<typename ViewType::value_type>;
     {
       std::declval<ViewType>().height
     }
-    ->value_type;
+    ->std::same_as<typename ViewType::value_type>;
     {
       std::declval<ViewType>().affine
     }
-    ->affine<value_type>;
+    ->std::same_as<affine<typename ViewType::value_type>>;
   };
 #else
   namespace detail
@@ -39,6 +41,6 @@ namespace usagi::concepts
 
   template <class ViewType>
   concept view = std::is_arithmetic_v<typename ViewType::value_type> &&
-      detail::has_width_v<ViewType> && detail::has_height_v<ViewType> && detail::has_affine_v<ViewType>;
+      detail::has_width_v<ViewType> &&detail::has_height_v<ViewType> &&detail::has_affine_v<ViewType>;
 #endif
 }

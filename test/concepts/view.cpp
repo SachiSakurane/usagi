@@ -11,7 +11,7 @@ struct ViewConcepts
 
 struct MissViewConcepts
 {
-  using value_type = Type;
+  using value_type = float;
   value_type width, height;
 };
 

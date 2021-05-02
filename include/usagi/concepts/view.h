@@ -22,7 +22,7 @@ namespace usagi::concepts
     }
     ->std::floating_point;
     {
-      std::declval<std::add_const_t<ViewType>>().affine()
+      std::declval<std::add_const_t<ViewType>>().height()
     }
     ->std::floating_point;
     {

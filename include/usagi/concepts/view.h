@@ -11,7 +11,7 @@ namespace usagi::concepts
 {
 #ifdef __cpp_lib_concepts
   template <class ViewType>
-  concept view = requires(const ViewType &v)
+  concept view = requires(ViewType v)
   {
     typename ViewType::value_type;
     {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <utility>
+
 #include <usagi/geometry.h>
 #ifdef __cpp_lib_concepts
 #include <concepts>
@@ -15,7 +17,7 @@ namespace usagi::concepts
   {
     typename ViewType::value_type;
     {
-      std::declval<std::add_const<ViewType>>.width()
+      std::declval<std::add_const_t<ViewType>>.width()
     }
     ->std::floating_point;
   };

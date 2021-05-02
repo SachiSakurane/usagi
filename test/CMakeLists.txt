@@ -20,7 +20,8 @@ set(TEST_PROJECT_NAME ${CMAKE_PROJECT_NAME}_Test)
 
 add_executable(${TEST_PROJECT_NAME}
         main.cpp
-        concepts/view.cpp)
+        concepts/view.cpp
+        concepts/parent_view.cpp)
 
 if (MSVC)
     target_link_libraries(${TEST_PROJECT_NAME} PRIVATE

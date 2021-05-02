@@ -18,14 +18,6 @@ namespace usagi::concepts
       std::declval<ViewType>().width
     }
     ->std::floating_point;
-    {
-      std::declval<ViewType>().height
-    }
-    ->std::floating_point;
-    {
-      std::declval<ViewType>().affine
-    }
-    ->std::convertible_to<affine<typename ViewType::value_type>>;
   };
 #else
   namespace detail

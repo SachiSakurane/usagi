@@ -27,7 +27,7 @@ namespace usagi::concepts
     {
       std::declval<std::add_const_t<ViewType>>().affine()
     }
-    ->std::convertable_to<affine<typename Type::value_type>>;
+    ->std::convertible_to<usagi::affine<typename Type::value_type>>;
   };
 #else
   namespace detail

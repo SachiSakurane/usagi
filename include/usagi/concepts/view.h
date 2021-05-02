@@ -17,11 +17,11 @@ namespace usagi::concepts
     {
       v.width
     }
-    ->std::convertible_to<typename ViewType::value_type>;
+    ->std::floating_point;
     {
       v.height
     }
-    ->std::convertible_to<typename ViewType::value_type>;
+    ->std::floating_point;
     {
       v.affine
     }

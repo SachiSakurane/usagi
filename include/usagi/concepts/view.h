@@ -15,18 +15,10 @@ namespace usagi::concepts
   {
     typename ViewType::value_type;
     std::enable_if_t<std::is_arithmetic_v<typename ViewType::value_type>>();
-    {
-      std::declval<ViewType>().width
-    }
-    ->std::same_as<typename ViewType::value_type>;
-    {
-      std::declval<ViewType>().height
-    }
-    ->std::same_as<typename ViewType::value_type>;
-    {
-      std::declval<ViewType>().affine
-    }
-    ->std::same_as<affine<typename ViewType::value_type>>;
+
+    std::declval<ViewType>().width;
+    std::declval<ViewType>().height;
+    std::declval<ViewType>().affine;
   };
 #else
   namespace detail

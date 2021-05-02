@@ -6,6 +6,8 @@ struct View
 {
   using value_type = Type;
   decltype(auto) width() const { return value_type{}; }
+  decltype(auto) height() const { return value_type{}; }
+  decltype(auto) affine() const { return usagi::affine<value_type>{}; }
 };
 
 struct MissViewConcepts

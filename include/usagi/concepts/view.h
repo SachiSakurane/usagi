@@ -20,6 +20,14 @@ namespace usagi::concepts
       std::declval<std::add_const_t<ViewType>>().width()
     }
     ->std::floating_point;
+    {
+      std::declval<std::add_const_t<ViewType>>().affine()
+    }
+    ->std::floating_point;
+    {
+      std::declval<std::add_const_t<ViewType>>().affine()
+    }
+    ->std::convertable_to<affine<typename Type::value_type>>;
   };
 #else
   namespace detail

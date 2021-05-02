@@ -17,7 +17,7 @@ namespace usagi::concepts
   {
     typename ViewType::value_type;
     {
-      std::declval<std::add_const_t<ViewType>>.width()
+      std::declval<std::add_const_t<ViewType>>().width()
     }
     ->std::floating_point;
   };

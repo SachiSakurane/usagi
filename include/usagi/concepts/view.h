@@ -11,26 +11,19 @@ namespace usagi::concepts
 {
 #ifdef __cpp_lib_concepts
   template <class ViewType>
-  concept view = requires()
+  concept view = requires(const ViewType &v)
   {
     typename ViewType::value_type;
     {
-      std::declval<typename ViewType::value_type>()
-    }
-    ->std::floating_point;
-
-    {
-      std::declval<ViewType>().width
+      v.width
     }
     ->std::convertible_to<typename ViewType::value_type>;
-
     {
-      std::declval<ViewType>().height
+      v.height
     }
     ->std::convertible_to<typename ViewType::value_type>;
-    
     {
-      std::declval<ViewType>().affine
+      v.affine
     }
     ->std::convertible_to<affine<typename ViewType::value_type>>;
   };

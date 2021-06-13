@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include <usagi/geometry/point.h>
+#include <usagi/geometry/size.h>
 
 namespace usagi
 {
@@ -10,36 +11,33 @@ namespace usagi
   struct rect
   {
   public:
-    constexpr rect(Type left, Type top, Type right, Type bottom) : left{left}, top{top}, right(right), bottom{bottom}
+    using value_type = Type;
+    using size_type = size<value_type>;
+    using point_type = point<value_type>;
+
+    constexpr rect(value_type left, value_type top, value_type right, value_type bottom) : left{left}, top{top}, right(right), bottom{bottom}
     {
       assert(left <= right);
       assert(top <= bottom);
     }
 
-    constexpr rect(Type width, Type height) : rect{point<Type>{.x = 0, .y = 0}, width, height}
+    constexpr explicit rect(size_type size) : rect{point_type{.x = 0, .y = 0}, size}
     {
     }
 
-    constexpr rect(point<Type> point, Type width, Type height) : left{point.x}, top{point.y}, right(point.x + width), bottom{point.y + height}
+    constexpr rect(point_type point, size_type size) : left{point.x}, top{point.y}, right(point.x + size.width), bottom{point.y + size.height}
     {
-      assert(width >= 0);
-      assert(height >= 0);
     }
 
-    Type l() const { return left; }
-    Type t() const { return top; }
-    Type r() const { return right; }
-    Type b() const { return bottom; }
+    value_type l() const { return left; }
+    value_type t() const { return top; }
+    value_type r() const { return right; }
+    value_type b() const { return bottom; }
 
-    Type width() const { return right - left; }
-    Type height() const { return bottom - top; }
-
-    Type center_x() const { return width() / static_cast<Type>(2); }
-    Type center_y() const { return height() / static_cast<Type>(2); }
-
-    point<Type> center() const { return point<Type>{center_x(), center_y()}; }
+    size_type size() const { return size_type{right - left, bottom - top}; }
+    point_type center() const { return point_type{size() / static_cast<value_type>(2)}; }
 
   private:
-    Type left, top, right, bottom;
+    value_type left, top, right, bottom;
   };
 }

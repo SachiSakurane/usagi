@@ -20,8 +20,11 @@ set(TEST_PROJECT_NAME ${CMAKE_PROJECT_NAME}_Test)
 
 add_executable(${TEST_PROJECT_NAME}
         main.cpp
-        concepts/view.cpp
-        concepts/parent_view.cpp)
+        geometry/size/function.cpp
+        geometry/size/operator.cpp
+        geometry/size/size.cpp
+        variable/variable_traits.cpp
+        variable/variable.cpp)
 
 if (MSVC)
     target_link_libraries(${TEST_PROJECT_NAME} PRIVATE

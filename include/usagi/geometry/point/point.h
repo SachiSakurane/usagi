@@ -11,7 +11,7 @@ namespace usagi
     using variable_type = typename usagi::variable_traits<Type>::variable_type;
 
     point() : x_{}, y_{} {}
-    point(const usagi::size<variable_type> &s) : x_{[s]()
+    explicit point(const usagi::size<Type> &s) : x_{[s]()
                                                     { return s.width(); }},
                                                  y_{[s]()
                                                     { return s.height(); }} {}

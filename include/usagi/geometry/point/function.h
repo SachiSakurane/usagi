@@ -17,10 +17,4 @@ namespace usagi
           return std::sqrt(x_sub * x_sub + y_sub * y_sub);
         }};
   }
-
-  template <class Type>
-  inline constexpr decltype(auto) duplicate(const usagi::point<Type> x)
-  {
-    return x.duplicate();
-  }
 }

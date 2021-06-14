@@ -23,6 +23,9 @@ add_executable(${TEST_PROJECT_NAME}
         geometry/point/function.cpp
         geometry/point/operator.cpp
         geometry/point/point.cpp
+        geometry/rect/function.cpp
+        geometry/rect/operator.cpp
+        geometry/rect/rect.cpp
         geometry/size/function.cpp
         geometry/size/operator.cpp
         geometry/size/size.cpp

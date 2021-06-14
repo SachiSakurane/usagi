@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include <usagi/geometry/point.h>
+#include <usagi/geometry/size.h>
 
 namespace usagi
 {
@@ -10,36 +11,63 @@ namespace usagi
   struct rect
   {
   public:
-    constexpr rect(Type left, Type top, Type right, Type bottom) : left{left}, top{top}, right(right), bottom{bottom}
+    using value_type = typename usagi::variable_traits<Type>::value_type;
+    using variable_type = typename usagi::variable_traits<Type>::variable_type;
+    using size_type = usagi::size<value_type>;
+    using point_type = usagi::point<value_type>;
+
+    constexpr rect() : left{}, top{}, right{}, bottom{} {}
+    constexpr rect(variable_type l, variable_type t, variable_type r, variable_type b) : left{l}, top{t}, right{r}, bottom{b} {}
+    constexpr rect(const size_type &size) : rect(size, point_type{}) {}
+    constexpr rect(const size_type &size, const point_type &point)
+        : left{[point]()
+               { return point.x(); }},
+          top{[point]()
+              { return point.y(); }},
+          right([size, point]()
+                { return point.x() + size.width(); }),
+          bottom{[size, point]()
+                 { return point.y() + size.height(); }} {}
+
+    decltype(auto) l() const
     {
-      assert(left <= right);
-      assert(top <= bottom);
+      decltype(auto) v = left();
+      assert(v <= right());
+      return v;
     }
 
-    constexpr rect(Type width, Type height) : rect{point<Type>{.x = 0, .y = 0}, width, height}
+    decltype(auto) t() const
     {
+      decltype(auto) v = top();
+      assert(v <= bottom());
+      return v;
     }
 
-    constexpr rect(point<Type> point, Type width, Type height) : left{point.x}, top{point.y}, right(point.x + width), bottom{point.y + height}
+    decltype(auto) r() const
     {
-      assert(width >= 0);
-      assert(height >= 0);
+      decltype(auto) v = right();
+      assert(left() <= v);
+      return v;
     }
 
-    Type l() const { return left; }
-    Type t() const { return top; }
-    Type r() const { return right; }
-    Type b() const { return bottom; }
+    decltype(auto) b() const
+    {
+      decltype(auto) v = bottom();
+      assert(top() <= v);
+      return v;
+    }
 
-    Type width() const { return right - left; }
-    Type height() const { return bottom - top; }
-
-    Type center_x() const { return width() / static_cast<Type>(2); }
-    Type center_y() const { return height() / static_cast<Type>(2); }
-
-    point<Type> center() const { return point<Type>{center_x(), center_y()}; }
+    size_type size() const
+    {
+      return size_type{[r = this->right, l = this->left]()
+                       { return r() - l(); },
+                       [b = this->bottom, t = this->top]()
+                       { return b() - t(); }};
+    }
+    point_type center() const { return point_type{size() / static_cast<value_type>(2)}; }
+    rect<value_type> duplicate() const { return rect<value_type>{left(), top(), right(), bottom()}; }
 
   private:
-    Type left, top, right, bottom;
+    variable_type left, top, right, bottom;
   };
 }

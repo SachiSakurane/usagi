@@ -5,14 +5,135 @@
 namespace usagi
 {
   template <class Type>
-  inline constexpr decltype(auto) operator+(const point<Type> &lhs, const point<Type> &rhs)
+  inline constexpr bool operator==(const usagi::point<Type> &lhs, const usagi::point<Type> &rhs)
   {
-    return point<Type>{.x = lhs.x + rhs.x, .y = lhs.y + rhs.y};
+    return lhs.x() == rhs.x() && lhs.y() == rhs.y();
   }
 
   template <class Type>
-  inline constexpr decltype(auto) operator-(const point<Type> &lhs, const point<Type> &rhs)
+  inline constexpr bool operator!=(const usagi::point<Type> &lhs, const usagi::point<Type> &rhs)
   {
-    return point<Type>{.x = lhs.x - rhs.x, .y = lhs.y - rhs.y};
+    return !(lhs == rhs);
+  }
+
+  template <class Type>
+  inline constexpr decltype(auto) operator+(typename usagi::point<Type>::value_type &&lhs, const usagi::point<Type> &rhs)
+  {
+    return usagi::point<Type>{
+        [lhs, rhs]()
+        { return lhs + rhs.x(); },
+        [lhs, rhs]()
+        { return lhs + rhs.y(); }};
+  }
+
+  template <class Type>
+  inline constexpr decltype(auto) operator+(const usagi::point<Type> &lhs, typename usagi::point<Type>::value_type &&rhs)
+  {
+    return usagi::point<Type>{
+        [lhs, rhs]()
+        { return lhs.x() + rhs; },
+        [lhs, rhs]()
+        { return lhs.y() + rhs; }};
+  }
+
+  template <class Type>
+  inline constexpr decltype(auto) operator+(const usagi::point<Type> &lhs, const usagi::point<Type> &rhs)
+  {
+    return usagi::point<Type>{
+        [lhs, rhs]()
+        { return lhs.x() + rhs.x(); },
+        [lhs, rhs]()
+        { return lhs.y() + rhs.y(); }};
+  }
+
+  template <class Type>
+  inline constexpr decltype(auto) operator-(typename usagi::point<Type>::value_type &&lhs, const usagi::point<Type> &rhs)
+  {
+    return usagi::point<Type>{
+        [lhs, rhs]()
+        { return lhs - rhs.x(); },
+        [lhs, rhs]()
+        { return lhs - rhs.y(); }};
+  }
+
+  template <class Type>
+  inline constexpr decltype(auto) operator-(const usagi::point<Type> &lhs, typename usagi::point<Type>::value_type &&rhs)
+  {
+    return usagi::point<Type>{
+        [lhs, rhs]()
+        { return lhs.x() - rhs; },
+        [lhs, rhs]()
+        { return lhs.y() - rhs; }};
+  }
+
+  template <class Type>
+  inline constexpr decltype(auto) operator-(const usagi::point<Type> &lhs, const usagi::point<Type> &rhs)
+  {
+    return usagi::point<Type>{
+        [lhs, rhs]()
+        { return lhs.x() - rhs.x(); },
+        [lhs, rhs]()
+        { return lhs.y() - rhs.y(); }};
+  }
+
+  template <class Type>
+  inline constexpr decltype(auto) operator*(typename usagi::point<Type>::value_type &&lhs, const usagi::point<Type> &rhs)
+  {
+    return usagi::point<Type>{
+        [lhs, rhs]()
+        { return lhs * rhs.x(); },
+        [lhs, rhs]()
+        { return lhs * rhs.y(); }};
+  }
+
+  template <class Type>
+  inline constexpr decltype(auto) operator*(const usagi::point<Type> &lhs, typename usagi::point<Type>::value_type &&rhs)
+  {
+    return usagi::point<Type>{
+        [lhs, rhs]()
+        { return lhs.x() * rhs; },
+        [lhs, rhs]()
+        { return lhs.y() * rhs; }};
+  }
+
+  template <class Type>
+  inline constexpr decltype(auto) operator*(const usagi::point<Type> &lhs, const usagi::point<Type> &rhs)
+  {
+    return usagi::point<Type>{
+        [lhs, rhs]()
+        { return lhs.x() * rhs.x(); },
+        [lhs, rhs]()
+        { return lhs.y() * rhs.y(); }};
+  }
+
+  template <class Type>
+  inline constexpr decltype(auto) operator/(typename usagi::point<Type>::value_type &&lhs, const usagi::point<Type> &rhs)
+  {
+    return usagi::point<Type>{
+        [lhs, rhs]()
+        { return lhs / rhs.x(); },
+        [lhs, rhs]()
+        { return lhs / rhs.y(); }};
+  }
+
+  template <class Type>
+  inline constexpr decltype(auto) operator/(const usagi::point<Type> &lhs, typename usagi::point<Type>::value_type &&rhs)
+  {
+    assert(rhs != 0);
+    return usagi::point<Type>{
+        [lhs, rhs]()
+        { return lhs.x() / rhs; },
+        [lhs, rhs]()
+        { return lhs.y() / rhs; }};
+  }
+
+  template <class Type>
+  inline constexpr decltype(auto) operator/(const usagi::point<Type> &lhs, const usagi::point<Type> &rhs)
+  {
+    return usagi::point<Type>{
+        [lhs, rhs]()
+        { return lhs.x() / rhs.x(); },
+        [lhs, rhs]()
+        { return lhs.y() / rhs.y(); }};
   }
 }

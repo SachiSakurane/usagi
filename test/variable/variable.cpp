@@ -8,6 +8,8 @@ TEST(VariableTest, ConstantCase)
   ASSERT_TRUE(va() == 42);
   auto v = 42;
   ASSERT_TRUE(usagi::variable{v}() == 42);
+
+  ASSERT_TRUE(usagi::variable{std::string{"42"}}() == "42");
 }
 
 TEST(VariableTest, FunctionCase)
@@ -20,4 +22,7 @@ TEST(VariableTest, FunctionCase)
   auto v = []()
   { return 42; };
   ASSERT_TRUE(usagi::variable{v}() == 42);
+
+  ASSERT_TRUE(usagi::variable{[]()
+                              { return std::string{"42"}; }}() == "42");
 }

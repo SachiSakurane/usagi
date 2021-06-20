@@ -4,7 +4,7 @@
 
 namespace usagi
 {
-  template <class ValueType, class = std::enable_if_t<std::is_arithmetic_v<ValueType>>>
+  template <class ValueType>
   struct variable_traits
   {
     using value_type = ValueType;

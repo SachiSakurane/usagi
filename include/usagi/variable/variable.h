@@ -5,7 +5,7 @@
 
 namespace usagi
 {
-  template <class ValueType, class = std::enable_if_t<std::is_arithmetic_v<ValueType>>>
+  template <class ValueType>
   struct variable
   {
     using value_type = ValueType;
@@ -30,9 +30,9 @@ namespace usagi
     std::function<value_type()> functor;
   };
 
-  template <class ValueType, class = std::enable_if_t<std::is_arithmetic_v<ValueType>>>
+  template <class ValueType>
   variable(const ValueType&) -> variable<ValueType>;
 
-  template <class FunctionType, class = std::enable_if_t<std::is_arithmetic_v<std::invoke_result_t<FunctionType>>>>
+  template <class FunctionType>
   variable(FunctionType &&) -> variable<std::invoke_result_t<FunctionType>>;
 }

@@ -4,7 +4,7 @@
 
 namespace usagi
 {
-  template <class Type>
+  template <class Type, class = std::enable_if_t<std::is_arithmetic_v<Type>>>
   struct point
   {
     using value_type = typename usagi::variable_traits<Type>::value_type;

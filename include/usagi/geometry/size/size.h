@@ -44,7 +44,9 @@ namespace usagi
     variable_type width_, height_;
   };
 
-  // pair特殊化
+  /**
+   * pair特殊化
+  */
   template <class Type, class = std::enable_if_t<std::is_arithmetic_v<Type>>>
   struct paired_size
   {

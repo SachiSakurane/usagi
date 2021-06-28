@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <usagi/concepts/geometry/size_concept.h>
-#include <usagi/geometry/size/size.h>
 
 template <class ValueType>
 struct Sized
@@ -24,13 +23,11 @@ bool SizeConceptStaticTest()
 {
   static_assert(usagi::concepts::geometry::size_concept<Sized<int>>);
   static_assert(!usagi::concepts::geometry::size_concept<UnSized<int>>);
-  static_assert(usagi::concepts::geometry::size_concept<usagi::size<int>>);
-  static_assert(usagi::concepts::geometry::size_concept<usagi::paired_size<int>>);
 
   return true;
 }
 
-TEST(SizeConceptStaticTest, StaticCase)
+TEST(SizeConceptTest, StaticCase)
 {
   ASSERT_TRUE(SizeConceptStaticTest());
 }

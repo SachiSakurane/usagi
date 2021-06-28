@@ -1,5 +1,19 @@
 #include <gtest/gtest.h>
+#include <usagi/concepts/geometry/size_concept.h>
 #include <usagi/geometry/size/size.h>
+
+bool SizeStaticTest()
+{
+  static_assert(usagi::concepts::geometry::size_concept<usagi::size<int>>);
+  static_assert(usagi::concepts::geometry::size_concept<usagi::paired_size<int>>);
+
+  return true;
+}
+
+TEST(SizeTest, StaticCase)
+{
+  ASSERT_TRUE(SizeStaticTest());
+}
 
 TEST(SizeTest, CommonCase)
 {

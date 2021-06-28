@@ -25,4 +25,34 @@ namespace usagi
   private:
     variable_type x_, y_;
   };
+
+  /**
+   * pair特殊化
+  */
+  template <class Type, class = std::enable_if_t<std::is_arithmetic_v<Type>>>
+  struct paired_point
+  {
+    using value_type = Type;
+    using pair_type = usagi::utility::mono_tuple<value_type, 2>;
+    using size_type = typename usagi::variable_traits<pair_type>::value_type;
+    using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
+
+    constexpr paired_point() : functor{} {}
+    constexpr paired_point(variable_type s) : functor{s} {}
+
+    value_type x() const
+    {
+      return std::get<0>(functor());
+    }
+
+    value_type y() const
+    {
+      return std::get<1>(functor());
+    }
+
+    paired_point<value_type> duplicate() const { return paired_point<value_type>{functor()}; }
+
+  private:
+    variable_type functor;
+  };
 }

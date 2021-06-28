@@ -1,25 +1,24 @@
 #pragma once
 
+#include <usagi/concepts/geometry.h>
 #include <usagi/geometry/rect/rect.h>
 
 namespace usagi
 {
-  template <class Type>
-  inline constexpr bool operator==(const usagi::rect<Type> &lhs, const usagi::rect<Type> &rhs)
+  inline constexpr bool operator==(const usagi::concepts::geometry::rect_concept auto &lhs, const usagi::concepts::geometry::rect_concept auto &rhs)
   {
     return lhs.l() == rhs.l() && lhs.r() == rhs.r() && lhs.t() == rhs.t() && lhs.b() == rhs.b();
   }
 
-  template <class Type>
-  inline constexpr bool operator!=(const usagi::rect<Type> &lhs, const usagi::rect<Type> &rhs)
+  inline constexpr bool operator!=(const usagi::concepts::geometry::rect_concept auto &lhs, const usagi::concepts::geometry::rect_concept auto &rhs)
   {
     return !(lhs == rhs);
   }
 
-  template <class Type>
-  inline constexpr decltype(auto) operator+(const usagi::rect<Type> &lhs, const usagi::point<Type> &rhs)
+  template <usagi::concepts::geometry::rect_concept RectType>
+  inline constexpr decltype(auto) operator+(const RectType &lhs, const usagi::concepts::geometry::point_concept auto &rhs)
   {
-    return usagi::rect<Type>{
+    return usagi::rect<typename RectType::value_type>{
         [lhs, rhs]()
         { return lhs.l() + rhs.x(); },
         [lhs, rhs]()
@@ -30,10 +29,10 @@ namespace usagi
         { return lhs.b() + rhs.y(); }};
   }
 
-  template <class Type>
-  inline constexpr decltype(auto) operator-(const rect<Type> &lhs, const point<Type> &rhs)
+  template <usagi::concepts::geometry::rect_concept RectType>
+  inline constexpr decltype(auto) operator-(const RectType &lhs, const usagi::concepts::geometry::point_concept auto &rhs)
   {
-    return usagi::rect<Type>{
+    return usagi::rect<typename RectType::value_type>{
         [lhs, rhs]()
         { return lhs.l() - rhs.x(); },
         [lhs, rhs]()

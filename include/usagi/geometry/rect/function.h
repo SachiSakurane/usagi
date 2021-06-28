@@ -1,11 +1,10 @@
 #pragma once
 
-#include <usagi/geometry/rect/rect.h>
+#include <usagi/concepts/geometry.h>
 
 namespace usagi
 {
-  template <class Type>
-  inline constexpr bool contain(const rect<Type> &r, const point<Type> &p)
+  inline constexpr bool contain(const usagi::concepts::geometry::rect_concept auto &r, const usagi::concepts::geometry::point_concept auto &p)
   {
     return (r.l() <= p.x() && p.x() <= r.r()) && (r.t() <= p.y() && p.y() <= r.b());
   }

@@ -31,12 +31,24 @@ namespace usagi::type
     };
 
     template <class ValueType>
+    on_down(ValueType, ValueType) -> on_down<ValueType>;
+
+    template <class ValueType>
+    on_drag(ValueType, ValueType) -> on_drag<ValueType>;
+
+    template <class ValueType>
+    on_up(ValueType, ValueType) -> on_up<ValueType>;
+
+    template <class ValueType>
+    on_over(ValueType, ValueType) -> on_over<ValueType>;
+
+    template <class ValueType>
     struct mouse_traits
     {
-      using on_down = on_down<ValueType>;
-      using on_drag = on_drag<ValueType>;
-      using on_up = on_up<ValueType>;
-      using on_over = on_over<ValueType>;
+      using on_down_type = on_down<ValueType>;
+      using on_drag_type = on_drag<ValueType>;
+      using on_up_type = on_up<ValueType>;
+      using on_over_type = on_over<ValueType>;
     };
   };
 }

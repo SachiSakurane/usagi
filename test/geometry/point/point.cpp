@@ -1,5 +1,18 @@
 #include <gtest/gtest.h>
+#include <usagi/concepts/geometry/point_concept.h>
 #include <usagi/geometry/point/point.h>
+
+bool PointStaticTest()
+{
+  static_assert(usagi::concepts::geometry::point_concept<usagi::point<int>>);
+
+  return true;
+}
+
+TEST(PointTest, StaticCase)
+{
+  ASSERT_TRUE(PointStaticTest());
+}
 
 TEST(PointTest, CommonCase)
 {

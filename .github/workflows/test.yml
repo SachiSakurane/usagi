@@ -21,7 +21,7 @@ jobs:
       - name: Build Linux
         if: runner.os == 'Linux'
         run: |
-          cmake -B ${BUILD_DIRECTORY}_${{matrix.build_type}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMAKE_CXX_COMPILER=g++-10
+          cmake -B ${BUILD_DIRECTORY}_${{matrix.build_type}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMAKE_CXX_COMPILER=clang++-12
           cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_Test -j 4
       - name: Build macOS
         if: runner.os == 'macOS'

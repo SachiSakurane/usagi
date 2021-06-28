@@ -41,5 +41,14 @@ namespace usagi::type
 
     template <class ValueType>
     on_over(ValueType, ValueType) -> on_over<ValueType>;
+
+    template <class ValueType>
+    struct mouse_traits
+    {
+      using on_down = on_down<ValueType>;
+      using on_drag = on_drag<ValueType>;
+      using on_up = on_up<ValueType>;
+      using on_over = on_over<ValueType>;
+    };
   };
 }

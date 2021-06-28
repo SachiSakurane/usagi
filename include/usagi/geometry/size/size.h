@@ -80,7 +80,7 @@ namespace usagi
       return {w, h};
     }
 
-    size<value_type> duplicate() const { return size<value_type>{functor()}; }
+    paired_size<value_type> duplicate() const { return paired_size<value_type>{functor()}; }
 
   private:
     variable_type functor;

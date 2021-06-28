@@ -20,6 +20,7 @@ set(TEST_PROJECT_NAME ${CMAKE_PROJECT_NAME}_Test)
 
 add_executable(${TEST_PROJECT_NAME}
         main.cpp
+        concepts/geometry/point_concept.cpp
         concepts/geometry/size_concept.cpp
         concepts/clickable.cpp
         geometry/point/function.cpp

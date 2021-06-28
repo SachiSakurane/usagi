@@ -4,7 +4,7 @@
 
 #include <usagi/type/mouse.h>
 
-namespace usagi::concepts
+namespace usagi::concepts::ui
 {
   /** 
    * clickできるやつ

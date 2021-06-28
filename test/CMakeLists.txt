@@ -23,7 +23,8 @@ add_executable(${TEST_PROJECT_NAME}
         concepts/geometry/point_concept.cpp
         concepts/geometry/rect_concept.cpp
         concepts/geometry/size_concept.cpp
-        concepts/clickable.cpp
+        concepts/ui/clickable.cpp
+        concepts/ui/drawable.cpp
         geometry/point/function.cpp
         geometry/point/operator.cpp
         geometry/point/point.cpp

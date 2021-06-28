@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <usagi/concepts/clickable.h>
+#include <usagi/concepts/ui/clickable.h>
 
 template <class ValueType>
 struct Clickable
@@ -25,8 +25,8 @@ struct UnClickable
 
 bool ClickableStaticTest()
 {
-  static_assert(usagi::concepts::clickable<Clickable<int>>);
-  static_assert(!usagi::concepts::clickable<UnClickable<int>>);
+  static_assert(usagi::concepts::ui::clickable<Clickable<int>>);
+  static_assert(!usagi::concepts::ui::clickable<UnClickable<int>>);
 
   return true;
 }

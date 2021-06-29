@@ -18,27 +18,8 @@ endif()
 
 set(TEST_PROJECT_NAME ${CMAKE_PROJECT_NAME}_Test)
 
-add_executable(${TEST_PROJECT_NAME}
-        main.cpp
-        concepts/geometry/point_concept.cpp
-        concepts/geometry/rect_concept.cpp
-        concepts/geometry/size_concept.cpp
-        concepts/graphics/color_concept.cpp
-        concepts/graphics/draw_contextable.cpp
-        concepts/ui/clickable.cpp
-        concepts/ui/drawable.cpp
-        geometry/point/function.cpp
-        geometry/point/operator.cpp
-        geometry/point/point.cpp
-        geometry/rect/function.cpp
-        geometry/rect/operator.cpp
-        geometry/rect/rect.cpp
-        geometry/size/function.cpp
-        geometry/size/operator.cpp
-        geometry/size/size.cpp
-        graphics/color/color.cpp
-        variable/variable_traits.cpp
-        variable/variable.cpp)
+file(GLOB_RECURSE TEST_PROJECT_SOURCES *.cpp)
+add_executable(${TEST_PROJECT_NAME} ${TEST_PROJECT_SOURCES})
 
 if (MSVC)
     target_link_libraries(${TEST_PROJECT_NAME} PRIVATE

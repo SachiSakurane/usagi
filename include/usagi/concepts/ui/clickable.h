@@ -7,7 +7,7 @@
 namespace usagi::concepts::ui
 {
   /** 
-   * clickできるやつ
+   * click できるやつ
   */
   template <class ClickableType>
   concept clickable = requires(ClickableType &c)

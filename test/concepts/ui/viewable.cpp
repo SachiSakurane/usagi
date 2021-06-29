@@ -3,8 +3,12 @@
 #include <usagi/geometry/rect/rect.h>
 #include <usagi/geometry/size/size.h>
 
+#include "../../mocks/clickable.h"
+#include "../../mocks/drawable.h"
+#include "../../mocks/draw_contextable.h"
+
 template <class ValueType>
-struct Viewable
+struct Viewable : Clickable<ValueType>, Drawable<ValueType, DrawContextable>
 {
   using value_type = ValueType;
   using size_type = typename usagi::geometry::size<value_type>;
@@ -14,7 +18,7 @@ struct Viewable
 };
 
 template <class ValueType>
-struct UnViewable
+struct UnViewable : Clickable<ValueType>, Drawable<ValueType, DrawContextable>
 {
   using value_type = ValueType;
   using size_type = typename usagi::geometry::size<value_type>;

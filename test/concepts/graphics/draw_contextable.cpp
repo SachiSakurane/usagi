@@ -1,16 +1,7 @@
 #include <gtest/gtest.h>
-#include <usagi/concepts/graphics/color_concept.h>
 #include <usagi/concepts/graphics/draw_contextable.h>
 
-struct DrawContextable
-{
-  void fill(const usagi::concepts::graphics::color_concept auto &) const;
-};
-
-struct UnDrawContextable
-{
-  void fill() const;
-};
+#include "../../mocks/draw_contextable.h"
 
 bool DrawContextableStaticTest()
 {

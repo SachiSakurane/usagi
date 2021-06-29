@@ -23,6 +23,8 @@ add_executable(${TEST_PROJECT_NAME}
         concepts/geometry/point_concept.cpp
         concepts/geometry/rect_concept.cpp
         concepts/geometry/size_concept.cpp
+        concepts/graphics/color_concept.cpp
+        concepts/graphics/draw_contextable.cpp
         concepts/ui/clickable.cpp
         concepts/ui/drawable.cpp
         geometry/point/function.cpp
@@ -34,6 +36,7 @@ add_executable(${TEST_PROJECT_NAME}
         geometry/size/function.cpp
         geometry/size/operator.cpp
         geometry/size/size.cpp
+        graphics/color/color.cpp
         variable/variable_traits.cpp
         variable/variable.cpp)
 

@@ -36,6 +36,7 @@ add_executable(${TEST_PROJECT_NAME}
         geometry/size/function.cpp
         geometry/size/operator.cpp
         geometry/size/size.cpp
+        graphics/color/color.cpp
         variable/variable_traits.cpp
         variable/variable.cpp)
 

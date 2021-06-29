@@ -1,8 +1,3 @@
 #pragma once
 
-namespace usagi::type
-{
-  class color
-  {
-  };
-}
+#include <usagi/graphics/color/color.h>

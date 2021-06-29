@@ -2,6 +2,8 @@
 
 #include <utility>
 
+#include <usagi/graphics/color/color.h>
+
 namespace usagi::concepts::graphics
 {
   /** 
@@ -10,6 +12,7 @@ namespace usagi::concepts::graphics
   template <class DrawContextType>
   concept draw_contextable = requires(DrawContextType &d)
   {
-    d.fill();
+    d.fill(std::declval<usagi::graphics::color<int>>());
+    d.fill(std::declval<usagi::graphics::color<float>>());
   };
 }

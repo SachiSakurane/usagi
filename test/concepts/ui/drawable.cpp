@@ -1,26 +1,27 @@
 #include <gtest/gtest.h>
+#include <usagi/concepts/graphics/color_concept.h>
 #include <usagi/concepts/ui/drawable.h>
 
-template <class DrawableType>
+template <class DrawContextType>
 struct Drawable
 {
-  using draw_type = DrawableType;
-  void draw(draw_type &draw);
+  using draw_context_type = DrawContextType;
+  void draw(draw_context_type &draw);
 };
 
-template <class DrawableType>
+template <class DrawContextType>
 struct UnDrawable
 {
-  using draw_type = DrawableType;
-  // void draw(draw_type &draw);
+  using draw_context_type = DrawContextType;
+  // void draw(draw_context_type &draw);
 };
 
 struct DrawContext
 {
+  void fill(const usagi::concepts::graphics::color_concept auto &) const;
 };
 
-bool
-DrawableStaticTest()
+bool DrawableStaticTest()
 {
   static_assert(usagi::concepts::ui::drawable<Drawable<DrawContext>>);
   static_assert(!usagi::concepts::ui::drawable<UnDrawable<DrawContext>>);

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace usagi
+namespace usagi::geometry
 {
   template <class GeometryType>
   inline constexpr decltype(auto) duplicate(const GeometryType &x)

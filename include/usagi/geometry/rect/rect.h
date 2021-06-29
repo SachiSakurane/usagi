@@ -5,7 +5,7 @@
 #include <usagi/geometry/point.h>
 #include <usagi/geometry/size.h>
 
-namespace usagi
+namespace usagi::geometry
 {
   template <class Type, class = std::enable_if_t<std::is_arithmetic_v<Type>>>
   struct rect
@@ -13,8 +13,8 @@ namespace usagi
   public:
     using value_type = typename usagi::variable_traits<Type>::value_type;
     using variable_type = typename usagi::variable_traits<Type>::variable_type;
-    using size_type = usagi::size<value_type>;
-    using point_type = usagi::point<value_type>;
+    using size_type = usagi::geometry::size<value_type>;
+    using point_type = usagi::geometry::point<value_type>;
 
     constexpr rect() : left{}, top{}, right{}, bottom{} {}
     constexpr rect(variable_type l, variable_type t, variable_type r, variable_type b) : left{l}, top{t}, right{r}, bottom{b} {}

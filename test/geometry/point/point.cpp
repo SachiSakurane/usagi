@@ -4,7 +4,7 @@
 
 bool PointStaticTest()
 {
-  static_assert(usagi::concepts::geometry::point_concept<usagi::point<int>>);
+  static_assert(usagi::concepts::geometry::point_concept<usagi::geometry::point<int>>);
 
   return true;
 }
@@ -16,11 +16,11 @@ TEST(PointTest, StaticCase)
 
 TEST(PointTest, CommonCase)
 {
-  usagi::point<float> p{42.f, []()
-                       { return 42.f; }};
+  usagi::geometry::point<float> p{42.f, []()
+                                  { return 42.f; }};
   ASSERT_TRUE(p.x() == 42.f);
   ASSERT_TRUE(p.y() == 42.f);
-  usagi::point<float> pp = p;
+  usagi::geometry::point<float> pp = p;
   p = {-42.f,
        []()
        { return -42.f; }};
@@ -33,8 +33,8 @@ TEST(PointTest, CommonCase)
 TEST(PointTest, DuplicateCase)
 {
   float side = 42.f;
-  usagi::point<float> p{42.f, [&side]()
-                        { return side; }};
+  usagi::geometry::point<float> p{42.f, [&side]()
+                                  { return side; }};
   auto c = p.duplicate();
   ASSERT_TRUE(c.x() == 42.f);
   ASSERT_TRUE(c.y() == 42.f);
@@ -45,8 +45,8 @@ TEST(PointTest, DuplicateCase)
 
 TEST(PointTest, SizeCastCase)
 {
-  usagi::size<float> s {42.f, 42.f};
-  auto p = usagi::point<float>{s};
+  usagi::geometry::size<float> s{42.f, 42.f};
+  auto p = usagi::geometry::point<float>{s};
   ASSERT_TRUE(p.x() == s.width());
   ASSERT_TRUE(p.y() == s.height());
 }

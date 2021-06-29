@@ -5,7 +5,7 @@
 
 TEST(RectFunctionTest, ContainCase)
 {
-  usagi::rect<float> a{0.f, 0.f, 42.f, 42.f};
-  ASSERT_TRUE(usagi::contain(a, usagi::point<float>{3.f, 4.f}));
-  ASSERT_FALSE(usagi::contain(a, usagi::point<float>{-3.f, 4.f}));
+  usagi::geometry::rect<float> a{0.f, 0.f, 42.f, 42.f};
+  ASSERT_TRUE(usagi::geometry::contain(a, usagi::geometry::point<float>{3.f, 4.f}));
+  ASSERT_FALSE(usagi::geometry::contain(a, usagi::geometry::point<float>{-3.f, 4.f}));
 }

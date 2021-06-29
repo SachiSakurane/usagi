@@ -11,8 +11,8 @@ struct Rected
   value_type t() const;
   value_type r() const;
   value_type b() const;
-  usagi::size<value_type> size() const;
-  usagi::point<value_type> center() const;
+  usagi::geometry::size<value_type> size() const;
+  usagi::geometry::point<value_type> center() const;
 };
 
 template <class ValueType>
@@ -23,8 +23,8 @@ struct UnRected
   value_type t() const;
   value_type r() const;
   // value_type b() const;
-  usagi::size<value_type> size() const;
-  usagi::point<value_type> center() const;
+  usagi::geometry::size<value_type> size() const;
+  usagi::geometry::point<value_type> center() const;
 };
 
 bool RectConceptStaticTest()

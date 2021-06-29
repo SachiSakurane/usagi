@@ -2,7 +2,7 @@
 
 #include <usagi/concepts/geometry.h>
 
-namespace usagi
+namespace usagi::geometry
 {
   inline constexpr bool contain(const usagi::concepts::geometry::rect_concept auto &r, const usagi::concepts::geometry::point_concept auto &p)
   {

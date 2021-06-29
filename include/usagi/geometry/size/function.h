@@ -2,6 +2,6 @@
 
 #include <usagi/geometry/size/size.h>
 
-namespace usagi
+namespace usagi::geometry
 {
 }

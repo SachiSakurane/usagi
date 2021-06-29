@@ -6,7 +6,7 @@ template <class ValueType>
 struct Contentable
 {
   using value_type = ValueType;
-  using size_type = typename usagi::size<value_type>;
+  using size_type = typename usagi::geometry::size<value_type>;
   size_type bounds() const;
 };
 
@@ -14,7 +14,7 @@ template <class ValueType>
 struct UnContentable
 {
   using value_type = ValueType;
-  using size_type = typename usagi::size<value_type>;
+  using size_type = typename usagi::geometry::size<value_type>;
   value_type bounds() const;
 };
 

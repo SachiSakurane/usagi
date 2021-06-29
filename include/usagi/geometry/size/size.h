@@ -5,7 +5,7 @@
 #include <usagi/variable/variable_traits.h>
 #include <usagi/utility/mono_tuple.h>
 
-namespace usagi
+namespace usagi::geometry
 {
   /** 
    * size はマイナスを許容しない

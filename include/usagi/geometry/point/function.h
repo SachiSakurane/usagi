@@ -6,7 +6,7 @@
 #include <usagi/concepts/geometry/point_concept.h>
 #include <usagi/variable/variable_traits.h>
 
-namespace usagi
+namespace usagi::geometry
 {
   template <
       usagi::concepts::geometry::point_concept PointTypeA,

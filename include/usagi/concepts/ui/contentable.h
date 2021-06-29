@@ -8,7 +8,8 @@
 namespace usagi::concepts::ui
 {
   /** 
-   * contentが表現可能
+   * content が表現可能
+   * content は二次元で表現される箱みたいなもの
   */
   template <class ContentType>
   concept contentable = requires()

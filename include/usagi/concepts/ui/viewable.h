@@ -11,6 +11,7 @@ namespace usagi::concepts::ui
 {
   /** 
    * view を表現可能
+   * TODO: affine の必要性について考える(view として持つ必要性がなさそうに思える)
   */
   template <class ViewType>
   concept viewable =
@@ -24,5 +25,6 @@ namespace usagi::concepts::ui
 
     { v.bounds() } -> usagi::utility::convertible_to<typename ViewType::size_type>;
     { v.frame() } -> usagi::utility::convertible_to<typename ViewType::rect_type>;
+    // { v.affine() } -> usagi::utility::convertible_to<typename ViewType::affine_type>;
   };
 }

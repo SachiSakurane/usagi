@@ -14,6 +14,34 @@ TEST(PointTest, StaticCase)
   ASSERT_TRUE(PointStaticTest());
 }
 
+TEST(PointTest, ConstructorCase)
+{
+  {
+    usagi::geometry::point<float> p{};
+    ASSERT_TRUE(p.x() == 0);
+    ASSERT_TRUE(p.y() == 0);
+  }
+
+  {
+    usagi::geometry::point<float> p{42.f, []()
+                                    { return 42.f; }};
+    ASSERT_TRUE(p.x() == 42.f);
+    ASSERT_TRUE(p.y() == 42.f);
+  }
+
+  {
+    float side = 42.f;
+    usagi::geometry::point p{
+        usagi::geometry::size<float>{
+            42.f, [&side]()
+            { return side; }}};
+    ASSERT_TRUE(p.x() == 42.f);
+    ASSERT_TRUE(p.y() == 42.f);
+    side = 20;
+    ASSERT_TRUE(p.y() == 20.f);
+  }
+}
+
 TEST(PointTest, CommonCase)
 {
   usagi::geometry::point<float> p{42.f, []()

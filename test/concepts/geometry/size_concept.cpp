@@ -1,4 +1,4 @@
-#include <usagi/concepts/geometry/size_concept.h>
+#include <usagi/concepts/geometry/size_concept.hpp>
 
 namespace
 {

@@ -1,4 +1,4 @@
-#include <usagi/concepts/geometry/point_concept.h>
+#include <usagi/concepts/geometry/point_concept.hpp>
 
 namespace
 {

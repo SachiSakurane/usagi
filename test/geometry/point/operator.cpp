@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <usagi/geometry/point/operator.h>
+#include <usagi/geometry/point/operator.hpp>
 
 TEST(PointOperatorTest, CmpCase)
 {

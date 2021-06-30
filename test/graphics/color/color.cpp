@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <usagi/concepts/graphics/color_concept.h>
-#include <usagi/graphics/color/color.h>
+#include <usagi/concepts/graphics/color_concept.hpp>
+#include <usagi/graphics/color/color.hpp>
 
 namespace
 {

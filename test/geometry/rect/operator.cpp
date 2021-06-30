@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <usagi/geometry/rect/operator.h>
+#include <usagi/geometry/rect/operator.hpp>
 
 TEST(RectOperatorTest, CmpCase)
 {

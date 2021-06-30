@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <usagi/geometry/rect/rect.h>
+#include <usagi/geometry/rect/rect.hpp>
 
 TEST(RectTest, ConstructorCase)
 {

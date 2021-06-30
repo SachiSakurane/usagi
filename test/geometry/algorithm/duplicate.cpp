@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <usagi/geometry/algorithm/duplicate.h>
-#include <usagi/geometry/point.h>
+#include <usagi/geometry/algorithm/duplicate.hpp>
+#include <usagi/geometry/point.hpp>
 
 TEST(GeometryAlgorithmTest, DuplicateCase)
 {

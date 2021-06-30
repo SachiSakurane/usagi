@@ -1,6 +1,6 @@
-#include <usagi/concepts/geometry/rect_concept.h>
-#include <usagi/geometry/point/point.h>
-#include <usagi/geometry/size/size.h>
+#include <usagi/concepts/geometry/rect_concept.hpp>
+#include <usagi/geometry/point/point.hpp>
+#include <usagi/geometry/size/size.hpp>
 
 namespace
 {

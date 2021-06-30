@@ -1,4 +1,4 @@
-#include <usagi/concepts/graphics/color_concept.h>
+#include <usagi/concepts/graphics/color_concept.hpp>
 
 namespace
 {

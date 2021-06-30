@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <usagi/variable/variable.h>
+#include <usagi/variable/variable.hpp>
 
 TEST(VariableTest, ConstantCase)
 {
@@ -15,7 +15,8 @@ TEST(VariableTest, ConstantCase)
 TEST(VariableTest, FunctionCase)
 {
   ASSERT_EQ(usagi::variable{[]()
-                            { return 42; }}(), 42);
+                            { return 42; }}(),
+            42);
   auto va = usagi::variable{[]()
                             { return 42; }};
   ASSERT_EQ(va(), 42);

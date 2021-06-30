@@ -124,4 +124,10 @@ namespace usagi::ui
   private:
     std::unique_ptr<view_type> holder;
   };
+
+  template <usagi::concepts::ui::viewable ViewType>
+  view(const ViewType &) -> view<typename ViewType::value_type, typename ViewType::draw_context_type>;
+
+  template <usagi::concepts::ui::viewable ViewType>
+  view(ViewType &&) -> view<typename ViewType::value_type, typename ViewType::draw_context_type>;
 }

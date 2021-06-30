@@ -36,12 +36,10 @@ namespace usagi::concepts::ui
       requires(ViewType &v)
   {
     typename ViewType::value_type;
-    typename ViewType::size_type;
-    typename ViewType::rect_type;
     typename ViewType::draw_context_type;
 
-    { v.bounds() } -> usagi::utility::convertible_to<typename ViewType::size_type>;
-    { v.frame() } -> usagi::utility::convertible_to<typename ViewType::rect_type>;
+    { v.bounds() } -> usagi::concepts::geometry::size_concept;
+    { v.frame() } -> usagi::concepts::geometry::rect_concept;
 
     v.add_sub_view(std::declval<usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type>>());
     // { v.affine() } -> usagi::utility::convertible_to<typename ViewType::affine_type>;

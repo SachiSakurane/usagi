@@ -29,11 +29,6 @@ namespace usagi::ui
     constexpr explicit base_view(const size_type &size) : content{size} {}
     constexpr base_view(const point_type &point, const size_type &size) : content{point, size} {}
 
-    base_view(const base_view &) = default;
-    base_view(base_view &&) = default;
-    base_view &operator=(const base_view &) = default;
-    base_view &operator=(base_view &&) = default;
-
     virtual void draw(draw_context_type &context)
     {
       for (auto &child : children)
@@ -135,10 +130,6 @@ namespace usagi::ui
     using view_type = usagi::ui::view<value_type, draw_context_type>;
 
     view() : holder{nullptr} {}
-    view(const view &) = default;
-    view(view &&) = default;
-    view &operator=(const view &) = default;
-    view &operator=(view &&) = default;
 
     template <usagi::concepts::ui::viewable ViewType>
     view(const ViewType &v) : holder{std::make_unique<view_holder<ViewType>>(v)} {}

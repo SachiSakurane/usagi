@@ -4,10 +4,11 @@
 
 #include <usagi/geometry/point.h>
 #include <usagi/geometry/size.h>
+#include <usagi/utility/arithmetic.h>
 
 namespace usagi::geometry
 {
-  template <class Type, class = std::enable_if_t<std::is_arithmetic_v<Type>>>
+  template <usagi::utility::arithmetic Type>
   struct rect
   {
   public:
@@ -71,10 +72,9 @@ namespace usagi::geometry
     variable_type left, top, right, bottom;
   };
 
-  template <class Type>
+  template <usagi::utility::arithmetic Type>
   rect(const usagi::geometry::size<Type> &) -> rect<Type>;
 
-  template <class Type>
+  template <usagi::utility::arithmetic Type>
   rect(const usagi::geometry::point<Type> &, const usagi::geometry::size<Type> &) -> rect<Type>;
-
 }

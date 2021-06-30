@@ -4,13 +4,14 @@
 
 #include <usagi/variable/variable_traits.h>
 #include <usagi/utility/mono_tuple.h>
+#include <usagi/utility/arithmetic.h>
 
 namespace usagi::geometry
 {
   /** 
    * size はマイナスを許容しない
   */
-  template <class Type, class = std::enable_if_t<std::is_arithmetic_v<Type>>>
+  template <usagi::utility::arithmetic Type>
   struct size
   {
     using value_type = typename usagi::variable_traits<Type>::value_type;
@@ -47,7 +48,7 @@ namespace usagi::geometry
   /**
    * pair特殊化
   */
-  template <class Type, class = std::enable_if_t<std::is_arithmetic_v<Type>>>
+  template <usagi::utility::arithmetic Type>
   struct paired_size
   {
     using value_type = Type;

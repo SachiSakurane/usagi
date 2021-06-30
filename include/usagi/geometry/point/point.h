@@ -1,10 +1,11 @@
 #pragma once
 
 #include <usagi/geometry/size/size.h>
+#include <usagi/utility/arithmetic.h>
 
 namespace usagi::geometry
 {
-  template <class Type, class = std::enable_if_t<std::is_arithmetic_v<Type>>>
+  template <usagi::utility::arithmetic Type>
   struct point
   {
     using value_type = typename usagi::variable_traits<Type>::value_type;
@@ -29,13 +30,13 @@ namespace usagi::geometry
     variable_type x_, y_;
   };
 
-  template <class Type>
+  template <usagi::utility::arithmetic Type>
   point(const usagi::geometry::size<Type> &) -> point<Type>;
 
   /**
    * pair特殊化
   */
-  template <class Type, class = std::enable_if_t<std::is_arithmetic_v<Type>>>
+  template <usagi::utility::arithmetic Type>
   struct paired_point
   {
     using value_type = Type;

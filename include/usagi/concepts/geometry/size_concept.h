@@ -1,8 +1,6 @@
 #pragma once
 
-#include <utility>
-
-#include <usagi/utility/convertible_to.h>
+#include <usagi/utility/arithmetic.h>
 
 namespace usagi::concepts::geometry
 {
@@ -12,10 +10,7 @@ namespace usagi::concepts::geometry
   template <class SizeType>
   concept size_concept = requires(SizeType &s)
   {
-    typename SizeType::value_type;
-
-    { s.width() } -> usagi::utility::convertible_to<typename SizeType::value_type>;
-    { s.height() } -> usagi::utility::convertible_to<typename SizeType::value_type>;
-    // { s() } -> usagi::utility::convertible_to<std::tuple<typename SizeType::value_type, typename SizeType::value_type>>;
+    { s.width() } -> usagi::utility::arithmetic;
+    { s.height() } -> usagi::utility::arithmetic;
   };
 }

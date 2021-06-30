@@ -6,7 +6,7 @@
 
 bool ViewStaticTest()
 {
-  static_assert(usagi::concepts::ui::viewable<usagi::ui::view<float, DrawContextable>>);
+  static_assert(usagi::concepts::ui::viewable<usagi::ui::view<float, DrawContextable<float>>>);
 
   return true;
 }

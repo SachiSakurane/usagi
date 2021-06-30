@@ -3,6 +3,7 @@
 #include <utility>
 
 #include <usagi/graphics/color/color.h>
+#include <usagi/utility/arithmetic.h>
 
 namespace usagi::concepts::graphics
 {
@@ -12,6 +13,9 @@ namespace usagi::concepts::graphics
   template <class DrawContextType>
   concept draw_contextable = requires(DrawContextType &d)
   {
+    { d.width() } -> usagi::utility::arithmetic;
+    { d.height() } -> usagi::utility::arithmetic;
+
     d.fill(std::declval<usagi::graphics::color<int>>());
     d.fill(std::declval<usagi::graphics::color<float>>());
   };

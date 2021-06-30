@@ -72,7 +72,7 @@ namespace usagi::ui
       view_holder(const ViewType &v) : holder{v} {}
       view_holder(ViewType &&v) : holder{std::move(v)} {}
 
-      void draw(const rect_type &r, draw_context_type &d) override { holder.draw(r, d); }
+      void draw(draw_context_type &d) override { holder.draw(d); }
 
       size_type bounds() const override { return holder.bounds(); }
       rect_type frame() const override { return holder.frame(); }
@@ -106,7 +106,7 @@ namespace usagi::ui
     template <usagi::concepts::ui::viewable ViewType>
     view(ViewType &&v) : holder{std::make_unique<view_holder<ViewType>>(std::move(v))} {}
 
-    void draw(const rect_type &r, draw_context_type &d) { holder->draw(r, d); }
+    void draw(draw_context_type &d) { holder->draw(d); }
 
     size_type bounds() const { return holder->bounds(); }
     rect_type frame() const { return holder->frame(); }

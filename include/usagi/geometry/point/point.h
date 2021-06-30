@@ -17,6 +17,9 @@ namespace usagi::geometry
                                                                         { return s.height(); }} {}
     constexpr point(variable_type x, variable_type y) : x_{x}, y_{y} {}
 
+    template <class LocalType>
+    constexpr explicit point(LocalType t) : x_{t.x}, y_{t.y} {}
+
     value_type x() const { return x_(); }
     value_type y() const { return y_(); }
 

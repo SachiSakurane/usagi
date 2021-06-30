@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <usagi/concepts/ui/viewable.h>
+#include <usagi/geometry/rect/function.h>
 #include <usagi/geometry/geometry_traits.h>
 #include <usagi/type/mouse.h>
 
@@ -27,17 +28,44 @@ namespace usagi::ui
     constexpr explicit base_view(const size_type &size) : content{size} {}
     constexpr base_view(const point_type &point, const size_type &size) : content{point, size} {}
 
-    virtual void draw(draw_context_type &)
+    virtual void draw(draw_context_type &context)
     {
+      for (auto &child : children)
+      {
+        child.draw(context);
+      }
     }
 
     virtual size_type bounds() const { return content.size(); }
     virtual rect_type frame() const { return content; }
 
-    virtual void event(typename mouse_traits::on_down_type) {}
-    virtual void event(typename mouse_traits::on_drag_type) {}
-    virtual void event(typename mouse_traits::on_up_type) {}
-    virtual void event(typename mouse_traits::on_over_type) {}
+    virtual void event(typename mouse_traits::on_down_type mouse)
+    {
+      if (usagi::geometry::contain(bounds(), point_type{mouse}))
+        for (auto &child : children)
+          child.event(mouse);
+    }
+
+    virtual void event(typename mouse_traits::on_drag_type mouse)
+    {
+      if (usagi::geometry::contain(bounds(), point_type{mouse}))
+        for (auto &child : children)
+          child.event(mouse);
+    }
+
+    virtual void event(typename mouse_traits::on_up_type mouse)
+    {
+      if (usagi::geometry::contain(bounds(), point_type{mouse}))
+        for (auto &child : children)
+          child.event(mouse);
+    }
+
+    virtual void event(typename mouse_traits::on_over_type mouse)
+    {
+      if (usagi::geometry::contain(bounds(), point_type{mouse}))
+        for (auto &child : children)
+          child.event(mouse);
+    }
 
     virtual view_type &add_sub_view(view_type &&sub_view)
     {

@@ -19,15 +19,15 @@ TEST(SizeTest, ConstructorCase)
 {
   {
     usagi::geometry::size<float> s{};
-    ASSERT_TRUE(s.width() == 0);
-    ASSERT_TRUE(s.height() == 0);
+    ASSERT_EQ(s.width(), 0);
+    ASSERT_EQ(s.height(), 0);
   }
 
   {
     usagi::geometry::size<float> s{42.f, []()
                                    { return 42.f; }};
-    ASSERT_TRUE(s.width() == 42.f);
-    ASSERT_TRUE(s.height() == 42.f);
+    ASSERT_EQ(s.width(), 42.f);
+    ASSERT_EQ(s.height(), 42.f);
   }
 }
 
@@ -35,16 +35,16 @@ TEST(SizeTest, CommonCase)
 {
   usagi::geometry::size<float> s{42.f, []()
                                  { return 42.f; }};
-  ASSERT_TRUE(s.width() == 42);
-  ASSERT_TRUE(s.height() == 42);
+  ASSERT_EQ(s.width(), 42);
+  ASSERT_EQ(s.height(), 42);
   auto ss = s;
   s = {24.f,
        []()
        { return 24.f; }};
-  ASSERT_TRUE(s.width() == 24);
-  ASSERT_TRUE(s.height() == 24);
-  ASSERT_TRUE(ss.width() == 42);
-  ASSERT_TRUE(ss.height() == 42);
+  ASSERT_EQ(s.width(), 24);
+  ASSERT_EQ(s.height(), 24);
+  ASSERT_EQ(ss.width(), 42);
+  ASSERT_EQ(ss.height(), 42);
 }
 
 TEST(SizeTest, DuplicateCase)
@@ -53,9 +53,9 @@ TEST(SizeTest, DuplicateCase)
   usagi::geometry::size<float> s{42.f, [&side]()
                                  { return side; }};
   auto c = s.duplicate();
-  ASSERT_TRUE(c.width() == 42);
-  ASSERT_TRUE(c.height() == 42);
+  ASSERT_EQ(c.width(), 42);
+  ASSERT_EQ(c.height(), 42);
   side = 20;
-  ASSERT_TRUE(s.height() == 20);
-  ASSERT_TRUE(c.height() == 42);
+  ASSERT_EQ(s.height(), 20);
+  ASSERT_EQ(c.height(), 42);
 }

@@ -10,8 +10,6 @@ namespace usagi::concepts::graphics
   template <class ColorType>
   concept color_concept = requires(ColorType &c)
   {
-    typename ColorType::value_type;
-
     { c.r() } -> usagi::utility::arithmetic;
     { c.g() } -> usagi::utility::arithmetic;
     { c.b() } -> usagi::utility::arithmetic;

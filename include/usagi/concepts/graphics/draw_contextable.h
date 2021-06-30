@@ -1,5 +1,6 @@
 #pragma once
 
+#include <usagi/geometry/rect/rect.h>
 #include <usagi/graphics/color/color.h>
 #include <usagi/utility/arithmetic.h>
 
@@ -15,7 +16,7 @@ namespace usagi::concepts::graphics
     { d.width() } -> usagi::utility::arithmetic;
     { d.height() } -> usagi::utility::arithmetic;
 
-    d.fill(std::declval<usagi::graphics::color<int>>());
-    d.fill(std::declval<usagi::graphics::color<float>>());
+    d.fill(std::declval<usagi::geometry::rect<int>>(), std::declval<usagi::graphics::color<int>>());
+    d.fill(std::declval<usagi::geometry::rect<float>>(), std::declval<usagi::graphics::color<float>>());
   };
 }

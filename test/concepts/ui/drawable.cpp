@@ -1,8 +1,8 @@
-#include <usagi/concepts/graphics/color_concept.h>
-#include <usagi/concepts/ui/drawable.h>
+#include <usagi/concepts/graphics/color_concept.hpp>
+#include <usagi/concepts/ui/drawable.hpp>
 
-#include "../../mocks/drawable.h"
-#include "../../mocks/draw_contextable.h"
+#include "../../mocks/drawable.hpp"
+#include "../../mocks/draw_contextable.hpp"
 
 namespace
 {

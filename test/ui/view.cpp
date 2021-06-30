@@ -1,7 +1,7 @@
-#include <usagi/concepts/ui/viewable.h>
-#include <usagi/ui/view.h>
+#include <usagi/concepts/ui/viewable.hpp>
+#include <usagi/ui/view.hpp>
 
-#include "../mocks/viewable.h"
+#include "../mocks/viewable.hpp"
 
 namespace
 {

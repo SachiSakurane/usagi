@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <usagi/concepts/geometry/size_concept.h>
-#include <usagi/geometry/size/size.h>
+#include <usagi/concepts/geometry/size_concept.hpp>
+#include <usagi/geometry/size/size.hpp>
 
 namespace
 {

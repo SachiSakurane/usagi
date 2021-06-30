@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <usagi/geometry/point/function.h>
-#include <usagi/geometry/point/point.h>
+#include <usagi/geometry/point/function.hpp>
+#include <usagi/geometry/point/point.hpp>
 
 TEST(PointFunctionTest, MathCase)
 {

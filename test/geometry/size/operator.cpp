@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <usagi/geometry/size/operator.h>
+#include <usagi/geometry/size/operator.hpp>
 
 TEST(SizeOperatorTest, CmpCase)
 {

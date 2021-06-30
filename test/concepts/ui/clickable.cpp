@@ -1,6 +1,6 @@
-#include <usagi/concepts/ui/clickable.h>
+#include <usagi/concepts/ui/clickable.hpp>
 
-#include "../../mocks/clickable.h"
+#include "../../mocks/clickable.hpp"
 
 namespace
 {

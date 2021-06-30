@@ -1,6 +1,6 @@
-#include <usagi/concepts/graphics/draw_contextable.h>
+#include <usagi/concepts/graphics/draw_contextable.hpp>
 
-#include "../../mocks/draw_contextable.h"
+#include "../../mocks/draw_contextable.hpp"
 
 namespace
 {

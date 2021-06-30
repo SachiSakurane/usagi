@@ -1,6 +1,6 @@
-#include <usagi/concepts/ui/viewable.h>
+#include <usagi/concepts/ui/viewable.hpp>
 
-#include "../../mocks/viewable.h"
+#include "../../mocks/viewable.hpp"
 
 namespace
 {

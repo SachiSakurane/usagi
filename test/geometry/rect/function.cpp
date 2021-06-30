@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include <usagi/geometry/point/point.h>
-#include <usagi/geometry/rect/function.h>
-#include <usagi/geometry/rect/rect.h>
+#include <usagi/geometry/point/point.hpp>
+#include <usagi/geometry/rect/function.hpp>
+#include <usagi/geometry/rect/rect.hpp>
 
 TEST(RectFunctionTest, ContainCase)
 {

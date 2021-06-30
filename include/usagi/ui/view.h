@@ -27,7 +27,7 @@ namespace usagi::ui
     constexpr explicit base_view(const size_type &size) : content{size} {}
     constexpr base_view(const point_type &point, const size_type &size) : content{point, size} {}
 
-    virtual void draw(const rect_type &, draw_context_type &)
+    virtual void draw(draw_context_type &)
     {
     }
 

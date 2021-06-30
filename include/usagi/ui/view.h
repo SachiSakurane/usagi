@@ -42,28 +42,28 @@ namespace usagi::ui
 
     virtual void event(typename mouse_traits::on_down_type mouse)
     {
-      if (usagi::geometry::contain(bounds(), point_type{mouse}))
+      if (usagi::geometry::contain(frame(), point_type{mouse}))
         for (auto &child : children)
           child.event(mouse);
     }
 
     virtual void event(typename mouse_traits::on_drag_type mouse)
     {
-      if (usagi::geometry::contain(bounds(), point_type{mouse}))
+      if (usagi::geometry::contain(frame(), point_type{mouse}))
         for (auto &child : children)
           child.event(mouse);
     }
 
     virtual void event(typename mouse_traits::on_up_type mouse)
     {
-      if (usagi::geometry::contain(bounds(), point_type{mouse}))
+      if (usagi::geometry::contain(frame(), point_type{mouse}))
         for (auto &child : children)
           child.event(mouse);
     }
 
     virtual void event(typename mouse_traits::on_over_type mouse)
     {
-      if (usagi::geometry::contain(bounds(), point_type{mouse}))
+      if (usagi::geometry::contain(frame(), point_type{mouse}))
         for (auto &child : children)
           child.event(mouse);
     }
@@ -87,14 +87,14 @@ namespace usagi::ui
   class view
   {
     template <usagi::concepts::ui::viewable ViewType>
-    class view_holder final : usagi::ui::base_view<ValueType, DrawContextType>
+    class view_holder final : public usagi::ui::base_view<ValueType, DrawContextType>
     {
       using base_view_type = typename usagi::ui::base_view<ValueType, DrawContextType>;
 
     public:
       using rect_type = typename base_view_type::rect_type;
       using size_type = typename base_view_type::size_type;
-      using draw_context_type = typename base_view_type::DrawContextType;
+      using draw_context_type = typename base_view_type::draw_context_type;
       using mouse_traits = typename base_view_type::mouse_traits;
       using view_type = typename base_view_type::view_type;
 
@@ -111,7 +111,7 @@ namespace usagi::ui
       void event(typename mouse_traits::on_up_type mouse) override { holder.event(mouse); }
       void event(typename mouse_traits::on_over_type mouse) override { holder.event(mouse); }
 
-      view_type &add_sub_view(view_type &&sub_view)
+      view_type &add_sub_view(view_type &&sub_view) override
       {
         return holder.add_sub_view(std::forward<view_type>(sub_view));
       }
@@ -128,6 +128,8 @@ namespace usagi::ui
     using draw_context_type = DrawContextType;
     using mouse_traits = typename usagi::type::mouse_traits<value_type>;
     using view_type = usagi::ui::view<value_type, draw_context_type>;
+
+    view() : holder{nullptr} {}
 
     template <usagi::concepts::ui::viewable ViewType>
     view(const ViewType &v) : holder{std::make_unique<view_holder<ViewType>>(v)} {}
@@ -150,8 +152,10 @@ namespace usagi::ui
       return holder->add_sub_view(std::forward<view_type>(sub_view));
     }
 
+    operator bool() const { return holder; }
+
   private:
-    std::unique_ptr<view_type> holder;
+    std::unique_ptr<usagi::ui::base_view<value_type, draw_context_type>> holder;
   };
 
   template <usagi::concepts::ui::viewable ViewType>

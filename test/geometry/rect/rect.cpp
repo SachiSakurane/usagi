@@ -5,10 +5,10 @@ TEST(RectTest, ConstructorCase)
 {
   {
     usagi::geometry::rect<float> r{};
-    ASSERT_TRUE(r.l() == 0);
-    ASSERT_TRUE(r.t() == 0);
-    ASSERT_TRUE(r.r() == 0);
-    ASSERT_TRUE(r.b() == 0);
+    ASSERT_EQ(r.l(), 0);
+    ASSERT_EQ(r.t(), 0);
+    ASSERT_EQ(r.r(), 0);
+    ASSERT_EQ(r.b(), 0);
   }
 
   {
@@ -18,10 +18,10 @@ TEST(RectTest, ConstructorCase)
         { return 42.f; },
         []()
         { return 42.f; }};
-    ASSERT_TRUE(r.l() == 2.f);
-    ASSERT_TRUE(r.t() == 2.f);
-    ASSERT_TRUE(r.r() == 42.f);
-    ASSERT_TRUE(r.b() == 42.f);
+    ASSERT_EQ(r.l(), 2.f);
+    ASSERT_EQ(r.t(), 2.f);
+    ASSERT_EQ(r.r(), 42.f);
+    ASSERT_EQ(r.b(), 42.f);
   }
 
   {
@@ -29,10 +29,10 @@ TEST(RectTest, ConstructorCase)
         usagi::geometry::size<float>{
             42.f, []()
             { return 42.f; }}};
-    ASSERT_TRUE(r.l() == 0);
-    ASSERT_TRUE(r.t() == 0);
-    ASSERT_TRUE(r.r() == 42.f);
-    ASSERT_TRUE(r.b() == 42.f);
+    ASSERT_EQ(r.l(), 0);
+    ASSERT_EQ(r.t(), 0);
+    ASSERT_EQ(r.r(), 42.f);
+    ASSERT_EQ(r.b(), 42.f);
   }
 
   {
@@ -43,10 +43,10 @@ TEST(RectTest, ConstructorCase)
         usagi::geometry::size<float>{
             40.f, []()
             { return 40.f; }}};
-    ASSERT_TRUE(r.l() == 2.f);
-    ASSERT_TRUE(r.t() == 2.f);
-    ASSERT_TRUE(r.r() == 42.f);
-    ASSERT_TRUE(r.b() == 42.f);
+    ASSERT_EQ(r.l(), 2.f);
+    ASSERT_EQ(r.t(), 2.f);
+    ASSERT_EQ(r.r(), 42.f);
+    ASSERT_EQ(r.b(), 42.f);
   }
 }
 
@@ -59,17 +59,17 @@ TEST(RectTest, CommonCase)
       { return 42.f; },
       [&side]()
       { return side; }};
-  ASSERT_TRUE(r.l() == 2.f);
-  ASSERT_TRUE(r.t() == 2.f);
-  ASSERT_TRUE(r.r() == 42.f);
-  ASSERT_TRUE(r.b() == 42.f);
+  ASSERT_EQ(r.l(), 2.f);
+  ASSERT_EQ(r.t(), 2.f);
+  ASSERT_EQ(r.r(), 42.f);
+  ASSERT_EQ(r.b(), 42.f);
 
   auto rr = r;
   side = 20.f;
-  ASSERT_TRUE(rr.l() == 2.f);
-  ASSERT_TRUE(rr.t() == 2.f);
-  ASSERT_TRUE(rr.r() == 42.f);
-  ASSERT_TRUE(rr.b() == 20.f);
+  ASSERT_EQ(rr.l(), 2.f);
+  ASSERT_EQ(rr.t(), 2.f);
+  ASSERT_EQ(rr.r(), 42.f);
+  ASSERT_EQ(rr.b(), 20.f);
 }
 
 TEST(RectTest, DuplicateCase)
@@ -82,11 +82,11 @@ TEST(RectTest, DuplicateCase)
       [&side]()
       { return side; }};
   auto c = r.duplicate();
-  ASSERT_TRUE(c.l() == 2.f);
-  ASSERT_TRUE(c.t() == 2.f);
-  ASSERT_TRUE(c.r() == 42.f);
-  ASSERT_TRUE(c.b() == 42.f);
+  ASSERT_EQ(c.l(), 2.f);
+  ASSERT_EQ(c.t(), 2.f);
+  ASSERT_EQ(c.r(), 42.f);
+  ASSERT_EQ(c.b(), 42.f);
   side = 20;
-  ASSERT_TRUE(r.b() == 20);
-  ASSERT_TRUE(c.b() == 42);
+  ASSERT_EQ(r.b(), 20);
+  ASSERT_EQ(c.b(), 42);
 }

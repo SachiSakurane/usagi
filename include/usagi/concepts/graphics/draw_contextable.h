@@ -13,6 +13,7 @@ namespace usagi::concepts::graphics
   template <class DrawContextType>
   concept draw_contextable = requires(DrawContextType &d)
   {
+    // size とは若干意味が異なるのであえて直書きしている
     { d.width() } -> usagi::utility::arithmetic;
     { d.height() } -> usagi::utility::arithmetic;
 

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <utility>
-
-#include <usagi/utility/convertible_to.h>
+#include <usagi/utility/arithmetic.h>
 
 namespace usagi::concepts::graphics
 {
@@ -14,9 +12,9 @@ namespace usagi::concepts::graphics
   {
     typename ColorType::value_type;
 
-    { c.r() } -> usagi::utility::convertible_to<typename ColorType::value_type>;
-    { c.g() } -> usagi::utility::convertible_to<typename ColorType::value_type>;
-    { c.b() } -> usagi::utility::convertible_to<typename ColorType::value_type>;
-    { c.a() } -> usagi::utility::convertible_to<typename ColorType::value_type>;
+    { c.r() } -> usagi::utility::arithmetic;
+    { c.g() } -> usagi::utility::arithmetic;
+    { c.b() } -> usagi::utility::arithmetic;
+    { c.a() } -> usagi::utility::arithmetic;
   };
 }

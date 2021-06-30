@@ -22,7 +22,7 @@ namespace usagi::ui
     using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
     using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
     using draw_context_type = DrawContextType;
-    using mouse_traits = typename usagi::type::mouse::mouse_traits<value_type>;
+    using mouse_traits = typename usagi::type::mouse_traits<value_type>;
     using view_type = usagi::ui::view<value_type, draw_context_type>;
 
     constexpr base_view() = default;
@@ -126,7 +126,7 @@ namespace usagi::ui
     using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
     using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
     using draw_context_type = DrawContextType;
-    using mouse_traits = typename usagi::type::mouse::mouse_traits<value_type>;
+    using mouse_traits = typename usagi::type::mouse_traits<value_type>;
     using view_type = usagi::ui::view<value_type, draw_context_type>;
 
     template <usagi::concepts::ui::viewable ViewType>

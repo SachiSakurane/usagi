@@ -43,14 +43,14 @@ namespace usagi::type
 
       ValueType x, y;
     };
+  };
 
-    template <usagi::utility::arithmetic ValueType>
-    struct mouse_traits
-    {
-      using on_down_type = on_down<ValueType>;
-      using on_drag_type = on_drag<ValueType>;
-      using on_up_type = on_up<ValueType>;
-      using on_over_type = on_over<ValueType>;
-    };
+  template <usagi::utility::arithmetic ValueType>
+  struct mouse_traits
+  {
+    using on_down_type = mouse::on_down<ValueType>;
+    using on_drag_type = mouse::on_drag<ValueType>;
+    using on_up_type = mouse::on_up<ValueType>;
+    using on_over_type = mouse::on_over<ValueType>;
   };
 }

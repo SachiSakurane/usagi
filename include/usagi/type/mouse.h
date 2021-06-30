@@ -2,11 +2,13 @@
 
 #include <type_traits>
 
+#include <usagi/utility/arithmetic.h>
+
 namespace usagi::type
 {
   struct mouse
   {
-    template <class ValueType, class = std::enable_if_t<std::is_arithmetic_v<ValueType>>>
+    template <usagi::utility::arithmetic ValueType>
     struct on_down
     {
       on_down() = default;
@@ -15,7 +17,7 @@ namespace usagi::type
       ValueType x, y;
     };
 
-    template <class ValueType, class = std::enable_if_t<std::is_arithmetic_v<ValueType>>>
+    template <usagi::utility::arithmetic ValueType>
     struct on_drag
     {
       on_drag() = default;
@@ -24,7 +26,7 @@ namespace usagi::type
       ValueType x, y;
     };
 
-    template <class ValueType, class = std::enable_if_t<std::is_arithmetic_v<ValueType>>>
+    template <usagi::utility::arithmetic ValueType>
     struct on_up
     {
       on_up() = default;
@@ -33,7 +35,7 @@ namespace usagi::type
       ValueType x, y;
     };
 
-    template <class ValueType, class = std::enable_if_t<std::is_arithmetic_v<ValueType>>>
+    template <usagi::utility::arithmetic ValueType>
     struct on_over
     {
       on_over() = default;
@@ -42,7 +44,7 @@ namespace usagi::type
       ValueType x, y;
     };
 
-    template <class ValueType>
+    template <usagi::utility::arithmetic ValueType>
     struct mouse_traits
     {
       using on_down_type = on_down<ValueType>;

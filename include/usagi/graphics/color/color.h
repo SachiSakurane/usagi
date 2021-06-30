@@ -2,10 +2,11 @@
 
 #include <usagi/variable/variable_traits.h>
 #include <usagi/utility/mono_tuple.h>
+#include <usagi/utility/arithmetic.h>
 
 namespace usagi::graphics
 {
-  template <class Type, class = std::enable_if_t<std::is_arithmetic_v<Type>>>
+  template <usagi::utility::arithmetic Type>
   struct color
   {
     using value_type = typename usagi::variable_traits<Type>::value_type;
@@ -48,7 +49,7 @@ namespace usagi::graphics
   /**
    * pair特殊化
   */
-  template <class Type, class = std::enable_if_t<std::is_arithmetic_v<Type>>>
+  template <usagi::utility::arithmetic Type>
   struct paired_color
   {
     using value_type = Type;

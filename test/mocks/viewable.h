@@ -1,12 +1,13 @@
 #pragma once
 
 #include <usagi/ui/view.h>
+#include <usagi/utility/arithmetic.h>
 
 #include "clickable.h"
 #include "draw_contextable.h"
 #include "drawable.h"
 
-template <class ValueType>
+template <usagi::utility::arithmetic ValueType>
 struct Viewable : Clickable<ValueType>, Drawable<ValueType, DrawContextable<ValueType>>
 {
   using value_type = ValueType;
@@ -19,10 +20,7 @@ struct Viewable : Clickable<ValueType>, Drawable<ValueType, DrawContextable<Valu
   view_type &add_sub_view(view_type &&);
 };
 
-/**
- * 実体を作ってはいけない
-*/
-template <class ValueType>
+template <usagi::utility::arithmetic ValueType>
 struct UnViewable : Clickable<ValueType>, Drawable<ValueType, DrawContextable<ValueType>>
 {
   using value_type = ValueType;

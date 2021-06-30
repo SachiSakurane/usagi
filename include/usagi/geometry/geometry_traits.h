@@ -3,10 +3,11 @@
 #include <usagi/geometry/point/point.h>
 #include <usagi/geometry/rect/rect.h>
 #include <usagi/geometry/size/size.h>
+#include <usagi/utility/arithmetic.h>
 
 namespace usagi::geometry
 {
-  template <class ValueType, class = std::enable_if_t<std::is_arithmetic_v<ValueType>>>
+  template <usagi::utility::arithmetic ValueType>
   struct geometry_traits
   {
     using value_type = ValueType;

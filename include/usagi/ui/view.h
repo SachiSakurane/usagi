@@ -7,11 +7,12 @@
 #include <usagi/geometry/rect/function.h>
 #include <usagi/geometry/geometry_traits.h>
 #include <usagi/type/mouse.h>
+#include <usagi/utility/arithmetic.h>
 
 namespace usagi::ui
 {
   template <
-      class ValueType,
+      usagi::utility::arithmetic ValueType,
       usagi::concepts::graphics::draw_contextable DrawContextType>
   class base_view
   {
@@ -81,7 +82,7 @@ namespace usagi::ui
    * view コンセプトを満たす型を格納する型
    */
   template <
-      class ValueType,
+      usagi::utility::arithmetic ValueType,
       usagi::concepts::graphics::draw_contextable DrawContextType>
   class view
   {

@@ -9,10 +9,11 @@
 #include <usagi/concepts/graphics/draw_contextable.h>
 #include <usagi/concepts/ui/clickable.h>
 #include <usagi/concepts/ui/drawable.h>
+#include <usagi/utility/arithmetic.h>
 
 namespace usagi::ui
 {
-  template <class ValueType, usagi::concepts::graphics::draw_contextable DrawContextType>
+  template <usagi::utility::arithmetic ValueType, usagi::concepts::graphics::draw_contextable DrawContextType>
   class view;
 }
 

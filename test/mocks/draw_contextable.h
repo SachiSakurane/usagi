@@ -9,7 +9,7 @@ struct DrawContextable
 {
   ValueType width() const;
   ValueType height() const;
-  void fill(const usagi::concepts::geometry::rect auto &, const usagi::concepts::graphics::color_concept auto &) const;
+  void fill(const usagi::concepts::geometry::rect_concept auto &, const usagi::concepts::graphics::color_concept auto &) const;
 };
 
 template <usagi::utility::arithmetic ValueType>

@@ -18,8 +18,8 @@ namespace usagi::geometry
 
     constexpr rect() : left{}, top{}, right{}, bottom{} {}
     constexpr rect(variable_type l, variable_type t, variable_type r, variable_type b) : left{l}, top{t}, right{r}, bottom{b} {}
-    constexpr rect(const size_type &size) : rect(size, point_type{}) {}
-    constexpr rect(const size_type &size, const point_type &point)
+    constexpr explicit rect(const size_type &size) : rect(point_type{}, size) {}
+    constexpr rect(const point_type &point, const size_type &size)
         : left{[point]()
                { return point.x(); }},
           top{[point]()
@@ -70,4 +70,11 @@ namespace usagi::geometry
   private:
     variable_type left, top, right, bottom;
   };
+
+  template <class Type>
+  rect(const usagi::geometry::size<Type> &) -> rect<Type>;
+
+  template <class Type>
+  rect(const usagi::geometry::point<Type> &, const usagi::geometry::size<Type> &) -> rect<Type>;
+
 }

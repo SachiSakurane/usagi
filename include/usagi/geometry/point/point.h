@@ -26,6 +26,9 @@ namespace usagi::geometry
     variable_type x_, y_;
   };
 
+  template <class Type>
+  point(const usagi::geometry::size<Type> &) -> point<Type>;
+
   /**
    * pair特殊化
   */

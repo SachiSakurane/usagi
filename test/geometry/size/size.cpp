@@ -15,6 +15,22 @@ TEST(SizeTest, StaticCase)
   ASSERT_TRUE(SizeStaticTest());
 }
 
+TEST(SizeTest, ConstructorCase)
+{
+  {
+    usagi::geometry::size<float> s{};
+    ASSERT_TRUE(s.width() == 0);
+    ASSERT_TRUE(s.height() == 0);
+  }
+
+  {
+    usagi::geometry::size<float> s{42.f, []()
+                                   { return 42.f; }};
+    ASSERT_TRUE(s.width() == 42.f);
+    ASSERT_TRUE(s.height() == 42.f);
+  }
+}
+
 TEST(SizeTest, CommonCase)
 {
   usagi::geometry::size<float> s{42.f, []()

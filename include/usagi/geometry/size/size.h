@@ -22,14 +22,14 @@ namespace usagi::geometry
     value_type width() const
     {
       decltype(auto) w = width_();
-      assert(w > 0);
+      assert(w >= 0);
       return w;
     }
 
     value_type height() const
     {
       decltype(auto) h = height_();
-      assert(h > 0);
+      assert(h >= 0);
       return h;
     }
 
@@ -61,22 +61,22 @@ namespace usagi::geometry
     value_type width() const
     {
       [[maybe_unused]] auto [w, _] = functor();
-      assert(w > 0);
+      assert(w >= 0);
       return w;
     }
 
     value_type height() const
     {
       [[maybe_unused]] auto [_, h] = functor();
-      assert(h > 0);
+      assert(h >= 0);
       return h;
     }
 
     size_type operator()() const
     {
       auto [w, h] = functor();
-      assert(w > 0);
-      assert(h > 0);
+      assert(w >= 0);
+      assert(h >= 0);
       return {w, h};
     }
 

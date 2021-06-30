@@ -8,7 +8,6 @@ namespace
     using value_type = ValueType;
     value_type width() const;
     value_type height() const;
-    std::pair<value_type, value_type> operator()() const;
   };
 
   template <class ValueType>
@@ -17,7 +16,6 @@ namespace
     using value_type = ValueType;
     value_type width() const;
     // value_type height() const;
-    std::pair<value_type, value_type> operator()() const;
   };
 
   static_assert(usagi::concepts::geometry::size_concept<Sized<int>>);

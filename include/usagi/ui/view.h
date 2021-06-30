@@ -39,9 +39,9 @@ namespace usagi::ui
     virtual void event(typename mouse_traits::on_up_type) {}
     virtual void event(typename mouse_traits::on_over_type) {}
 
-    virtual void add_sub_view(view_type &&sub_view)
+    virtual view_type &add_sub_view(view_type &&sub_view)
     {
-      children.emplace_back(std::move(sub_view));
+      return children.emplace_back(std::move(sub_view));
     }
 
   private:
@@ -82,9 +82,9 @@ namespace usagi::ui
       void event(typename mouse_traits::on_up_type mouse) override { holder.event(mouse); }
       void event(typename mouse_traits::on_over_type mouse) override { holder.event(mouse); }
 
-      void add_sub_view(view_type &&sub_view)
+      view_type &add_sub_view(view_type &&sub_view)
       {
-        holder.add_sub_view(std::forward<view_type>(sub_view));
+        return holder.add_sub_view(std::forward<view_type>(sub_view));
       }
 
     private:
@@ -116,9 +116,9 @@ namespace usagi::ui
     void event(typename mouse_traits::on_up_type mouse) { holder->event(mouse); }
     void event(typename mouse_traits::on_over_type mouse) { holder->event(mouse); }
 
-    void add_sub_view(view_type &&sub_view)
+    view_type &add_sub_view(view_type &&sub_view)
     {
-      holder->add_sub_view(std::forward<view_type>(sub_view));
+      return holder->add_sub_view(std::forward<view_type>(sub_view));
     }
 
   private:

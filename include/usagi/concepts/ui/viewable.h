@@ -1,5 +1,6 @@
 #pragma once
 
+#include <concepts>
 #include <type_traits>
 #include <utility>
 
@@ -8,7 +9,6 @@
 #include <usagi/concepts/graphics/draw_contextable.h>
 #include <usagi/concepts/ui/clickable.h>
 #include <usagi/concepts/ui/drawable.h>
-#include <usagi/utility/convertible_to.h>
 
 namespace usagi::ui
 {
@@ -41,7 +41,9 @@ namespace usagi::concepts::ui
     { v.bounds() } -> usagi::concepts::geometry::size_concept;
     { v.frame() } -> usagi::concepts::geometry::rect_concept;
 
-    v.add_sub_view(std::declval<usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type>>());
+    { 
+      v.add_sub_view(std::declval<usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type>>())
+    } -> std::same_as<std::add_lvalue_reference_t<usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type>>>;
     // { v.affine() } -> usagi::utility::convertible_to<typename ViewType::affine_type>;
   };
 }

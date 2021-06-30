@@ -17,7 +17,7 @@ struct Viewable : Clickable<ValueType>, Drawable<ValueType, DrawContextable<Valu
   using view_type = usagi::ui::view<value_type, draw_context_type>;
   size_type bounds() const;
   rect_type frame() const;
-  void add_sub_view(view_type&&);
+  view_type &add_sub_view(view_type &&);
 };
 
 template <class ValueType>
@@ -30,7 +30,7 @@ struct UnViewable : Clickable<ValueType>, Drawable<ValueType, DrawContextable<Va
   using view_type = usagi::ui::view<value_type, draw_context_type>;
   // size_type bounds() const;
   rect_type frame() const;
-  void add_sub_view(view_type &&);
+  view_type &add_sub_view(view_type &&);
 };
 
 bool ViewableStaticTest()

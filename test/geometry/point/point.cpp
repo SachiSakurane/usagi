@@ -2,16 +2,9 @@
 #include <usagi/concepts/geometry/point_concept.h>
 #include <usagi/geometry/point/point.h>
 
-bool PointStaticTest()
+namespace
 {
   static_assert(usagi::concepts::geometry::point_concept<usagi::geometry::point<int>>);
-
-  return true;
-}
-
-TEST(PointTest, StaticCase)
-{
-  ASSERT_TRUE(PointStaticTest());
 }
 
 TEST(PointTest, ConstructorCase)

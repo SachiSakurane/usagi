@@ -2,17 +2,10 @@
 #include <usagi/concepts/graphics/color_concept.h>
 #include <usagi/graphics/color/color.h>
 
-bool ColorStaticTest()
+namespace
 {
   static_assert(usagi::concepts::graphics::color_concept<usagi::graphics::color<int>>);
   static_assert(usagi::concepts::graphics::color_concept<usagi::graphics::paired_color<int>>);
-
-  return true;
-}
-
-TEST(ColorTest, StaticCase)
-{
-  ASSERT_TRUE(ColorStaticTest());
 }
 
 TEST(ColorTest, CommonCase)

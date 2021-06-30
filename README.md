@@ -1,4 +1,4 @@
 UI Concepts...
 
 # usagi no usage
-オタクむけ
+お嬢様専用でしてよ。

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <utility>
-
 #include <usagi/graphics/color/color.h>
 #include <usagi/utility/arithmetic.h>
 

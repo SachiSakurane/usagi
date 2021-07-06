@@ -9,6 +9,7 @@ namespace usagi::concepts::ui
 {
   /** 
    * 描画可能か
+   * 
    * draw_context_type は draw_context を満たす 
   */
   template <class DrawableType>

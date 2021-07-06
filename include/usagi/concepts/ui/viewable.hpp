@@ -21,8 +21,9 @@ namespace usagi::concepts::ui
 {
   /** 
    * view を表現可能かどうか
+   * 
    * view は大きさを表現できる
-   * TODO: view は親子関係を表現できる
+   * view は親子関係を表現できる
    * view は drawable
    * view は clickable
    * TODO: affine の必要性について考える(view として持つ必要性がなさそうに思える)
@@ -39,16 +40,12 @@ namespace usagi::concepts::ui
     typename ViewType::value_type;
     typename ViewType::draw_context_type;
 
-    {
-      v.bounds()
-      } -> usagi::concepts::geometry::size_concept;
-    {
-      v.frame()
-      } -> usagi::concepts::geometry::rect_concept;
+    { v.bounds() } -> usagi::concepts::geometry::size_concept;
+    { v.frame() } -> usagi::concepts::geometry::rect_concept;
 
     {
       v.add_sub_view(std::declval<usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type>>())
-      } -> std::same_as<std::add_lvalue_reference_t<usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type>>>;
+    } -> std::same_as<std::add_lvalue_reference_t<usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type>>>;
     // { v.affine() } -> usagi::utility::convertible_to<typename ViewType::affine_type>;
   };
 }

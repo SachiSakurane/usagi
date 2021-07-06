@@ -76,6 +76,13 @@
     "variant": "cpp",
     "vector": "cpp",
     "memory_resource": "cpp",
-    "filesystem": "cpp"
+    "filesystem": "cpp",
+    "compare": "cpp",
+    "condition_variable": "cpp",
+    "numeric": "cpp",
+    "queue": "cpp",
+    "random": "cpp",
+    "semaphore": "cpp",
+    "thread": "cpp"
   }
 }

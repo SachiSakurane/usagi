@@ -41,3 +41,9 @@ TEST(ViewTest, DrawCase)
   auto context = DrawContextable {};
   v.draw(context);
 }
+
+TEST(ViewTest, SubViewCase)
+{
+  auto v = usagi::ui::view{SpecialView{}};
+  auto& sub = v.add_sub_view(usagi::ui::base_view<float, DrawContextable>{});
+}

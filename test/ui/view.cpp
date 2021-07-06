@@ -46,4 +46,5 @@ TEST(ViewTest, SubViewCase)
 {
   auto v = usagi::ui::view{SpecialView{}};
   auto& sub = v.add_sub_view(usagi::ui::base_view<float, DrawContextable>{});
+  ASSERT_TRUE(static_cast<bool>(sub));
 }

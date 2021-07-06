@@ -56,7 +56,7 @@ namespace usagi::wrapper::icontrol
       local_view.event(iplug_traits::mouse_traits::on_over_type{x, y});
     }
 
-  private:
+  protected:
     iplug_traits::view_type local_view;
   };
 }

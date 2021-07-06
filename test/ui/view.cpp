@@ -23,6 +23,18 @@ namespace
   static_assert(usagi::concepts::ui::viewable<decltype(usagi::ui::view{(SpecialView{})})>, "view is constructable from SpecialView");
 }
 
+TEST(ViewTest, PredicationCase)
+{
+  {
+    auto v = usagi::ui::view<float, DrawContextable>{};
+    ASSERT_FALSE(static_cast<bool>(v));
+  }
+  {
+    auto v = usagi::ui::view{SpecialView{}};
+    ASSERT_TRUE(static_cast<bool>(v));
+  }
+}
+
 TEST(ViewTest, DrawCase)
 {
   auto v = usagi::ui::view{SpecialView{}};

@@ -163,7 +163,7 @@ namespace usagi::ui
       return holder->add_sub_view(std::forward<view_type>(sub_view));
     }
 
-    operator bool() const { return holder; }
+    operator bool() const { return holder.operator bool(); }
 
   private:
     std::unique_ptr<usagi::ui::base_view<value_type, draw_context_type>> holder;

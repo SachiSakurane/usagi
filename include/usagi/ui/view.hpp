@@ -28,6 +28,7 @@ namespace usagi::ui
     constexpr base_view() = default;
     constexpr explicit base_view(const size_type &size) : content{size} {}
     constexpr base_view(const point_type &point, const size_type &size) : content{point, size} {}
+    constexpr explicit base_view(const rect_type &frame) : content{frame} {}
 
     base_view(base_view &&) noexcept = default;
     base_view &operator=(base_view &&) noexcept = default;

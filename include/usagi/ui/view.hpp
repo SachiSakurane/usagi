@@ -29,6 +29,11 @@ namespace usagi::ui
     constexpr explicit base_view(const size_type &size) : content{size} {}
     constexpr base_view(const point_type &point, const size_type &size) : content{point, size} {}
 
+    base_view(base_view &&) noexcept = default;
+    base_view &operator=(base_view &&) noexcept = default;
+
+    virtual ~base_view() = default;
+
     virtual void draw(draw_context_type &context)
     {
       for (auto &child : children)
@@ -101,6 +106,9 @@ namespace usagi::ui
       view_holder(const ViewType &v) : holder{v} {}
       view_holder(ViewType &&v) : holder{std::move(v)} {}
 
+      view_holder(view_holder &&) noexcept = default;
+      view_holder &operator=(view_holder &&) noexcept = default;
+
       void draw(draw_context_type &d) override { holder.draw(d); }
 
       size_type bounds() const override { return holder.bounds(); }
@@ -136,6 +144,9 @@ namespace usagi::ui
 
     template <usagi::concepts::ui::viewable ViewType>
     view(ViewType &&v) : holder{std::make_unique<view_holder<ViewType>>(std::move(v))} {}
+
+    view(view &&) noexcept = default;
+    view &operator=(view &&) noexcept = default;
 
     void draw(draw_context_type &d) { holder->draw(d); }
 

@@ -4,6 +4,6 @@
 
 namespace
 {
-  static_assert(usagi::concepts::graphics::draw_contextable<DrawContextable<float>>);
-  static_assert(!usagi::concepts::graphics::draw_contextable<UnDrawContextable<float>>);
+  static_assert(usagi::concepts::graphics::draw_contextable<DrawContextable>);
+  static_assert(!usagi::concepts::graphics::draw_contextable<UnDrawContextable>);
 }

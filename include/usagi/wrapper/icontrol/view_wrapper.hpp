@@ -13,7 +13,7 @@ namespace usagi::wrapper::icontrol
     using mouse_traits = typename usagi::type::mouse_traits<value_type>;
     using point_type = typename usagi::geometry::geometry_traits<value_type>::point_type;
     using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
-    using draw_context_type = typename usagi::wrapper::icontrol::draw_context<value_type, IGraphics>;
+    using draw_context_type = typename usagi::wrapper::icontrol::draw_context<IGraphics>;
     using view_type = typename usagi::ui::view<value_type, draw_context_type>;
     using base_view_type = typename usagi::ui::base_view<value_type, draw_context_type>;
   };

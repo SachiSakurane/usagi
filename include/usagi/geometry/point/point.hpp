@@ -34,7 +34,7 @@ namespace usagi::geometry
   point(const SizeType &) -> point<typename SizeType::value_type>;
 
   /**
-   * pair特殊化
+   * tuple特殊化
   */
   template <usagi::utility::arithmetic Type>
   struct tupled_point

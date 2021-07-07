@@ -46,7 +46,7 @@ namespace usagi::geometry
   };
 
   /**
-   * pair特殊化
+   * tuple特殊化
   */
   template <usagi::utility::arithmetic Type>
   struct tupled_size

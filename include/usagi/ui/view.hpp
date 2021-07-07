@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 
+#include <usagi/concepts/geometry.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/rect/function.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
@@ -26,9 +27,11 @@ namespace usagi::ui
     using view_type = usagi::ui::view<value_type, draw_context_type>;
 
     constexpr base_view() = default;
-    constexpr explicit base_view(const size_type &size) : content{size} {}
-    constexpr base_view(const point_type &point, const size_type &size) : content{point, size} {}
-    constexpr explicit base_view(const rect_type &frame) : content{frame} {}
+    constexpr explicit base_view(const usagi::concepts::geometry::size_concept auto &size) : content{size} {}
+    constexpr base_view(
+        const usagi::concepts::geometry::point_concept auto &point,
+        const usagi::concepts::geometry::size_concept auto &size) : content{point, size} {}
+    constexpr explicit base_view(const usagi::concepts::geometry::rect_concept auto &frame) : content{frame} {}
 
     base_view(base_view &&) noexcept = default;
     base_view &operator=(base_view &&) noexcept = default;

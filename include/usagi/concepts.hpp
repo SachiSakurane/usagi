@@ -1,5 +1,5 @@
 #pragma once
 
-#include <usagi/concepts/app.hpp>
-#include <usagi/concepts/parent_view.hpp>
-#include <usagi/concepts/view.hpp>
+#include <usagi/concepts/geometry.hpp>
+#include <usagi/concepts/graphics.hpp>
+#include <usagi/concepts/ui.hpp>

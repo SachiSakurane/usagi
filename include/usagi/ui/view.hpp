@@ -51,28 +51,28 @@ namespace usagi::ui
 
     virtual void event(typename mouse_traits::on_down_type mouse)
     {
-      if (usagi::geometry::contain(frame(), point_type{mouse}))
+      if (usagi::geometry::contain(frame(), point_type{mouse.x, mouse.y}))
         for (auto &child : children)
           child.event(mouse);
     }
 
     virtual void event(typename mouse_traits::on_drag_type mouse)
     {
-      if (usagi::geometry::contain(frame(), point_type{mouse}))
+      if (usagi::geometry::contain(frame(), point_type{mouse.x, mouse.y}))
         for (auto &child : children)
           child.event(mouse);
     }
 
     virtual void event(typename mouse_traits::on_up_type mouse)
     {
-      if (usagi::geometry::contain(frame(), point_type{mouse}))
+      if (usagi::geometry::contain(frame(), point_type{mouse.x, mouse.y}))
         for (auto &child : children)
           child.event(mouse);
     }
 
     virtual void event(typename mouse_traits::on_over_type mouse)
     {
-      if (usagi::geometry::contain(frame(), point_type{mouse}))
+      if (usagi::geometry::contain(frame(), point_type{mouse.x, mouse.y}))
         for (auto &child : children)
           child.event(mouse);
     }

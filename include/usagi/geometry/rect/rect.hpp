@@ -82,10 +82,10 @@ namespace usagi::geometry
   rect(const PointType &, const SizeType &) -> rect<typename SizeType::value_type>;
 
   /**
-   * pair特殊化
+   * tupled特殊化
   */
   template <usagi::utility::arithmetic Type>
-  struct paired_rect
+  struct tupled_rect
   {
   public:
     using value_type = typename usagi::variable_traits<Type>::value_type;
@@ -94,8 +94,8 @@ namespace usagi::geometry
     using size_type = usagi::geometry::size<value_type>;
     using point_type = usagi::geometry::point<value_type>;
 
-    constexpr paired_rect() : functor{} {}
-    constexpr paired_rect(variable_type v) : functor{v} {}
+    constexpr tupled_rect() : functor{} {}
+    constexpr tupled_rect(variable_type v) : functor{v} {}
 
     value_type l() const
     {
@@ -133,7 +133,7 @@ namespace usagi::geometry
                        { return std::get<3>(f()) - std::get<1>(f()); }};
     }
     point_type center() const { return point_type{size() / static_cast<value_type>(2)}; }
-    paired_rect<value_type> duplicate() const { return paired_rect<value_type>{functor()}; }
+    tupled_rect<value_type> duplicate() const { return tupled_rect<value_type>{functor()}; }
 
   private:
     variable_type functor;

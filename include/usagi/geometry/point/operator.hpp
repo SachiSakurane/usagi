@@ -18,7 +18,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::point_concept PointType>
   inline constexpr decltype(auto) operator+(typename PointType::value_type &&lhs, const PointType &rhs)
   {
-    return usagi::geometry::paired_point<typename PointType::value_type>{
+    return usagi::geometry::tupled_point<typename PointType::value_type>{
         [lhs, rhs]()
         { return std::make_tuple(lhs + rhs.x(), lhs + rhs.y()); }};
   }
@@ -26,7 +26,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::point_concept PointType>
   inline constexpr decltype(auto) operator+(const PointType &lhs, typename PointType::value_type &&rhs)
   {
-    return usagi::geometry::paired_point<typename PointType::value_type>{
+    return usagi::geometry::tupled_point<typename PointType::value_type>{
         [lhs, rhs]()
         { return std::make_tuple(lhs.x() + rhs, lhs.y() + rhs); }};
   }
@@ -34,7 +34,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::point_concept PointType>
   inline constexpr decltype(auto) operator+(const PointType &lhs, const PointType &rhs)
   {
-    return usagi::geometry::paired_point<typename PointType::value_type>{
+    return usagi::geometry::tupled_point<typename PointType::value_type>{
         [lhs, rhs]()
         { return std::make_tuple(lhs.x() + rhs.x(), lhs.y() + rhs.y()); }};
   }
@@ -42,7 +42,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::point_concept PointType>
   inline constexpr decltype(auto) operator-(typename PointType::value_type &&lhs, const PointType &rhs)
   {
-    return usagi::geometry::paired_point<typename PointType::value_type>{
+    return usagi::geometry::tupled_point<typename PointType::value_type>{
         [lhs, rhs]()
         { return std::make_tuple(lhs - rhs.x(), lhs - rhs.y()); }};
   }
@@ -50,7 +50,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::point_concept PointType>
   inline constexpr decltype(auto) operator-(const PointType &lhs, typename PointType::value_type &&rhs)
   {
-    return usagi::geometry::paired_point<typename PointType::value_type>{
+    return usagi::geometry::tupled_point<typename PointType::value_type>{
         [lhs, rhs]()
         { return std::make_tuple(lhs.x() - rhs, lhs.y() - rhs); }};
   }
@@ -58,7 +58,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::point_concept PointType>
   inline constexpr decltype(auto) operator-(const PointType &lhs, const PointType &rhs)
   {
-    return usagi::geometry::paired_point<typename PointType::value_type>{
+    return usagi::geometry::tupled_point<typename PointType::value_type>{
         [lhs, rhs]()
         { return std::make_tuple(lhs.x() - rhs.x(), lhs.y() - rhs.y()); }};
   }
@@ -66,7 +66,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::point_concept PointType>
   inline constexpr decltype(auto) operator*(typename PointType::value_type &&lhs, const PointType &rhs)
   {
-    return usagi::geometry::paired_point<typename PointType::value_type>{
+    return usagi::geometry::tupled_point<typename PointType::value_type>{
         [lhs, rhs]()
         { return std::make_tuple(lhs * rhs.x(), lhs * rhs.y()); }};
   }
@@ -74,7 +74,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::point_concept PointType>
   inline constexpr decltype(auto) operator*(const PointType &lhs, typename PointType::value_type &&rhs)
   {
-    return usagi::geometry::paired_point<typename PointType::value_type>{
+    return usagi::geometry::tupled_point<typename PointType::value_type>{
         [lhs, rhs]()
         { return std::make_tuple(lhs.x() * rhs, lhs.y() * rhs); }};
   }
@@ -82,7 +82,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::point_concept PointType>
   inline constexpr decltype(auto) operator*(const PointType &lhs, const PointType &rhs)
   {
-    return usagi::geometry::paired_point<typename PointType::value_type>{
+    return usagi::geometry::tupled_point<typename PointType::value_type>{
         [lhs, rhs]()
         { return std::make_tuple(lhs.x() * rhs.x(), lhs.y() * rhs.y()); }};
   }
@@ -90,7 +90,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::point_concept PointType>
   inline constexpr decltype(auto) operator/(typename PointType::value_type &&lhs, const PointType &rhs)
   {
-    return usagi::geometry::paired_point<typename PointType::value_type>{
+    return usagi::geometry::tupled_point<typename PointType::value_type>{
         [lhs, rhs]()
         { return std::make_tuple(lhs / rhs.x(), lhs / rhs.y()); }};
   }
@@ -98,7 +98,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::point_concept PointType>
   inline constexpr decltype(auto) operator/(const PointType &lhs, typename PointType::value_type &&rhs)
   {
-    return usagi::geometry::paired_point<typename PointType::value_type>{
+    return usagi::geometry::tupled_point<typename PointType::value_type>{
         [lhs, rhs]()
         { return std::make_tuple(lhs.x() / rhs, lhs.y() / rhs); }};
   }
@@ -106,7 +106,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::point_concept PointType>
   inline constexpr decltype(auto) operator/(const PointType &lhs, const PointType &rhs)
   {
-    return usagi::geometry::paired_point<typename PointType::value_type>{
+    return usagi::geometry::tupled_point<typename PointType::value_type>{
         [lhs, rhs]()
         { return std::make_tuple(lhs.x() / rhs.x(), lhs.y() / rhs.y()); }};
   }

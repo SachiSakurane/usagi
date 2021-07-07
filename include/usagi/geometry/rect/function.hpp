@@ -15,7 +15,7 @@ namespace usagi::geometry
   template <usagi::concepts::geometry::rect_concept RectType>
   inline constexpr decltype(auto) padding(const RectType &rect, typename RectType::value_type v)
   {
-    return usagi::geometry::paired_rect<typename RectType::value_type>{
+    return usagi::geometry::tupled_rect<typename RectType::value_type>{
         [rect, v]()
         {
           auto l = rect.l() + v;

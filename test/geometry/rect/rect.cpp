@@ -37,6 +37,15 @@ TEST(RectTest, ConstructorCase)
 
   {
     usagi::geometry::rect r{
+        usagi::geometry::tupled_size<float>{std::make_tuple(42.f, 42.f)}};
+    ASSERT_EQ(r.l(), 0);
+    ASSERT_EQ(r.t(), 0);
+    ASSERT_EQ(r.r(), 42.f);
+    ASSERT_EQ(r.b(), 42.f);
+  }
+
+  {
+    usagi::geometry::rect r{
         usagi::geometry::point<float>{
             2.f, []()
             { return 2.f; }},

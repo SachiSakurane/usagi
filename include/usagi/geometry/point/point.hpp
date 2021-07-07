@@ -37,14 +37,14 @@ namespace usagi::geometry
    * pair特殊化
   */
   template <usagi::utility::arithmetic Type>
-  struct paired_point
+  struct tupled_point
   {
     using value_type = Type;
     using pair_type = usagi::utility::mono_tuple<value_type, 2>;
     using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
 
-    constexpr paired_point() : functor{} {}
-    constexpr paired_point(variable_type s) : functor{s} {}
+    constexpr tupled_point() : functor{} {}
+    constexpr tupled_point(variable_type s) : functor{s} {}
 
     value_type x() const
     {
@@ -56,7 +56,7 @@ namespace usagi::geometry
       return std::get<1>(functor());
     }
 
-    paired_point<value_type> duplicate() const { return paired_point<value_type>{functor()}; }
+    tupled_point<value_type> duplicate() const { return tupled_point<value_type>{functor()}; }
 
   private:
     variable_type functor;

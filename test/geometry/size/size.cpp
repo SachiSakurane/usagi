@@ -5,7 +5,7 @@
 namespace
 {
   static_assert(usagi::concepts::geometry::size_concept<usagi::geometry::size<int>>);
-  static_assert(usagi::concepts::geometry::size_concept<usagi::geometry::paired_size<int>>);
+  static_assert(usagi::concepts::geometry::size_concept<usagi::geometry::tupled_size<int>>);
 }
 
 TEST(SizeTest, ConstructorCase)

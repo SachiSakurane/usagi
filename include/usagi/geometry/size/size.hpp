@@ -49,15 +49,15 @@ namespace usagi::geometry
    * pair特殊化
   */
   template <usagi::utility::arithmetic Type>
-  struct paired_size
+  struct tupled_size
   {
     using value_type = Type;
     using pair_type = usagi::utility::mono_tuple<value_type, 2>;
     using size_type = typename usagi::variable_traits<pair_type>::value_type;
     using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
 
-    constexpr paired_size() : functor{} {}
-    constexpr paired_size(variable_type s) : functor{s} {}
+    constexpr tupled_size() : functor{} {}
+    constexpr tupled_size(variable_type s) : functor{s} {}
 
     value_type width() const
     {
@@ -81,7 +81,7 @@ namespace usagi::geometry
       return {w, h};
     }
 
-    paired_size<value_type> duplicate() const { return paired_size<value_type>{functor()}; }
+    tupled_size<value_type> duplicate() const { return tupled_size<value_type>{functor()}; }
 
   private:
     variable_type functor;

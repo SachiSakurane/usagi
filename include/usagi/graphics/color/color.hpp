@@ -50,15 +50,15 @@ namespace usagi::graphics
    * pair特殊化
   */
   template <usagi::utility::arithmetic Type>
-  struct paired_color
+  struct tupled_color
   {
     using value_type = Type;
     using pair_type = usagi::utility::mono_tuple<value_type, 4>;
     using size_type = typename usagi::variable_traits<pair_type>::value_type;
     using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
 
-    constexpr paired_color() : functor{} {}
-    constexpr paired_color(variable_type c) : functor{c} {}
+    constexpr tupled_color() : functor{} {}
+    constexpr tupled_color(variable_type c) : functor{c} {}
 
     value_type r() const
     {
@@ -85,7 +85,7 @@ namespace usagi::graphics
       return functor();
     }
 
-    paired_color<value_type> duplicate() const { return paired_color<value_type>{functor()}; }
+    tupled_color<value_type> duplicate() const { return tupled_color<value_type>{functor()}; }
 
   private:
     variable_type functor;

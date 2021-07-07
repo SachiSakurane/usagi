@@ -5,7 +5,7 @@
 namespace
 {
   static_assert(usagi::concepts::graphics::color_concept<usagi::graphics::color<int>>);
-  static_assert(usagi::concepts::graphics::color_concept<usagi::graphics::paired_color<int>>);
+  static_assert(usagi::concepts::graphics::color_concept<usagi::graphics::tupled_color<int>>);
 }
 
 TEST(ColorTest, CommonCase)

@@ -57,6 +57,14 @@ TEST(RectTest, ConstructorCase)
     ASSERT_EQ(r.r(), 42.f);
     ASSERT_EQ(r.b(), 42.f);
   }
+
+  {
+    usagi::geometry::rect<float> r{usagi::geometry::tupled_rect<float>{std::make_tuple(2.f, 2.f, 42.f, 42.f)}};
+    ASSERT_EQ(r.l(), 2.f);
+    ASSERT_EQ(r.t(), 2.f);
+    ASSERT_EQ(r.r(), 42.f);
+    ASSERT_EQ(r.b(), 42.f);
+  }
 }
 
 TEST(RectTest, CommonCase)

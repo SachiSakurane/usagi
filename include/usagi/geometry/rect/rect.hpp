@@ -2,6 +2,7 @@
 
 #include <cassert>
 
+#include <usagi/concepts/geometry/rect_concept.hpp>
 #include <usagi/geometry/point.hpp>
 #include <usagi/geometry/size.hpp>
 #include <usagi/utility/arithmetic.hpp>
@@ -29,7 +30,15 @@ namespace usagi::geometry
                 { return point.x() + size.width(); }),
           bottom{[size, point]()
                  { return point.y() + size.height(); }} {}
-
+    constexpr explicit rect(const usagi::concepts::geometry::rect_concept auto &r)
+        : left{[r]()
+               { return r.l(); }},
+          top{[r]()
+              { return r.t(); }},
+          right([r]()
+                { return r.r(); }),
+          bottom{[r]()
+                 { return r.b(); }} {}
     decltype(auto) l() const
     {
       decltype(auto) v = left();

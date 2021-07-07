@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <usagi/concepts/geometry/point_concept.hpp>
+#include <usagi/geometry/size/size.hpp>
 #include <usagi/geometry/point/point.hpp>
 
 namespace

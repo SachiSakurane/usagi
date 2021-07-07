@@ -61,14 +61,14 @@ namespace usagi::geometry
 
     value_type width() const
     {
-      [[maybe_unused]] auto [w, _] = functor();
+      auto w = std::get<0>(functor());
       assert(w >= 0);
       return w;
     }
 
     value_type height() const
     {
-      [[maybe_unused]] auto [_, h] = functor();
+      auto h = std::get<1>(functor());
       assert(h >= 0);
       return h;
     }

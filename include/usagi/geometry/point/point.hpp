@@ -1,7 +1,9 @@
 #pragma once
 
-#include <usagi/geometry/size/size.hpp>
+#include <usagi/concepts/geometry/size_concept.hpp>
+#include <usagi/variable/variable_traits.hpp>
 #include <usagi/utility/arithmetic.hpp>
+#include <usagi/utility/mono_tuple.hpp>
 
 namespace usagi::geometry
 {
@@ -12,10 +14,11 @@ namespace usagi::geometry
     using variable_type = typename usagi::variable_traits<Type>::variable_type;
 
     constexpr point() : x_{}, y_{} {}
-    constexpr explicit point(const usagi::geometry::size<Type> &s) : x_{[s]()
-                                                                        { return s.width(); }},
-                                                                     y_{[s]()
-                                                                        { return s.height(); }} {}
+    constexpr explicit point(const usagi::concepts::geometry::size_concept auto &s)
+        : x_{[s]()
+             { return s.width(); }},
+          y_{[s]()
+             { return s.height(); }} {}
     constexpr point(variable_type x, variable_type y) : x_{x}, y_{y} {}
 
     template <class LocalType>
@@ -30,8 +33,8 @@ namespace usagi::geometry
     variable_type x_, y_;
   };
 
-  template <usagi::utility::arithmetic Type>
-  point(const usagi::geometry::size<Type> &) -> point<Type>;
+  template <usagi::concepts::geometry::size_concept SizeType>
+  point(const SizeType &) -> point<typename SizeType::value_type>;
 
   /**
    * pair特殊化
@@ -41,7 +44,6 @@ namespace usagi::geometry
   {
     using value_type = Type;
     using pair_type = usagi::utility::mono_tuple<value_type, 2>;
-    using size_type = typename usagi::variable_traits<pair_type>::value_type;
     using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
 
     constexpr paired_point() : functor{} {}

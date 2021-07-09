@@ -5,10 +5,7 @@
 struct DrawContextable
 {
   using draw_type = std::function<void()>;
-  void draw(draw_type &&d) const
-  {
-    std::forward<draw_type>(d)();
-  }
+  void draw(draw_type &&d) const;
 };
 
 class SpecialView final : public usagi::ui::base_view<float, DrawContextable>

@@ -2,6 +2,4 @@
 
 #include <usagi/geometry/size/size.hpp>
 
-namespace usagi::geometry
-{
-}
+namespace usagi::geometry {}

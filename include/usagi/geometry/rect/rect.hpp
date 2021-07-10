@@ -18,8 +18,7 @@ public:
 
   constexpr rect() : left{}, top{}, right{}, bottom{} {}
 
-  constexpr rect(variable_type l, variable_type t, variable_type r,
-                 variable_type b)
+  constexpr rect(variable_type l, variable_type t, variable_type r, variable_type b)
       : left{l}, top{t}, right{r}, bottom{b} {}
 
   constexpr explicit rect(const concepts::geometry::size_concept auto &size)
@@ -27,11 +26,10 @@ public:
 
   constexpr rect(const concepts::geometry::point_concept auto &point,
                  const concepts::geometry::size_concept auto &size)
-      : left{[point]() { return point.x(); }}, top{[point]() {
-          return point.y();
-        }},
-        right([size, point]() { return point.x() + size.width(); }),
-        bottom{[size, point]() { return point.y() + size.height(); }} {}
+      : left{[point]() { return point.x(); }}, top{[point]() { return point.y(); }},
+        right([size, point]() { return point.x() + size.width(); }), bottom{[size, point]() {
+          return point.y() + size.height();
+        }} {}
 
   constexpr explicit rect(const concepts::geometry::rect_concept auto &r)
       : left{[r]() { return r.l(); }}, top{[r]() { return r.t(); }},
@@ -65,12 +63,14 @@ public:
     return size_type{[r = this->right, l = this->left]() { return r() - l(); },
                      [b = this->bottom, t = this->top]() { return b() - t(); }};
   }
+
   point_type center() const {
-    return point_type{size() / static_cast<value_type>(2)};
+    return point_type{
+        [r = this->right, l = this->left]() { return (r() + l()) / static_cast<value_type>(2); },
+        [b = this->bottom, t = this->top]() { return (b() + t()) / static_cast<value_type>(2); }};
   }
-  rect<value_type> duplicate() const {
-    return rect<value_type>{left(), top(), right(), bottom()};
-  }
+
+  rect<value_type> duplicate() const { return rect<value_type>{left(), top(), right(), bottom()}; }
 
 private:
   variable_type left, top, right, bottom;
@@ -81,10 +81,9 @@ rect(const SizeType &) -> rect<typename SizeType::value_type>;
 
 template <usagi::concepts::geometry::point_concept PointType,
           usagi::concepts::geometry::size_concept SizeType,
-          class = std::enable_if_t<std::is_same_v<
-              typename PointType::value_type, typename SizeType::value_type>>>
-rect(const PointType &, const SizeType &)
-    -> rect<typename SizeType::value_type>;
+          class = std::enable_if_t<
+              std::is_same_v<typename PointType::value_type, typename SizeType::value_type>>>
+rect(const PointType &, const SizeType &) -> rect<typename SizeType::value_type>;
 
 /**
  * tupled特殊化
@@ -126,18 +125,20 @@ public:
   }
 
   size_type size() const {
-    return size_type{
-        [f = this->functor]() { return std::get<2>(f()) - std::get<0>(f()); },
-        [f = this->functor]() { return std::get<3>(f()) - std::get<1>(f()); }};
+    return size_type{[f = this->functor]() { return std::get<2>(f()) - std::get<0>(f()); },
+                     [f = this->functor]() { return std::get<3>(f()) - std::get<1>(f()); }};
   }
 
   point_type center() const {
-    return point_type{size() / static_cast<value_type>(2)};
+    return point_type{[f = this->functor]() {
+                        return (std::get<2>(f()) + std::get<0>(f())) / static_cast<value_type>(2);
+                      },
+                      [f = this->functor]() {
+                        return (std::get<3>(f()) + std::get<1>(f())) / static_cast<value_type>(2);
+                      }};
   }
 
-  tupled_rect<value_type> duplicate() const {
-    return tupled_rect<value_type>{functor()};
-  }
+  tupled_rect<value_type> duplicate() const { return tupled_rect<value_type>{functor()}; }
 
 private:
   variable_type functor;

@@ -1,15 +1,13 @@
 #include <gtest/gtest.h>
 #include <usagi/geometry/point/operator.hpp>
 
-TEST(PointOperatorTest, CmpCase)
-{
+TEST(PointOperatorTest, CmpCase) {
   usagi::geometry::point<float> p{42.f, -42.f};
   ASSERT_EQ(p, (usagi::geometry::point<float>{42.f, -42.f}));
   ASSERT_NE(p, (usagi::geometry::point<float>{40.f, -42.f}));
 }
 
-TEST(PointOperatorTest, AuthmeticCase)
-{
+TEST(PointOperatorTest, AuthmeticCase) {
   usagi::geometry::point<float> s1{40.f, 40.f};
   usagi::geometry::point<float> s2{2.f, 2.f};
   ASSERT_EQ(s1 + 2.f, (usagi::geometry::point<float>{42.f, 42.f}));

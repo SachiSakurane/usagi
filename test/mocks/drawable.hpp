@@ -4,8 +4,7 @@
 #include <usagi/geometry/rect/rect.hpp>
 
 template <class ValueType, usagi::concepts::graphics::draw_contextable DrawContextType>
-struct Drawable
-{
+struct Drawable {
   using value_type = ValueType;
   using draw_context_type = DrawContextType;
   using rect_type = usagi::geometry::rect<value_type>;
@@ -13,8 +12,7 @@ struct Drawable
 };
 
 template <class ValueType, usagi::concepts::graphics::draw_contextable DrawContextType>
-struct UnDrawable
-{
+struct UnDrawable {
   using value_type = ValueType;
   using draw_context_type = DrawContextType;
   using rect_type = usagi::geometry::rect<value_type>;

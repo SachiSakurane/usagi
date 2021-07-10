@@ -8,8 +8,7 @@
 #include "drawable.hpp"
 
 template <usagi::utility::arithmetic ValueType>
-struct Viewable : Clickable<ValueType>, Drawable<ValueType, DrawContextable>
-{
+struct Viewable : Clickable<ValueType>, Drawable<ValueType, DrawContextable> {
   using value_type = ValueType;
   using size_type = typename usagi::geometry::size<value_type>;
   using rect_type = typename usagi::geometry::rect<value_type>;
@@ -21,8 +20,7 @@ struct Viewable : Clickable<ValueType>, Drawable<ValueType, DrawContextable>
 };
 
 template <usagi::utility::arithmetic ValueType>
-struct UnViewable : Clickable<ValueType>, Drawable<ValueType, DrawContextable>
-{
+struct UnViewable : Clickable<ValueType>, Drawable<ValueType, DrawContextable> {
   using value_type = ValueType;
   using size_type = typename usagi::geometry::size<value_type>;
   using rect_type = typename usagi::geometry::rect<value_type>;

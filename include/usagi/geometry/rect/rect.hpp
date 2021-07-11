@@ -70,6 +70,16 @@ public:
         [b = this->bottom, t = this->top]() { return (b() + t()) / static_cast<value_type>(2); }};
   }
 
+  usagi::utility::mono_tuple<value_type, 4> operator()() const {
+    decltype(auto) l = left();
+    decltype(auto) t = top();
+    decltype(auto) r = right();
+    decltype(auto) b = bottom();
+    assert(l <= r);
+    assert(t <= b);
+    return {l, t, r, b};
+  }
+
   rect<value_type> duplicate() const { return rect<value_type>{left(), top(), right(), bottom()}; }
 
 private:
@@ -136,6 +146,13 @@ public:
                       [f = this->functor]() {
                         return (std::get<3>(f()) + std::get<1>(f())) / static_cast<value_type>(2);
                       }};
+  }
+
+  usagi::utility::mono_tuple<value_type, 4> operator()() const {
+    auto [l, t, r, b] = functor();
+    assert(l <= r);
+    assert(t <= b);
+    return {l, t, r, b};
   }
 
   tupled_rect<value_type> duplicate() const { return tupled_rect<value_type>{functor()}; }

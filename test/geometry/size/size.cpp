@@ -15,9 +15,15 @@ TEST(SizeTest, ConstructorCase) {
   }
 
   {
-    usagi::geometry::size<float> s{42.f, []() { return 42.f; }};
+    usagi::geometry::size<float> s{42.f, []() { return 24.f; }};
     ASSERT_EQ(s.width(), 42.f);
-    ASSERT_EQ(s.height(), 42.f);
+    ASSERT_EQ(s.height(), 24.f);
+  }
+
+  {
+    usagi::geometry::tupled_size<float> s{std::make_tuple(42.f, 24.f)};
+    ASSERT_EQ(s.width(), 42.f);
+    ASSERT_EQ(s.height(), 24.f);
   }
 }
 
@@ -31,6 +37,22 @@ TEST(SizeTest, CommonCase) {
   ASSERT_EQ(s.height(), 24);
   ASSERT_EQ(ss.width(), 42);
   ASSERT_EQ(ss.height(), 42);
+}
+
+TEST(SizeTest, BindCase) {
+  {
+    usagi::geometry::size<float> s{42.f, []() { return 24.f; }};
+    auto [w, h] = s();
+    ASSERT_EQ(s.width(), w);
+    ASSERT_EQ(s.height(), h);
+  }
+
+  {
+    usagi::geometry::tupled_size<float> s{std::make_tuple(42.f, 24.f)};
+    auto [w, h] = s();
+    ASSERT_EQ(s.width(), w);
+    ASSERT_EQ(s.height(), h);
+  }
 }
 
 TEST(SizeTest, DuplicateCase) {

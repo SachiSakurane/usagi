@@ -15,9 +15,15 @@ TEST(PointTest, ConstructorCase) {
   }
 
   {
-    usagi::geometry::point<float> p{42.f, []() { return 42.f; }};
+    usagi::geometry::point<float> p{42.f, []() { return 24.f; }};
     ASSERT_EQ(p.x(), 42.f);
-    ASSERT_EQ(p.y(), 42.f);
+    ASSERT_EQ(p.y(), 24.f);
+  }
+
+  {
+    usagi::geometry::tupled_point<float> p{std::make_tuple(42.f, 24.f)};
+    ASSERT_EQ(p.x(), 42.f);
+    ASSERT_EQ(p.y(), 24.f);
   }
 
   {
@@ -40,6 +46,22 @@ TEST(PointTest, CommonCase) {
   ASSERT_EQ(p.y(), -42.f);
   ASSERT_EQ(pp.x(), 42.f);
   ASSERT_EQ(pp.y(), 42.f);
+}
+
+TEST(PointTest, BindCase) {
+  {
+    usagi::geometry::point<float> p{42.f, []() { return 24.f; }};
+    auto [x, y] = p();
+    ASSERT_EQ(p.x(), x);
+    ASSERT_EQ(p.y(), y);
+  }
+
+  {
+    usagi::geometry::tupled_point<float> p{std::make_tuple(42.f, 24.f)};
+    auto [x, y] = p();
+    ASSERT_EQ(p.x(), x);
+    ASSERT_EQ(p.y(), y);
+  }
 }
 
 TEST(PointTest, DuplicateCase) {

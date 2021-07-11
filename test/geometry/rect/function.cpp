@@ -22,6 +22,30 @@ TEST(RectFunctionTest, FromCase) {
   }
 }
 
+TEST(RectFunctionTest, ReduceFromCase) {
+  usagi::geometry::rect<float> rect{0.f, 0.f, 42.f, 42.f};
+  {
+    auto rr = usagi::geometry::reduce_from_left(rect, 1.f);
+    ASSERT_EQ(rr.l(), 1.f);
+    ASSERT_EQ(rr.size().width(), 41.f);
+  }
+  {
+    auto rr = usagi::geometry::reduce_from_top(rect, 1.f);
+    ASSERT_EQ(rr.t(), 1.f);
+    ASSERT_EQ(rr.size().height(), 41.f);
+  }
+  {
+    auto rr = usagi::geometry::reduce_from_right(rect, 2.f);
+    ASSERT_EQ(rr.r(), 40.f);
+    ASSERT_EQ(rr.size().width(), 40.f);
+  }
+  {
+    auto rr = usagi::geometry::reduce_from_bottom(rect, 2.f);
+    ASSERT_EQ(rr.b(), 40.f);
+    ASSERT_EQ(rr.size().height(), 40.f);
+  }
+}
+
 TEST(RectFunctionTest, ContainCase) {
   usagi::geometry::rect<float> a{0.f, 0.f, 42.f, 42.f};
   ASSERT_TRUE(usagi::geometry::contain(a, usagi::geometry::point<float>{3.f, 4.f}));

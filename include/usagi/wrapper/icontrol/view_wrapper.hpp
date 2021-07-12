@@ -3,7 +3,6 @@
 #include <usagi/geometry/geometry_traits.hpp>
 #include <usagi/type/mouse.hpp>
 #include <usagi/ui/view.hpp>
-#include <usagi/wrapper/icontrol/draw_context.hpp>
 
 namespace usagi::wrapper::icontrol {
 struct iplug_traits {
@@ -11,7 +10,8 @@ struct iplug_traits {
   using mouse_traits = typename usagi::type::mouse_traits<value_type>;
   using point_type = typename usagi::geometry::geometry_traits<value_type>::point_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
-  using draw_context_type = typename usagi::wrapper::icontrol::draw_context<IGraphics>;
+  using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
+  using draw_context_type = SkCanvas;
   using view_type = typename usagi::ui::view<value_type, draw_context_type>;
   using base_view_type = typename usagi::ui::base_view<value_type, draw_context_type>;
 };
@@ -19,14 +19,15 @@ struct iplug_traits {
 class view_wrapper : public IControl {
 public:
   view_wrapper(const IRECT &bounds)
-      : IControl{bounds},
-        local_view{usagi::ui::base_view<iplug_traits::value_type, iplug_traits::draw_context_type>{
-            iplug_traits::point_type{bounds.L, bounds.T},
-            iplug_traits::size_type{bounds.W(), bounds.H()}}} {}
+      : IControl{bounds}, local_view{iplug_traits::base_view_type{iplug_traits::rect_type{
+                              iplug_traits::point_type{bounds.L, bounds.T},
+                              iplug_traits::size_type{bounds.W(), bounds.H()}}}} {}
 
   void Draw(IGraphics &g) override {
-    iplug_traits::draw_context_type context{g};
-    local_view.draw(context);
+    SkCanvas *canvas = static_cast<SkCanvas *>(g.GetDrawContext());
+    if (canvas) {
+      local_view.draw(*canvas);
+    }
   }
 
   void OnMouseDown(float x, float y, const IMouseMod &mod) override {

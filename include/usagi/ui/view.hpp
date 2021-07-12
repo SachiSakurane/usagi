@@ -11,8 +11,7 @@
 #include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::ui {
-template <usagi::utility::arithmetic ValueType,
-          usagi::concepts::graphics::draw_contextable DrawContextType>
+template <usagi::utility::arithmetic ValueType, class DrawContextType>
 class base_view {
 public:
   using value_type = ValueType;
@@ -76,8 +75,7 @@ private:
 /**
  * viewable を格納する型
  */
-template <usagi::utility::arithmetic ValueType,
-          usagi::concepts::graphics::draw_contextable DrawContextType>
+template <usagi::utility::arithmetic ValueType, class DrawContextType>
 class view {
   template <usagi::concepts::ui::viewable ViewType>
   class view_holder final : public usagi::ui::base_view<ValueType, DrawContextType> {

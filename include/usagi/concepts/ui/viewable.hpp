@@ -6,14 +6,12 @@
 
 #include <usagi/concepts/geometry/rect_concept.hpp>
 #include <usagi/concepts/geometry/size_concept.hpp>
-#include <usagi/concepts/graphics/draw_contextable.hpp>
 #include <usagi/concepts/ui/clickable.hpp>
 #include <usagi/concepts/ui/drawable.hpp>
 #include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::ui {
-template <usagi::utility::arithmetic ValueType,
-          usagi::concepts::graphics::draw_contextable DrawContextType>
+template <usagi::utility::arithmetic ValueType, class DrawContextType>
 class view;
 }
 
@@ -30,7 +28,6 @@ namespace usagi::concepts::ui {
 template <class ViewType>
 concept viewable = usagi::concepts::geometry::size_concept<typename ViewType::size_type> &&
     usagi::concepts::geometry::rect_concept<typename ViewType::rect_type> &&
-    usagi::concepts::graphics::draw_contextable<typename ViewType::draw_context_type> &&
     usagi::concepts::ui::clickable<ViewType> && usagi::concepts::ui::drawable<ViewType> &&
     requires(ViewType &v) {
   typename ViewType::value_type;

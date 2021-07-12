@@ -1,6 +1,5 @@
 #pragma once
 
-#include <concepts>
 #include <type_traits>
 #include <utility>
 
@@ -9,6 +8,7 @@
 #include <usagi/concepts/ui/clickable.hpp>
 #include <usagi/concepts/ui/drawable.hpp>
 #include <usagi/utility/arithmetic.hpp>
+#include <usagi/utility/convertible_to.hpp>
 
 namespace usagi::ui {
 template <usagi::utility::arithmetic ValueType, class DrawContextType>
@@ -26,10 +26,8 @@ namespace usagi::concepts::ui {
  * TODO: affine の必要性について考える(view として持つ必要性がなさそうに思える)
  */
 template <class ViewType>
-concept viewable = usagi::concepts::geometry::size_concept<typename ViewType::size_type> &&
-    usagi::concepts::geometry::rect_concept<typename ViewType::rect_type> &&
-    usagi::concepts::ui::clickable<ViewType> && usagi::concepts::ui::drawable<ViewType> &&
-    requires(ViewType &v) {
+concept viewable = usagi::concepts::ui::clickable<ViewType> &&
+    usagi::concepts::ui::drawable<ViewType> && requires(ViewType &v) {
   typename ViewType::value_type;
   typename ViewType::draw_context_type;
 
@@ -40,7 +38,7 @@ concept viewable = usagi::concepts::geometry::size_concept<typename ViewType::si
     v.add_sub_view(
         std::declval<
             usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type>>())
-    } -> std::same_as<std::add_lvalue_reference_t<
+    } -> usagi::utility::convertible_to<std::add_lvalue_reference_t<
         usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type>>>;
 };
 } // namespace usagi::concepts::ui

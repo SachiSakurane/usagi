@@ -4,6 +4,7 @@
 #include <type_traits>
 
 #include <usagi/concepts/ui/viewable.hpp>
+#include <usagi/geometry/geometry_traits.hpp>
 
 namespace usagi::ui {
 
@@ -16,11 +17,10 @@ namespace detail {
 template <usagi::concepts::ui::viewable ViewType>
 struct surface final {
   using value_type = typename ViewType::value_type;
-  using point_type = typename ViewType::point_type;
-  using rect_type = typename ViewType::rect_type;
-  using size_type = typename ViewType::size_type;
+  using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
+  using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = typename ViewType::draw_context_type;
-  using mouse_traits = typename ViewType::mouse_traits;
+  using mouse_traits = typename usagi::type::mouse_traits<value_type>;
   using view_type = surface<ViewType>;
 
   template <class... Args>

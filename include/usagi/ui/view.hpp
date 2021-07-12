@@ -114,7 +114,6 @@ class view {
 
 public:
   using value_type = ValueType;
-  using point_type = typename usagi::geometry::geometry_traits<value_type>::point_type;
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = DrawContextType;

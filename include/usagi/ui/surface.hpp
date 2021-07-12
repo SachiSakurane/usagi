@@ -10,7 +10,7 @@ namespace usagi::ui {
 namespace detail {
   template <usagi::concepts::ui::viewable ViewType>
   using surface_func_type =
-      std::function<void(typename ViewType::draw_context_type::draw_type &, const ViewType &)>;
+      std::function<void(typename ViewType::draw_context_type &, const ViewType &)>;
 } // namespace detail
 
 template <usagi::concepts::ui::viewable ViewType>
@@ -25,11 +25,11 @@ struct surface final {
 
   template <class... Args>
   explicit surface(usagi::ui::detail::surface_func_type<ViewType> &&f, Args &&...args)
-      : func{std::forward<usagi::ui::detail::surface_func_type<ViewType>>(f)},
+      : drawer{std::forward<usagi::ui::detail::surface_func_type<ViewType>>(f)},
         holder{std::forward<Args>(args)...} {}
 
   void draw(draw_context_type &context) {
-    context.draw([this](typename ViewType::draw_context_type::draw_type &d) { func(d, *this); });
+    drawer(context, holder);
     holder.draw(context);
   }
 
@@ -46,7 +46,7 @@ struct surface final {
   }
 
 private:
-  usagi::ui::detail::surface_func_type<ViewType> func;
+  usagi::ui::detail::surface_func_type<ViewType> drawer;
   ViewType holder;
 };
 

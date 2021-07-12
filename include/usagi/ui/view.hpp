@@ -96,8 +96,8 @@ class view {
     using mouse_traits = typename base_view_type::mouse_traits;
     using view_type = typename base_view_type::view_type;
 
-    view_holder(const ViewType &v) : holder{v} {}
-    view_holder(ViewType &&v) : holder{std::move(v)} {}
+    explicit view_holder(const ViewType &v) : holder{v} {}
+    explicit view_holder(ViewType &&v) : holder{std::move(v)} {}
 
     view_holder(view_holder &&) noexcept = default;
     view_holder &operator=(view_holder &&) noexcept = default;
@@ -132,10 +132,7 @@ public:
   view() : holder{nullptr} {}
 
   template <usagi::concepts::ui::viewable ViewType>
-  view(const ViewType &v) : holder{std::make_unique<view_holder<ViewType>>(v)} {}
-
-  template <usagi::concepts::ui::viewable ViewType>
-  view(ViewType &&v) : holder{std::make_unique<view_holder<ViewType>>(std::move(v))} {}
+  view(ViewType &&v) : holder{std::make_unique<view_holder<ViewType>>(std::forward<ViewType>(v))} {}
 
   view(view &&) noexcept = default;
   view &operator=(view &&) noexcept = default;
@@ -154,7 +151,7 @@ public:
     return holder->add_sub_view(std::forward<view_type>(sub_view));
   }
 
-  operator bool() const { return holder.operator bool(); }
+  explicit operator bool() const { return holder.operator bool(); }
 
 private:
   std::unique_ptr<usagi::ui::base_view<value_type, draw_context_type>> holder;

@@ -8,16 +8,16 @@ struct DrawContextable {
   void draw(draw_type &&d) const;
 };
 
-class SpecialView final : public usagi::ui::base_view<float, DrawContextable> {};
+class SpecificView final : public usagi::ui::base_view<float, DrawContextable> {};
 
 // static test
 namespace {
 static_assert(usagi::concepts::ui::viewable<usagi::ui::view<float, DrawContextable>>,
               "usagi::ui::view<float, DrawContextable> has viewable concept");
-static_assert(usagi::concepts::ui::viewable<decltype(usagi::ui::view{SpecialView{}})>,
-              "view is constructable from SpecialView");
-static_assert(usagi::concepts::ui::viewable<decltype(usagi::ui::view{(SpecialView{})})>,
-              "view is constructable from SpecialView");
+static_assert(usagi::concepts::ui::viewable<decltype(usagi::ui::view{SpecificView{}})>,
+              "view is constructable from SpecificView");
+static_assert(usagi::concepts::ui::viewable<decltype(usagi::ui::view{(SpecificView{})})>,
+              "view is constructable from SpecificView");
 } // namespace
 
 TEST(ViewTest, BoundsCase) {
@@ -33,13 +33,13 @@ TEST(ViewTest, PredicationCase) {
     ASSERT_FALSE(static_cast<bool>(v));
   }
   {
-    auto v = usagi::ui::view{SpecialView{}};
+    auto v = usagi::ui::view{SpecificView{}};
     ASSERT_TRUE(static_cast<bool>(v));
   }
 }
 
 TEST(ViewTest, DrawCase) {
-  auto v = usagi::ui::view{SpecialView{}};
+  auto v = usagi::ui::view{SpecificView{}};
   auto context = DrawContextable{};
   v.draw(context);
 
@@ -49,13 +49,13 @@ TEST(ViewTest, DrawCase) {
 }
 
 TEST(ViewTest, SubViewCase) {
-  auto v = usagi::ui::view{SpecialView{}};
+  auto v = usagi::ui::view{SpecificView{}};
   auto &sub = v.add_sub_view(usagi::ui::base_view<float, DrawContextable>{});
   ASSERT_TRUE(static_cast<bool>(sub));
 }
 
 TEST(ViewTest, ClickCase) {
-  auto v = usagi::ui::view{SpecialView{}};
+  auto v = usagi::ui::view{SpecificView{}};
   v.event(usagi::type::mouse_traits<float>::on_down_type{});
   v.event(usagi::type::mouse_traits<float>::on_drag_type{});
   v.event(usagi::type::mouse_traits<float>::on_over_type{});
@@ -70,6 +70,6 @@ TEST(ViewTest, ClickCase) {
 }
 
 TEST(ViewTest, MakeCase) {
-  auto v = usagi::ui::make_view<SpecialView>();
+  auto v = usagi::ui::make_view<SpecificView>();
   ASSERT_TRUE(static_cast<bool>(v));
 }

@@ -23,14 +23,8 @@ public:
   using mouse_traits = typename usagi::type::mouse_traits<value_type>;
   using view_type = usagi::ui::view<value_type, draw_context_type>;
 
-  constexpr base_view() = default;
-  constexpr explicit base_view(const usagi::concepts::geometry::size_concept auto &size)
-      : content{size} {}
-  constexpr base_view(const usagi::concepts::geometry::point_concept auto &point,
-                      const usagi::concepts::geometry::size_concept auto &size)
-      : content{point, size} {}
-  constexpr explicit base_view(const usagi::concepts::geometry::rect_concept auto &frame)
-      : content{frame} {}
+  base_view() = default;
+  explicit base_view(const usagi::concepts::geometry::rect_concept auto &frame) : content{frame} {}
 
   base_view(base_view &&) noexcept = default;
   base_view &operator=(base_view &&) noexcept = default;
@@ -80,7 +74,7 @@ private:
 };
 
 /**
- * view コンセプトを満たす型を格納する型
+ * viewable を格納する型
  */
 template <usagi::utility::arithmetic ValueType,
           usagi::concepts::graphics::draw_contextable DrawContextType>

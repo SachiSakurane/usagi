@@ -31,6 +31,24 @@ inline constexpr decltype(auto) from_bottom(const RectType &rect, typename RectT
 }
 
 template <concepts::geometry::rect_concept RectType>
+inline constexpr decltype(auto) from_width(const RectType &rect, typename RectType::value_type w) {
+  return tupled_rect<typename RectType::value_type>{[rect, w]() {
+    auto cx = rect.center().x();
+    return std::make_tuple(cx - w * static_cast<typename RectType::value_type>(0.5f), rect.t(),
+                           cx + w * static_cast<typename RectType::value_type>(0.5f), rect.b());
+  }};
+}
+
+template <concepts::geometry::rect_concept RectType>
+inline constexpr decltype(auto) from_height(const RectType &rect, typename RectType::value_type h) {
+  return tupled_rect<typename RectType::value_type>{[rect, h]() {
+    auto cy = rect.center().y();
+    return std::make_tuple(rect.l(), cy - h * static_cast<typename RectType::value_type>(0.5f),
+                           rect.r(), cy + h * static_cast<typename RectType::value_type>(0.5f));
+  }};
+}
+
+template <concepts::geometry::rect_concept RectType>
 inline constexpr decltype(auto) reduce_from_left(const RectType &rect,
                                                  typename RectType::value_type l) {
   return tupled_rect<typename RectType::value_type>{

@@ -20,6 +20,14 @@ TEST(RectFunctionTest, FromCase) {
     auto rr = usagi::geometry::from_bottom(r, 42.24f);
     ASSERT_EQ(rr.b(), 42.24f);
   }
+  {
+    auto rr = usagi::geometry::from_width(r, 42.f);
+    ASSERT_EQ(rr.size().width(), 42.f);
+  }
+  {
+    auto rr = usagi::geometry::from_height(r, 42.f);
+    ASSERT_EQ(rr.size().height(), 42.f);
+  }
 }
 
 TEST(RectFunctionTest, ReduceFromCase) {

@@ -162,4 +162,9 @@ view(const ViewType &) -> view<typename ViewType::value_type, typename ViewType:
 
 template <usagi::concepts::ui::viewable ViewType>
 view(ViewType &&) -> view<typename ViewType::value_type, typename ViewType::draw_context_type>;
+
+template <usagi::concepts::ui::viewable ViewType, class... Args>
+inline constexpr decltype(auto) make_view(Args &&...args) {
+  return usagi::ui::view{ViewType{std::forward<Args>(args)...}};
+}
 } // namespace usagi::ui

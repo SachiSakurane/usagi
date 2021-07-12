@@ -68,3 +68,8 @@ TEST(ViewTest, ClickCase) {
   v.event(usagi::type::mouse_traits<float>::on_over_type{});
   v.event(usagi::type::mouse_traits<float>::on_up_type{});
 }
+
+TEST(ViewTest, MakeCase) {
+  auto v = usagi::ui::make_view<SpecialView>();
+  ASSERT_TRUE(static_cast<bool>(v));
+}

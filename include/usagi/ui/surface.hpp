@@ -21,7 +21,7 @@ struct surface final {
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = typename ViewType::draw_context_type;
   using mouse_traits = typename usagi::type::mouse_traits<value_type>;
-  using view_type = surface<ViewType>;
+  using view_type = typename ViewType::view_type;
 
   template <class... Args>
   explicit surface(usagi::ui::detail::surface_func_type<ViewType> &&f, Args &&...args)

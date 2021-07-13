@@ -30,6 +30,12 @@ private:
   std::vector<int> &stamp;
 };
 
+// static test
+namespace {
+static_assert(usagi::concepts::ui::viewable<usagi::ui::surface<SpecificView<int, DrawContext>>>,
+              "usagi::ui::surface<SpecificView<int, DrawContext>> has viewable concept");
+}
+
 TEST(SurfaceTest, SequentialCase) {
   std::vector<int> stamp;
   auto s =

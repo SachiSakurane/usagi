@@ -98,6 +98,41 @@ inline constexpr decltype(auto) padding(const RectType &rect, typename RectType:
 }
 
 template <concepts::geometry::rect_concept RectType>
+inline constexpr decltype(auto) padding(const RectType &rect, typename RectType::value_type tb,
+                                        typename RectType::value_type lr) {
+  return tupled_rect<typename RectType::value_type>{[rect, tb, lr]() {
+    auto l = rect.l() + lr;
+    auto t = rect.t() + tb;
+    auto r = rect.r() - lr;
+    auto b = rect.b() - tb;
+    bool wb = l < r;
+    bool hb = t < b;
+    return std::make_tuple(wb ? l : (l + r) / static_cast<typename RectType::value_type>(2),
+                           hb ? t : (t + b) / static_cast<typename RectType::value_type>(2),
+                           wb ? r : (l + r) / static_cast<typename RectType::value_type>(2),
+                           hb ? b : (t + b) / static_cast<typename RectType::value_type>(2));
+  }};
+}
+
+template <concepts::geometry::rect_concept RectType>
+inline constexpr decltype(auto) padding(const RectType &rect, typename RectType::value_type t,
+                                        typename RectType::value_type lr,
+                                        typename RectType::value_type b) {
+  return tupled_rect<typename RectType::value_type>{[rect, t, lr, b]() {
+    auto l_ = rect.l() + lr;
+    auto t_ = rect.t() + t;
+    auto r_ = rect.r() - lr;
+    auto b_ = rect.b() - b;
+    bool wb = l_ < r_;
+    bool hb = t_ < b_;
+    return std::make_tuple(wb ? l_ : (l_ + r_) / static_cast<typename RectType::value_type>(2),
+                           hb ? t_ : (t_ + b_) / static_cast<typename RectType::value_type>(2),
+                           wb ? r_ : (l_ + r_) / static_cast<typename RectType::value_type>(2),
+                           hb ? b_ : (t_ + b_) / static_cast<typename RectType::value_type>(2));
+  }};
+}
+
+template <concepts::geometry::rect_concept RectType>
 inline constexpr decltype(auto) padding_width(const RectType &rect,
                                               typename RectType::value_type v) {
   return tupled_rect<typename RectType::value_type>{[rect, v]() {

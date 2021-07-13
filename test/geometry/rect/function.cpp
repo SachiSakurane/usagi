@@ -61,9 +61,21 @@ TEST(RectFunctionTest, ContainCase) {
 }
 
 TEST(RectFunctionTest, PaddingCase) {
-  usagi::geometry::rect<float> a{0.f, 0.f, 42.f, 42.f};
-  ASSERT_EQ(usagi::geometry::padding(a, 16.f),
-            (usagi::geometry::rect<float>{16.f, 16.f, 26.f, 26.f}));
-  ASSERT_EQ(usagi::geometry::padding(a, 30.f),
-            (usagi::geometry::rect<float>{21.f, 21.f, 21.f, 21.f}));
+  {
+    usagi::geometry::rect<float> a{0.f, 0.f, 42.f, 42.f};
+    ASSERT_EQ(usagi::geometry::padding(a, 16.f),
+              (usagi::geometry::rect<float>{16.f, 16.f, 26.f, 26.f}));
+    ASSERT_EQ(usagi::geometry::padding(a, 30.f),
+              (usagi::geometry::rect<float>{21.f, 21.f, 21.f, 21.f}));
+  }
+  {
+    usagi::geometry::rect<float> a{0.f, 0.f, 42.f, 42.f};
+    ASSERT_EQ(usagi::geometry::padding_width(a, 16.f),
+              (usagi::geometry::rect<float>{16.f, 0.f, 26.f, 42.f}));
+  }
+  {
+    usagi::geometry::rect<float> a{0.f, 0.f, 42.f, 42.f};
+    ASSERT_EQ(usagi::geometry::padding_height(a, 16.f),
+              (usagi::geometry::rect<float>{0.f, 16.f, 42.f, 26.f}));
+  }
 }

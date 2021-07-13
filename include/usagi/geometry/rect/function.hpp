@@ -96,4 +96,30 @@ inline constexpr decltype(auto) padding(const RectType &rect, typename RectType:
                            h ? b : (t + b) / static_cast<typename RectType::value_type>(2));
   }};
 }
+
+template <concepts::geometry::rect_concept RectType>
+inline constexpr decltype(auto) padding_width(const RectType &rect,
+                                              typename RectType::value_type v) {
+  return tupled_rect<typename RectType::value_type>{[rect, v]() {
+    auto l = rect.l() + v;
+    auto r = rect.r() - v;
+    bool w = l < r;
+    return std::make_tuple(
+        w ? l : (l + r) / static_cast<typename RectType::value_type>(2), rect.t(),
+        w ? r : (l + r) / static_cast<typename RectType::value_type>(2), rect.b());
+  }};
+}
+
+template <concepts::geometry::rect_concept RectType>
+inline constexpr decltype(auto) padding_height(const RectType &rect,
+                                               typename RectType::value_type v) {
+  return tupled_rect<typename RectType::value_type>{[rect, v]() {
+    auto t = rect.t() + v;
+    auto b = rect.b() - v;
+    bool h = t < b;
+    return std::make_tuple(
+        rect.l(), h ? t : (t + b) / static_cast<typename RectType::value_type>(2), rect.r(),
+        h ? b : (t + b) / static_cast<typename RectType::value_type>(2));
+  }};
+}
 } // namespace usagi::geometry

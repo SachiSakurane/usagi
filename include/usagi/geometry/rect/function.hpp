@@ -9,25 +9,25 @@ namespace usagi::geometry {
 template <concepts::geometry::rect_concept RectType>
 inline constexpr decltype(auto) from_left(const RectType &rect, typename RectType::value_type l) {
   return tupled_rect<typename RectType::value_type>{
-      [rect, l]() { return std::make_tuple(l, rect.t(), rect.r(), rect.b()); }};
+      [rect, l]() { return std::make_tuple(rect.l(), rect.t(), rect.l() + l, rect.b()); }};
 }
 
 template <concepts::geometry::rect_concept RectType>
 inline constexpr decltype(auto) from_top(const RectType &rect, typename RectType::value_type t) {
   return tupled_rect<typename RectType::value_type>{
-      [rect, t]() { return std::make_tuple(rect.l(), t, rect.r(), rect.b()); }};
+      [rect, t]() { return std::make_tuple(rect.l(), rect.t(), rect.r(), rect.t() + t); }};
 }
 
 template <concepts::geometry::rect_concept RectType>
 inline constexpr decltype(auto) from_right(const RectType &rect, typename RectType::value_type r) {
   return tupled_rect<typename RectType::value_type>{
-      [rect, r]() { return std::make_tuple(rect.l(), rect.t(), r, rect.b()); }};
+      [rect, r]() { return std::make_tuple(rect.r() - r, rect.t(), rect.r(), rect.b()); }};
 }
 
 template <concepts::geometry::rect_concept RectType>
 inline constexpr decltype(auto) from_bottom(const RectType &rect, typename RectType::value_type b) {
   return tupled_rect<typename RectType::value_type>{
-      [rect, b]() { return std::make_tuple(rect.l(), rect.t(), rect.r(), b); }};
+      [rect, b]() { return std::make_tuple(rect.l(), rect.b() - b, rect.r(), rect.b()); }};
 }
 
 template <concepts::geometry::rect_concept RectType>

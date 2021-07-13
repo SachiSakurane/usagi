@@ -5,20 +5,24 @@
 TEST(RectFunctionTest, FromCase) {
   usagi::geometry::rect<float> r{2.f, 4.f, 42.f, 24.f};
   {
-    auto rr = usagi::geometry::from_left(r, 2.4f);
-    ASSERT_EQ(rr.l(), 2.4f);
+    auto rr = usagi::geometry::from_left(r, 10.f);
+    ASSERT_EQ(rr.l(), 2.f);
+    ASSERT_EQ(rr.r(), 12.f);
   }
   {
-    auto rr = usagi::geometry::from_top(r, 2.4f);
-    ASSERT_EQ(rr.t(), 2.4f);
+    auto rr = usagi::geometry::from_top(r, 10.f);
+    ASSERT_EQ(rr.t(), 4.0f);
+    ASSERT_EQ(rr.b(), 14.0f);
   }
   {
-    auto rr = usagi::geometry::from_right(r, 42.24f);
-    ASSERT_EQ(rr.r(), 42.24f);
+    auto rr = usagi::geometry::from_right(r, 10.0);
+    ASSERT_EQ(rr.l(), 32.f);
+    ASSERT_EQ(rr.r(), 42.f);
   }
   {
-    auto rr = usagi::geometry::from_bottom(r, 42.24f);
-    ASSERT_EQ(rr.b(), 42.24f);
+    auto rr = usagi::geometry::from_bottom(r, 10.f);
+    ASSERT_EQ(rr.t(), 14.0f);
+    ASSERT_EQ(rr.b(), 24.0f);
   }
   {
     auto rr = usagi::geometry::from_width(r, 42.f);

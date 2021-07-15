@@ -11,8 +11,8 @@ namespace usagi::geometry {
 template <usagi::utility::arithmetic Type>
 struct rect {
 public:
-  using value_type = typename variable_traits<Type>::value_type;
-  using variable_type = typename variable_traits<value_type>::variable_type;
+  using value_type = typename usagi::variable_traits<Type>::value_type;
+  using variable_type = typename usagi::variable_traits<value_type>::variable_type;
   using size_type = usagi::geometry::size<value_type>;
   using point_type = usagi::geometry::point<value_type>;
 
@@ -101,9 +101,9 @@ rect(const PointType &, const SizeType &) -> rect<typename SizeType::value_type>
 template <usagi::utility::arithmetic Type>
 struct tupled_rect {
 public:
-  using value_type = typename variable_traits<Type>::value_type;
+  using value_type = typename usagi::variable_traits<Type>::value_type;
   using pair_type = utility::mono_tuple<value_type, 4>;
-  using variable_type = typename variable_traits<pair_type>::variable_type;
+  using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
   using size_type = geometry::size<value_type>;
   using point_type = geometry::point<value_type>;
 

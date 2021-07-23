@@ -4,6 +4,7 @@
 
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
+#include <usagi/utility/invocable.hpp>
 
 namespace usagi::ui {
 template <class FunctionType>
@@ -17,6 +18,8 @@ struct surface_wrapper {
 };
 
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
+requires usagi::utility::invocable<FunctionType, typename ViewType::draw_context_type &,
+                                   const ViewType &>
 struct surface final {
   using value_type = typename ViewType::value_type;
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
@@ -25,8 +28,7 @@ struct surface final {
   using mouse_traits = typename usagi::type::mouse_traits<value_type>;
   using view_type = typename ViewType::view_type;
 
-  surface(ViewType &&v, FunctionType f)
-      : holder{std::move(v)}, drawer{f} {}
+  surface(ViewType &&v, FunctionType f) : holder{std::move(v)}, drawer{f} {}
 
   void draw(draw_context_type &context) {
     drawer(context, holder);
@@ -58,6 +60,18 @@ inline constexpr decltype(auto) operator|(ViewType &&v, surface_wrapper<Function
   return surface{std::forward<ViewType>(v), func};
 }
 
+/**
+ * Adapter for wrapping the surface
+ *
+ * @tparam FunctionType must be able to execute a function with
+ * @code
+ * invocable&lt;FunctionType, typename ViewType::draw_context_type &, const ViewType &&gt;
+ * @endcode
+ * as arguments.
+ *
+ * @param func to be wrapped by surface
+ * @return surface_wrapper
+ */
 template <class FunctionType>
 inline constexpr decltype(auto) surfaced(FunctionType func) {
   return surface_wrapper<FunctionType>{func};

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <functional>
-#include <type_traits>
+#include <utility>
 
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>

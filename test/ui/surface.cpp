@@ -20,7 +20,7 @@ struct SpecificView final : usagi::ui::base_view<ValueType, DrawContextType> {
 
   explicit SpecificView(std::vector<int> &s) : stamp{s} {}
 
-  void draw(draw_context_type &c) {
+  void draw(draw_context_type &c) override {
     // 2
     stamp.emplace_back(2);
     c.tick();

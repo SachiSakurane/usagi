@@ -55,8 +55,7 @@ surface(ViewType &&, FunctionType) -> surface<ViewType, FunctionType>;
 
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
 inline constexpr decltype(auto) operator|(ViewType &&v, surface_holder<FunctionType> &&holder) {
-  return surface{std::forward<ViewType>(v),
-                 std::forward<surface_holder<FunctionType>>(holder).func};
+  return surface{std::forward<ViewType>(v), std::forward<FunctionType>(std::move(holder).func)};
 }
 
 /**

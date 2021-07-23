@@ -13,7 +13,7 @@ struct surface_holder {
 };
 
 template <class FunctionType>
-surface_holder(FunctionType &&) -> surface_holder<FunctionType>;
+surface_holder(FunctionType) -> surface_holder<FunctionType>;
 
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
 requires usagi::utility::invocable<FunctionType, typename ViewType::draw_context_type &,
@@ -26,7 +26,7 @@ struct surface {
   using mouse_traits = typename usagi::type::mouse_traits<value_type>;
   using view_type = typename ViewType::view_type;
 
-  surface(ViewType &&v, FunctionType f) : holder{std::move(v)}, drawer{std::move(f)} {}
+  surface(ViewType &&v, FunctionType f) : holder{std::move(v)}, drawer{f} {}
 
   void draw(draw_context_type &context) {
     drawer(context, holder);
@@ -55,7 +55,7 @@ surface(ViewType &&, FunctionType) -> surface<ViewType, FunctionType>;
 
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
 inline constexpr decltype(auto) operator|(ViewType &&v, surface_holder<FunctionType> &&holder) {
-  return surface{std::forward<ViewType>(v), std::forward<FunctionType>(std::move(holder).func)};
+  return surface{std::forward<ViewType>(v), std::move(holder).func};
 }
 
 /**
@@ -72,7 +72,7 @@ inline constexpr decltype(auto) operator|(ViewType &&v, surface_holder<FunctionT
  */
 template <class FunctionType>
 inline constexpr decltype(auto) surfaced(FunctionType &&func) {
-  return surface_holder<FunctionType>{std::forward<FunctionType>(func)};
+  return surface_holder<FunctionType>{func};
 }
 
 } // namespace usagi::ui

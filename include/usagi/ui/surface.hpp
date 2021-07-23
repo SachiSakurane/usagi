@@ -26,11 +26,10 @@ struct surface final {
   using mouse_traits = typename usagi::type::mouse_traits<value_type>;
   using view_type = typename ViewType::view_type;
 
-  surface(ViewType &&v, surface_holder<FunctionType> &&f)
-      : holder{std::move(v)}, drawer{std::move(f)} {}
+  surface(ViewType &&v, FunctionType f) : holder{std::move(v)}, drawer{std::move(f)} {}
 
   void draw(draw_context_type &context) {
-    drawer.func(context, holder);
+    drawer(context, holder);
     holder.draw(context);
   }
 
@@ -48,15 +47,16 @@ struct surface final {
 
 private:
   ViewType holder;
-  surface_holder<FunctionType> drawer;
+  FunctionType drawer;
 };
 
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
 surface(ViewType &&, FunctionType) -> surface<ViewType, FunctionType>;
 
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
-inline constexpr decltype(auto) operator|(ViewType &&v, surface_holder<FunctionType> &&func) {
-  return surface{std::forward<ViewType>(v), std::forward<surface_holder<FunctionType>>(func)};
+inline constexpr decltype(auto) operator|(ViewType &&v, surface_holder<FunctionType> &&holder) {
+  return surface{std::forward<ViewType>(v),
+                 std::forward<surface_holder<FunctionType>>(holder).func};
 }
 
 /**

@@ -13,7 +13,7 @@ struct surface_holder {
 };
 
 template <class FunctionType>
-surface_holder(FunctionType) -> surface_holder<FunctionType>;
+surface_holder(FunctionType &&) -> surface_holder<FunctionType>;
 
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
 requires usagi::utility::invocable<FunctionType, typename ViewType::draw_context_type &,

@@ -137,18 +137,30 @@ TEST(GestureTest, Gestures) {
 
   std::vector<int> stamp;
   view v{stamp};
-  usagi::ui::gestures<view> g{std::make_tuple(
-      [&stamp](view::mouse_traits::on_drag_type, auto &) { stamp.emplace_back(0); })};
 
+  // default
   {
+    usagi::ui::gestures<view> g{std::make_tuple()};
     g.on_down_holder(view::mouse_traits::on_down_type{}, v);
+    g.on_drag_holder(view::mouse_traits::on_drag_type{}, v);
+    g.on_up_holder(view::mouse_traits::on_up_type{}, v);
+    g.on_over_holder(view::mouse_traits::on_over_type{}, v);
 
     ASSERT_EQ(stamp.size(), 0);
   }
-
   stamp.clear();
 
+  // specialized
   {
+    usagi::ui::gestures<view> g{std::make_tuple(
+        [&stamp](view::mouse_traits::on_drag_type, auto &) { stamp.emplace_back(0); })};
+
+    g.on_down_holder(view::mouse_traits::on_down_type{}, v);
+
+    ASSERT_EQ(stamp.size(), 0);
+
+    stamp.clear();
+
     g.on_drag_holder(view::mouse_traits::on_drag_type{}, v);
 
     // 特殊化した関数が実行されている
@@ -161,8 +173,9 @@ TEST(GestureTest, Gesture) {
   using view = SpecificView<float>;
 
   std::vector<int> stamp;
-  auto v = view{stamp} | usagi::ui::gestured(
-                    [&stamp](view::mouse_traits::on_drag_type, auto &) { stamp.emplace_back(0); });
+  auto v = view{stamp} | usagi::ui::gestured([&stamp](view::mouse_traits::on_drag_type, auto &) {
+             stamp.emplace_back(0);
+           });
 
   {
     v.event(view::mouse_traits::on_down_type{});

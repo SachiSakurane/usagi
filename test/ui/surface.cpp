@@ -52,11 +52,11 @@ TEST(SurfaceTest, SequentialCase) {
   s.draw(context);
 
   // 0 が先に呼ばれているので surface に渡したラムダが先に到達していることがわかる
+  ASSERT_EQ(stamp.size(), 4);
   ASSERT_EQ(stamp[0], 0);
   ASSERT_EQ(stamp[1], 1);
   ASSERT_EQ(stamp[2], 2);
   ASSERT_EQ(stamp[3], 1);
-  ASSERT_EQ(stamp.size(), 4);
 }
 
 TEST(SurfaceTest, SurfacedCase) {
@@ -70,9 +70,9 @@ TEST(SurfaceTest, SurfacedCase) {
   s.draw(context);
 
   // 0 が先に呼ばれているので surface に渡したラムダが先に到達していることがわかる
+  ASSERT_EQ(stamp.size(), 4);
   ASSERT_EQ(stamp[0], 0);
   ASSERT_EQ(stamp[1], 1);
   ASSERT_EQ(stamp[2], 2);
   ASSERT_EQ(stamp[3], 1);
-  ASSERT_EQ(stamp.size(), 4);
 }

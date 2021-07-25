@@ -9,7 +9,7 @@ namespace usagi::wrapper::icontrol {
 template <usagi::utility::arithmetic ValueType>
 struct iplug_mouse_parameter {
   ValueType x, y;
-  IGraphics* graphics;
+  IGraphics *graphics;
 };
 
 struct iplug_traits {
@@ -48,18 +48,27 @@ public:
 
   void OnMouseDown(float x, float y, const IMouseMod &mod) override {
     local_view.event(iplug_traits::mouse_traits::on_down_type{x, y, GetUI()});
+    IControl::OnMouseDown(x, y, mod);
   }
 
   void OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod) override {
     local_view.event(iplug_traits::mouse_traits::on_drag_type{x, y, GetUI()});
+    IControl::OnMouseDrag(x, y, dX, dY, mod);
   }
 
   void OnMouseUp(float x, float y, const IMouseMod &mod) override {
     local_view.event(iplug_traits::mouse_traits::on_up_type{x, y, GetUI()});
+    IControl::OnMouseUp(x, y, mod);
   }
 
   void OnMouseOver(float x, float y, const IMouseMod &mod) override {
     local_view.event(iplug_traits::mouse_traits::on_over_type{x, y, GetUI()});
+    IControl::OnMouseOver(x, y, mod);
+  }
+
+  void OnMouseOut() override {
+    local_view.event(iplug_traits::mouse_traits::on_out_type{0.f, 0.f, GetUI()});
+    IControl::OnMouseOut();
   }
 
 protected:

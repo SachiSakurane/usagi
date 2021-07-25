@@ -10,6 +10,7 @@ struct Clickable {
   void event(typename mouse_traits::on_drag_type);
   void event(typename mouse_traits::on_up_type);
   void event(typename mouse_traits::on_over_type);
+  void event(typename mouse_traits::on_out_type);
 };
 
 template <class ValueType>
@@ -19,5 +20,6 @@ struct UnClickable {
   void event(typename mouse_traits::on_down_type);
   void event(typename mouse_traits::on_drag_type);
   void event(typename mouse_traits::on_up_type);
-  // void event(typename mouse_traits::on_over_type);
+  void event(typename mouse_traits::on_over_type);
+  // void event(typename mouse_traits::on_out_type);
 };

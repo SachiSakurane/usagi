@@ -38,6 +38,13 @@ struct mouse {
     template <class... Args>
     explicit on_over(Args &&...args) : ParameterType{std::forward<Args>(args)...} {}
   };
+
+  template <class ParameterType>
+  struct on_out : ParameterType {
+    on_out() = default;
+    template <class... Args>
+    explicit on_out(Args &&...args) : ParameterType{std::forward<Args>(args)...} {}
+  };
 };
 
 template <class ParameterType>
@@ -46,5 +53,6 @@ struct mouse_traits {
   using on_drag_type = mouse::on_drag<ParameterType>;
   using on_up_type = mouse::on_up<ParameterType>;
   using on_over_type = mouse::on_over<ParameterType>;
+  using on_out_type = mouse::on_out<ParameterType>;
 };
 } // namespace usagi::type

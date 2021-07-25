@@ -7,35 +7,35 @@
 namespace usagi::type {
 struct mouse {
   template <usagi::utility::arithmetic ValueType>
-  struct on_down {
+  struct parameters {
+    parameters() = default;
+    parameters(ValueType _x, ValueType _y) : x{_x}, y{_y} {}
+
+    ValueType x, y;
+  };
+
+  template <usagi::utility::arithmetic ValueType>
+  struct on_down : parameters<ValueType> {
     on_down() = default;
-    on_down(ValueType _x, ValueType _y) : x{_x}, y{_y} {}
-
-    ValueType x, y;
+    on_down(ValueType _x, ValueType _y) : parameters<ValueType>{_x, _y} {}
   };
 
   template <usagi::utility::arithmetic ValueType>
-  struct on_drag {
+  struct on_drag : parameters<ValueType> {
     on_drag() = default;
-    on_drag(ValueType _x, ValueType _y) : x{_x}, y{_y} {}
-
-    ValueType x, y;
+    on_drag(ValueType _x, ValueType _y) : parameters<ValueType>{_x, _y} {}
   };
 
   template <usagi::utility::arithmetic ValueType>
-  struct on_up {
+  struct on_up : parameters<ValueType> {
     on_up() = default;
-    on_up(ValueType _x, ValueType _y) : x{_x}, y{_y} {}
-
-    ValueType x, y;
+    on_up(ValueType _x, ValueType _y) : parameters<ValueType>{_x, _y} {}
   };
 
   template <usagi::utility::arithmetic ValueType>
-  struct on_over {
+  struct on_over : parameters<ValueType> {
     on_over() = default;
-    on_over(ValueType _x, ValueType _y) : x{_x}, y{_y} {}
-
-    ValueType x, y;
+    on_over(ValueType _x, ValueType _y) : parameters<ValueType>{_x, _y} {}
   };
 };
 

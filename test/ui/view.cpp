@@ -55,12 +55,14 @@ TEST(ViewTest, ClickCase) {
   auto v = usagi::ui::view{SpecificView{}};
   v.event(usagi::type::mouse_traits<float>::on_down_type{});
   v.event(usagi::type::mouse_traits<float>::on_drag_type{});
+  v.event(usagi::type::mouse_traits<float>::on_over_type{});
   v.event(usagi::type::mouse_traits<float>::on_up_type{});
 
   // sub case
   v.add_sub_view(usagi::ui::base_view<float, DrawContext>{});
   v.event(usagi::type::mouse_traits<float>::on_down_type{});
   v.event(usagi::type::mouse_traits<float>::on_drag_type{});
+  v.event(usagi::type::mouse_traits<float>::on_over_type{});
   v.event(usagi::type::mouse_traits<float>::on_up_type{});
 }
 

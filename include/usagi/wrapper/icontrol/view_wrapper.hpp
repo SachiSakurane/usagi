@@ -49,6 +49,10 @@ public:
     local_view.event(iplug_traits::mouse_traits::on_up_type{x, y});
   }
 
+  void OnMouseOver(float x, float y, const IMouseMod &mod) override {
+    local_view.event(iplug_traits::mouse_traits::on_over_type{x, y});
+  }
+
 protected:
   IRECT local_rect;
   iplug_traits::rect_type wrapped_bounds;

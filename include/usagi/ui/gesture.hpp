@@ -86,11 +86,14 @@ struct gestures {
         on_drag_holder{usagi::ui::detail::pick_invocable<
             std::tuple<typename mouse_traits::on_drag_type, ViewType &>>(t, [](auto, auto &) {})},
         on_up_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_up_type, ViewType &>>(t, [](auto, auto &) {})} {}
+            std::tuple<typename mouse_traits::on_up_type, ViewType &>>(t, [](auto, auto &) {})},
+        on_over_holder{usagi::ui::detail::pick_invocable<
+            std::tuple<typename mouse_traits::on_over_type, ViewType &>>(t, [](auto, auto &) {})} {}
 
   std::function<void(typename mouse_traits::on_down_type, ViewType &)> on_down_holder;
   std::function<void(typename mouse_traits::on_drag_type, ViewType &)> on_drag_holder;
   std::function<void(typename mouse_traits::on_up_type, ViewType &)> on_up_holder;
+  std::function<void(typename mouse_traits::on_over_type, ViewType &)> on_over_holder;
 };
 
 template <usagi::concepts::ui::viewable ViewType>
@@ -122,6 +125,11 @@ struct gesture {
 
   void event(typename mouse_traits::on_up_type mouse) {
     g.on_up_holder(mouse, holder);
+    holder.event(mouse);
+  }
+
+  void event(typename mouse_traits::on_over_type mouse) {
+    g.on_over_holder(mouse, holder);
     holder.event(mouse);
   }
 

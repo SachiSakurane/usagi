@@ -3,6 +3,6 @@
 #include "../../mocks/clickable.hpp"
 
 namespace {
-static_assert(usagi::concepts::ui::clickable<Clickable<int>>);
-static_assert(!usagi::concepts::ui::clickable<UnClickable<int>>);
+static_assert(usagi::concepts::ui::clickable<Clickable<float>>);
+static_assert(!usagi::concepts::ui::clickable<UnClickable<float>>);
 } // namespace

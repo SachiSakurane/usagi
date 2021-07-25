@@ -7,11 +7,13 @@ namespace {
 struct a_tag {};
 struct b_tag {};
 
+using MouseParameter = usagi::type::mouse::default_parameter<float>;
+
 template <usagi::utility::arithmetic ValueType>
-struct SpecificView final : usagi::ui::base_view<ValueType, int> {
+struct SpecificView final : usagi::ui::base_view<ValueType, int, MouseParameter> {
   using value_type = ValueType;
   using draw_context_type = int;
-  using mouse_traits = typename usagi::ui::base_view<ValueType, int>::mouse_traits;
+  using mouse_traits = typename usagi::ui::base_view<ValueType, int, MouseParameter>::mouse_traits;
 
   explicit SpecificView(std::vector<int> &s) : stamp{s} {}
 
@@ -25,7 +27,7 @@ struct SpecificView final : usagi::ui::base_view<ValueType, int> {
     stamp.emplace_back(2);
   }
 
-  using usagi::ui::base_view<ValueType, int>::event;
+  using usagi::ui::base_view<ValueType, int, MouseParameter>::event;
 
 private:
   std::vector<int> &stamp;

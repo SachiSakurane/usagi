@@ -7,11 +7,12 @@
 #include <usagi/concepts/geometry/size_concept.hpp>
 #include <usagi/concepts/ui/clickable.hpp>
 #include <usagi/concepts/ui/drawable.hpp>
+#include <usagi/type/mouse.hpp>
 #include <usagi/utility/arithmetic.hpp>
 #include <usagi/utility/convertible_to.hpp>
 
 namespace usagi::ui {
-template <usagi::utility::arithmetic ValueType, class DrawContextType>
+template <usagi::utility::arithmetic ValueType, class DrawContextType, class MouseParameterType>
 class view;
 }
 
@@ -28,17 +29,13 @@ namespace usagi::concepts::ui {
 template <class ViewType>
 concept viewable = usagi::concepts::ui::clickable<ViewType> &&
     usagi::concepts::ui::drawable<ViewType> && requires(ViewType &v) {
-  typename ViewType::value_type;
-  typename ViewType::draw_context_type;
+  typename ViewType::view_type;
 
   { v.bounds() } -> usagi::concepts::geometry::size_concept;
   { v.frame() } -> usagi::concepts::geometry::rect_concept;
 
   {
-    v.add_sub_view(
-        std::declval<
-            usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type>>())
-    } -> usagi::utility::convertible_to<std::add_lvalue_reference_t<
-        usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type>>>;
+    v.add_sub_view(std::declval<typename ViewType::view_type>())
+    } -> usagi::utility::convertible_to<std::add_lvalue_reference_t<typename ViewType::view_type>>;
 };
 } // namespace usagi::concepts::ui

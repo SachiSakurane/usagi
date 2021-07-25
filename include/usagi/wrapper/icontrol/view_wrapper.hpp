@@ -3,17 +3,26 @@
 #include <usagi/geometry/geometry_traits.hpp>
 #include <usagi/type/mouse.hpp>
 #include <usagi/ui/view.hpp>
+#include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::wrapper::icontrol {
+template <usagi::utility::arithmetic ValueType>
+struct iplug_mouse_parameter {
+  ValueType x, y;
+  IGraphics* graphics;
+};
+
 struct iplug_traits {
   using value_type = float;
-  using mouse_traits = typename usagi::type::mouse_traits<value_type>;
   using point_type = typename usagi::geometry::geometry_traits<value_type>::point_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using draw_context_type = SkCanvas;
-  using view_type = typename usagi::ui::view<value_type, draw_context_type>;
-  using base_view_type = typename usagi::ui::base_view<value_type, draw_context_type>;
+  using mouse_parameter_type = iplug_mouse_parameter<value_type>;
+  using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
+  using view_type = typename usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
+  using base_view_type =
+      typename usagi::ui::base_view<value_type, draw_context_type, mouse_parameter_type>;
 };
 
 class view_wrapper : public IControl {
@@ -24,7 +33,9 @@ public:
             usagi::geometry::tupled_rect<iplug_traits::value_type>{[&rect = this->local_rect]() {
               return std::make_tuple(rect.L, rect.T, rect.R, rect.B);
             }}},
-        local_view{iplug_traits::base_view_type{wrapped_bounds}} {}
+        local_view{iplug_traits::base_view_type{wrapped_bounds}} {
+    mDblAsSingleClick = true;
+  }
 
   void Draw(IGraphics &g) override {
     SkCanvas *canvas = static_cast<SkCanvas *>(g.GetDrawContext());
@@ -33,24 +44,22 @@ public:
     }
   }
 
-  void OnResize() override {
-    local_rect = GetRECT();
-  }
+  void OnResize() override { local_rect = GetRECT(); }
 
   void OnMouseDown(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_down_type{x, y});
+    local_view.event(iplug_traits::mouse_traits::on_down_type{x, y, GetUI()});
   }
 
   void OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_drag_type{x, y});
+    local_view.event(iplug_traits::mouse_traits::on_drag_type{x, y, GetUI()});
   }
 
   void OnMouseUp(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_up_type{x, y});
+    local_view.event(iplug_traits::mouse_traits::on_up_type{x, y, GetUI()});
   }
 
   void OnMouseOver(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_over_type{x, y});
+    local_view.event(iplug_traits::mouse_traits::on_over_type{x, y, GetUI()});
   }
 
 protected:

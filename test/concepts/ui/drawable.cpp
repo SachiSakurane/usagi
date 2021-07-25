@@ -1,4 +1,3 @@
-#include <usagi/concepts/graphics/color_concept.hpp>
 #include <usagi/concepts/ui/drawable.hpp>
 
 #include "../../mocks/draw_context.hpp"

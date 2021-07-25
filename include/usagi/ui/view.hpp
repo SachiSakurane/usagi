@@ -11,7 +11,7 @@
 #include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::ui {
-template <usagi::utility::arithmetic ValueType, class DrawContextType>
+template <usagi::utility::arithmetic ValueType, class DrawContextType, class MouseParameterType>
 class base_view {
 public:
   using value_type = ValueType;
@@ -19,8 +19,9 @@ public:
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = DrawContextType;
-  using mouse_traits = typename usagi::type::mouse_traits<value_type>;
-  using view_type = usagi::ui::view<value_type, draw_context_type>;
+  using mouse_parameter_type = MouseParameterType;
+  using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
+  using view_type = usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
 
   base_view() = default;
   explicit base_view(const usagi::concepts::geometry::rect_concept auto &frame) : content{frame} {}
@@ -75,16 +76,19 @@ private:
 /**
  * viewable を格納する型
  */
-template <usagi::utility::arithmetic ValueType, class DrawContextType>
+template <usagi::utility::arithmetic ValueType, class DrawContextType, class MouseParameterType>
 class view {
   template <usagi::concepts::ui::viewable ViewType>
-  class view_holder final : public usagi::ui::base_view<ValueType, DrawContextType> {
-    using base_view_type = typename usagi::ui::base_view<ValueType, DrawContextType>;
+  class view_holder final
+      : public usagi::ui::base_view<ValueType, DrawContextType, MouseParameterType> {
+    using base_view_type =
+        typename usagi::ui::base_view<ValueType, DrawContextType, MouseParameterType>;
 
   public:
     using rect_type = typename base_view_type::rect_type;
     using size_type = typename base_view_type::size_type;
     using draw_context_type = typename base_view_type::draw_context_type;
+    using mouse_parameter_type = typename base_view_type::mouse_parameter_type;
     using mouse_traits = typename base_view_type::mouse_traits;
     using view_type = typename base_view_type::view_type;
 
@@ -117,8 +121,9 @@ public:
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = DrawContextType;
-  using mouse_traits = typename usagi::type::mouse_traits<value_type>;
-  using view_type = usagi::ui::view<value_type, draw_context_type>;
+  using mouse_parameter_type = MouseParameterType;
+  using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
+  using view_type = usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
 
   view() : holder{nullptr} {}
 
@@ -145,14 +150,16 @@ public:
   explicit operator bool() const { return holder.operator bool(); }
 
 private:
-  std::unique_ptr<usagi::ui::base_view<value_type, draw_context_type>> holder;
+  std::unique_ptr<usagi::ui::base_view<value_type, draw_context_type, mouse_parameter_type>> holder;
 };
 
 template <usagi::concepts::ui::viewable ViewType>
-view(const ViewType &) -> view<typename ViewType::value_type, typename ViewType::draw_context_type>;
+view(const ViewType &) -> view<typename ViewType::value_type, typename ViewType::draw_context_type,
+                               typename ViewType::mouse_parameter_type>;
 
 template <usagi::concepts::ui::viewable ViewType>
-view(ViewType &&) -> view<typename ViewType::value_type, typename ViewType::draw_context_type>;
+view(ViewType &&) -> view<typename ViewType::value_type, typename ViewType::draw_context_type,
+                          typename ViewType::mouse_parameter_type>;
 
 template <usagi::concepts::ui::viewable ViewType, class... Args>
 inline constexpr decltype(auto) make_view(Args &&...args) {

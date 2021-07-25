@@ -7,43 +7,44 @@
 namespace usagi::type {
 struct mouse {
   template <usagi::utility::arithmetic ValueType>
-  struct parameters {
-    parameters() = default;
-    parameters(ValueType _x, ValueType _y) : x{_x}, y{_y} {}
-
+  struct default_parameter {
     ValueType x, y;
   };
 
-  template <usagi::utility::arithmetic ValueType>
-  struct on_down : parameters<ValueType> {
+  template <class ParameterType>
+  struct on_down : ParameterType {
     on_down() = default;
-    on_down(ValueType _x, ValueType _y) : parameters<ValueType>{_x, _y} {}
+    template <class... Args>
+    explicit on_down(Args &&...args) : ParameterType{std::forward<Args>(args)...} {}
   };
 
-  template <usagi::utility::arithmetic ValueType>
-  struct on_drag : parameters<ValueType> {
+  template <class ParameterType>
+  struct on_drag : ParameterType {
     on_drag() = default;
-    on_drag(ValueType _x, ValueType _y) : parameters<ValueType>{_x, _y} {}
+    template <class... Args>
+    explicit on_drag(Args &&...args) : ParameterType{std::forward<Args>(args)...} {}
   };
 
-  template <usagi::utility::arithmetic ValueType>
-  struct on_up : parameters<ValueType> {
+  template <class ParameterType>
+  struct on_up : ParameterType {
     on_up() = default;
-    on_up(ValueType _x, ValueType _y) : parameters<ValueType>{_x, _y} {}
+    template <class... Args>
+    explicit on_up(Args &&...args) : ParameterType{std::forward<Args>(args)...} {}
   };
 
-  template <usagi::utility::arithmetic ValueType>
-  struct on_over : parameters<ValueType> {
+  template <class ParameterType>
+  struct on_over : ParameterType {
     on_over() = default;
-    on_over(ValueType _x, ValueType _y) : parameters<ValueType>{_x, _y} {}
+    template <class... Args>
+    explicit on_over(Args &&...args) : ParameterType{std::forward<Args>(args)...} {}
   };
 };
 
-template <usagi::utility::arithmetic ValueType>
+template <class ParameterType>
 struct mouse_traits {
-  using on_down_type = mouse::on_down<ValueType>;
-  using on_drag_type = mouse::on_drag<ValueType>;
-  using on_up_type = mouse::on_up<ValueType>;
-  using on_over_type = mouse::on_over<ValueType>;
+  using on_down_type = mouse::on_down<ParameterType>;
+  using on_drag_type = mouse::on_drag<ParameterType>;
+  using on_up_type = mouse::on_up<ParameterType>;
+  using on_over_type = mouse::on_over<ParameterType>;
 };
 } // namespace usagi::type

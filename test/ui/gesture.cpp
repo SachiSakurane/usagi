@@ -144,7 +144,6 @@ TEST(GestureTest, Gestures) {
     g.on_down_holder(view::mouse_traits::on_down_type{}, v);
     g.on_drag_holder(view::mouse_traits::on_drag_type{}, v);
     g.on_up_holder(view::mouse_traits::on_up_type{}, v);
-    g.on_over_holder(view::mouse_traits::on_over_type{}, v);
 
     ASSERT_EQ(stamp.size(), 0);
   }

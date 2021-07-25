@@ -20,8 +20,5 @@ concept clickable = requires(ClickableType &c) {
 
   c.event(usagi::type::mouse::on_up{std::declval<typename ClickableType::value_type>(),
                                     std::declval<typename ClickableType::value_type>()});
-
-  c.event(usagi::type::mouse::on_over{std::declval<typename ClickableType::value_type>(),
-                                      std::declval<typename ClickableType::value_type>()});
 };
 } // namespace usagi::concepts::ui

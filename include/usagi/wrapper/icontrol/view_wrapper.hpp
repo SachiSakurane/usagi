@@ -27,7 +27,7 @@ struct iplug_traits {
 
 class view_wrapper : public IControl {
 public:
-  view_wrapper(const IRECT &bounds)
+  explicit view_wrapper(const IRECT &bounds)
       : IControl{bounds}, local_rect{bounds},
         wrapped_bounds{
             usagi::geometry::tupled_rect<iplug_traits::value_type>{[&rect = this->local_rect]() {
@@ -40,6 +40,7 @@ public:
   void Draw(IGraphics &g) override {
     SkCanvas *canvas = static_cast<SkCanvas *>(g.GetDrawContext());
     if (canvas) {
+      canvas->clear(SK_ColorTRANSPARENT);
       local_view.draw(*canvas);
     }
   }

@@ -40,7 +40,6 @@ public:
   void Draw(IGraphics &g) override {
     SkCanvas *canvas = static_cast<SkCanvas *>(g.GetDrawContext());
     if (canvas) {
-      canvas->clear(SK_ColorTRANSPARENT);
       local_view.draw(*canvas);
     }
   }

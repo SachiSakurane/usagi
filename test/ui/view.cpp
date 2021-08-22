@@ -47,8 +47,25 @@ TEST(ViewTest, DrawCase) {
 
 TEST(ViewTest, SubViewCase) {
   auto v = usagi::ui::view{SpecificView{}};
-  auto &sub = v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
-  ASSERT_TRUE(static_cast<bool>(sub));
+
+  ASSERT_FALSE(v.remove_sub_view(0));
+
+  {
+    auto& sub = v.add_sub_view(SpecificView{});
+    ASSERT_TRUE(static_cast<bool>(sub));
+  }
+  ASSERT_EQ(v.sub_view_size(), 1);
+
+  v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
+  ASSERT_EQ(v.sub_view_size(), 2);
+
+  ASSERT_TRUE(v.remove_sub_view(1));
+  ASSERT_EQ(v.sub_view_size(), 1);
+
+  ASSERT_TRUE(v.remove_sub_view(0));
+  ASSERT_EQ(v.sub_view_size(), 0);
+
+  ASSERT_FALSE(v.remove_sub_view(0));
 }
 
 TEST(ViewTest, ClickCase) {

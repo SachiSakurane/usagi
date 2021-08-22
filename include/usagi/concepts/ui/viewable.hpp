@@ -1,5 +1,6 @@
 #pragma once
 
+#include <concepts>
 #include <type_traits>
 #include <utility>
 
@@ -37,5 +38,8 @@ concept viewable = usagi::concepts::ui::clickable<ViewType> &&
   {
     v.add_sub_view(std::declval<typename ViewType::view_type>())
     } -> usagi::utility::convertible_to<std::add_lvalue_reference_t<typename ViewType::view_type>>;
+
+  { v.remove_sub_view(std::declval<size_t>()) } -> std::same_as<bool>;
+  { v.sub_view_size() } -> std::same_as<size_t>;
 };
 } // namespace usagi::concepts::ui

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iterator>
 #include <memory>
 #include <vector>
 
@@ -68,8 +69,22 @@ public:
   }
 
   virtual view_type &add_sub_view(view_type &&sub_view) {
-    return children.emplace_back(std::move(sub_view));
+    return children.emplace_back(std::forward<view_type>(sub_view));
   }
+
+  virtual bool remove_sub_view(size_t index) {
+    if (index < children.size()) {
+      auto it = std::begin(children);
+      std::advance(it, index);
+      if (it != std::end(children)) {
+        children.erase(it);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  virtual size_t sub_view_size() const { return children.size(); }
 
 private:
   rect_type content{};
@@ -116,6 +131,10 @@ class view {
       return holder.add_sub_view(std::forward<view_type>(sub_view));
     }
 
+    bool remove_sub_view(size_t index) override { return holder.remove_sub_view(index); }
+
+    size_t sub_view_size() const override { return holder.sub_view_size(); }
+
   private:
     ViewType holder;
   };
@@ -151,6 +170,10 @@ public:
   view_type &add_sub_view(view_type &&sub_view) {
     return holder->add_sub_view(std::forward<view_type>(sub_view));
   }
+
+  bool remove_sub_view(size_t index) { return holder->remove_sub_view(index); }
+
+  size_t sub_view_size() const { return holder->sub_view_size(); }
 
   explicit operator bool() const { return holder.operator bool(); }
 

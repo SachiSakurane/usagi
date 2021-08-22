@@ -18,6 +18,8 @@ struct Viewable : Clickable<ValueType>, Drawable<ValueType, DrawContext> {
   size_type bounds() const;
   rect_type frame() const;
   view_type &add_sub_view(view_type &&);
+  bool remove_sub_view(size_t);
+  size_t sub_view_size() const;
 };
 
 template <usagi::utility::arithmetic ValueType>
@@ -28,7 +30,9 @@ struct UnViewable : Clickable<ValueType>, Drawable<ValueType, DrawContext> {
   using draw_context_type = typename Drawable<ValueType, DrawContext>::draw_context_type;
   using mouse_parameter_type = typename Clickable<ValueType>::mouse_parameter_type;
   using view_type = usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
-  // size_type bounds() const;
+  size_type bounds() const;
   rect_type frame() const;
   view_type &add_sub_view(view_type &&);
+  //bool remove_sub_view(size_t);
+  size_t sub_view_size() const;
 };

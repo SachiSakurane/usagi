@@ -17,6 +17,12 @@ static_assert(usagi::concepts::ui::viewable<decltype(usagi::ui::view{(SpecificVi
               "view is constructable from SpecificView");
 } // namespace
 
+TEST(ViewTest, CommonCase) {
+  auto v = usagi::ui::view{SpecificView{}};
+  auto& vv = v.operator=(std::move(v));
+  ASSERT_TRUE(static_cast<bool>(vv));
+}
+
 TEST(ViewTest, BoundsCase) {
   auto v = usagi::ui::view{usagi::ui::base_view<float, DrawContext, MouseParameter>{
       usagi::geometry::rect<float>{10.f, 10.f, 40.f, 40.f}}};
@@ -26,6 +32,7 @@ TEST(ViewTest, BoundsCase) {
 
 TEST(ViewTest, PredicationCase) {
   {
+    // default constructor case
     auto v = usagi::ui::view<float, DrawContext, MouseParameter>{};
     ASSERT_FALSE(static_cast<bool>(v));
   }

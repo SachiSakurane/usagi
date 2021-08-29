@@ -9,7 +9,8 @@ namespace usagi::concepts::geometry {
  * rectが表現可能
  */
 template <class RectType>
-concept rect_concept = requires(RectType &r) {
+concept rect_concept = usagi::utility::arithmetic<typename RectType::value_type> &&
+    requires(RectType &r) {
   { r.l() } -> usagi::utility::arithmetic;
   { r.t() } -> usagi::utility::arithmetic;
   { r.r() } -> usagi::utility::arithmetic;

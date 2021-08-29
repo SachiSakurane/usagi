@@ -84,7 +84,7 @@ public:
     return false;
   }
 
-  virtual size_t sub_view_size() const { return children.size(); }
+  [[nodiscard]] virtual size_t sub_view_size() const { return children.size(); }
 
 private:
   rect_type content{};
@@ -133,7 +133,7 @@ class view {
 
     bool remove_sub_view(size_t index) override { return holder.remove_sub_view(index); }
 
-    size_t sub_view_size() const override { return holder.sub_view_size(); }
+    [[nodiscard]] size_t sub_view_size() const override { return holder.sub_view_size(); }
 
   private:
     ViewType holder;
@@ -173,7 +173,7 @@ public:
 
   bool remove_sub_view(size_t index) { return holder->remove_sub_view(index); }
 
-  size_t sub_view_size() const { return holder->sub_view_size(); }
+  [[nodiscard]] size_t sub_view_size() const { return holder->sub_view_size(); }
 
   explicit operator bool() const { return holder.operator bool(); }
 

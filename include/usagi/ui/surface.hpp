@@ -49,7 +49,7 @@ struct surface {
 
   bool remove_sub_view(size_t index) { return holder.remove_sub_view(index); }
 
-  size_t sub_view_size() const { return holder.sub_view_size(); }
+  [[nodiscard]] size_t sub_view_size() const { return holder.sub_view_size(); }
 
 private:
   ViewType holder;

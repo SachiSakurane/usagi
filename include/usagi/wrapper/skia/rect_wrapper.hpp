@@ -17,7 +17,7 @@ SkRect to_rect(const PointType &point, const SizeType &size) {
 
 template <usagi::concepts::geometry::rect_concept RectType>
 SkRect to_rect(const RectType &rect) {
-  auto [l, t, r, b] = std::forward<RectType>(rect)();
+  auto [l, t, r, b] = rect();
   return SkRect::MakeLTRB(l, t, r, b);
 }
 

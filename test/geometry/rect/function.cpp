@@ -2,6 +2,13 @@
 #include <usagi/geometry/point/point.hpp>
 #include <usagi/geometry/rect.hpp>
 
+TEST(RectFunctionTest, MakeCase) {
+  auto r = usagi::geometry::make_from_center(
+      usagi::geometry::point<float>{10.f, 10.f},
+      usagi::geometry::size<float>{20.f, 20.f});
+  ASSERT_EQ(r, (usagi::geometry::rect<float>{0.f, 0.f, 20.f, 20.f}));
+}
+
 TEST(RectFunctionTest, FromCase) {
   usagi::geometry::rect<float> r{2.f, 4.f, 42.f, 24.f};
   {

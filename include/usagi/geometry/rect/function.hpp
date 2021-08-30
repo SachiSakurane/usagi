@@ -8,16 +8,21 @@
 namespace usagi::geometry {
 template <concepts::geometry::point_concept PointType, concepts::geometry::size_concept SizeType>
 requires std::is_same_v<typename PointType::value_type, typename SizeType::value_type>
-inline constexpr decltype(auto) make_from_center(const PointType& center, const SizeType& size) {
+inline constexpr decltype(auto) make_from_center(const PointType &center, const SizeType &size) {
   using value_type = typename PointType::value_type;
   constexpr auto two = static_cast<value_type>(2);
-  return tupled_rect<value_type>{
-    [center, size]() { return std::make_tuple(
-                             center.x() - size.width() / two,
-                             center.y() - size.height() / two,
-                             center.x() + size.width() / two,
-                             center.y() + size.height() / two); }
-  };
+  return tupled_rect<value_type>{[center, size]() {
+    return std::make_tuple(center.x() - size.width() / two, center.y() - size.height() / two,
+                           center.x() + size.width() / two, center.y() + size.height() / two);
+  }};
+}
+
+template <concepts::geometry::rect_concept RectType>
+inline constexpr decltype(auto) transform(const RectType &rect, typename RectType::value_type x,
+                                          typename RectType::value_type y) {
+  return tupled_rect<typename RectType::value_type>{[rect, x, y]() {
+    return std::make_tuple(rect.l() + x, rect.t() + y, rect.r() + x, rect.b() + y);
+  }};
 }
 
 template <concepts::geometry::rect_concept RectType>

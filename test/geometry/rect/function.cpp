@@ -3,10 +3,15 @@
 #include <usagi/geometry/rect.hpp>
 
 TEST(RectFunctionTest, MakeCase) {
-  auto r = usagi::geometry::make_from_center(
-      usagi::geometry::point<float>{10.f, 10.f},
-      usagi::geometry::size<float>{20.f, 20.f});
+  auto r = usagi::geometry::make_from_center(usagi::geometry::point<float>{10.f, 10.f},
+                                             usagi::geometry::size<float>{20.f, 20.f});
   ASSERT_EQ(r, (usagi::geometry::rect<float>{0.f, 0.f, 20.f, 20.f}));
+}
+
+TEST(RectFunctionTest, TransformCase) {
+  usagi::geometry::rect<float> r{0.f, 0.f, 40.f, 40.f};
+  ASSERT_EQ(usagi::geometry::transform(r, 2.f, 2.f),
+            (usagi::geometry::rect<float>{2.f, 2.f, 42.f, 42.f}));
 }
 
 TEST(RectFunctionTest, FromCase) {

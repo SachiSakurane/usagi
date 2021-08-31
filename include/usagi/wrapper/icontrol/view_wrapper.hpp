@@ -9,6 +9,7 @@ namespace usagi::wrapper::icontrol {
 template <usagi::utility::arithmetic ValueType>
 struct iplug_mouse_parameter {
   ValueType x, y;
+  // update mouse pointer
   IGraphics *graphics;
 };
 

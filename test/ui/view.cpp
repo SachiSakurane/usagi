@@ -19,7 +19,7 @@ static_assert(usagi::concepts::ui::viewable<decltype(usagi::ui::view{(SpecificVi
 
 TEST(ViewTest, CommonCase) {
   auto v = usagi::ui::view{SpecificView{}};
-  auto& vv = v.operator=(std::move(v));
+  auto &vv = v.operator=(std::move(v));
   ASSERT_TRUE(static_cast<bool>(vv));
 }
 
@@ -58,7 +58,7 @@ TEST(ViewTest, SubViewCase) {
   ASSERT_FALSE(v.remove_sub_view(0));
 
   {
-    auto& sub = v.add_sub_view(SpecificView{});
+    auto &sub = v.add_sub_view(SpecificView{});
     ASSERT_TRUE(static_cast<bool>(sub));
   }
   ASSERT_EQ(v.sub_view_size(), 1);
@@ -82,6 +82,7 @@ TEST(ViewTest, ClickCase) {
   v.event(SpecificView::mouse_traits::on_over_type{});
   v.event(SpecificView::mouse_traits::on_up_type{});
   v.event(SpecificView::mouse_traits::on_out_type{});
+  v.event(SpecificView::mouse_traits::on_double_click_type{});
 
   // sub case
   v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
@@ -90,6 +91,7 @@ TEST(ViewTest, ClickCase) {
   v.event(SpecificView::mouse_traits::on_over_type{});
   v.event(SpecificView::mouse_traits::on_up_type{});
   v.event(SpecificView::mouse_traits::on_out_type{});
+  v.event(SpecificView::mouse_traits::on_double_click_type{});
 }
 
 TEST(ViewTest, MakeCase) {

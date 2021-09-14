@@ -148,6 +148,7 @@ TEST(GestureTest, Gestures) {
     g.on_up_holder(view::mouse_traits::on_up_type{}, v);
     g.on_over_holder(view::mouse_traits::on_over_type{}, v);
     g.on_out_holder(view::mouse_traits::on_out_type{}, v);
+    g.on_double_click_type(view::mouse_traits::on_double_click_type{}, v);
 
     ASSERT_EQ(stamp.size(), 0);
   }

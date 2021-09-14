@@ -34,10 +34,11 @@ public:
             usagi::geometry::tupled_rect<iplug_traits::value_type>{[&rect = this->local_rect]() {
               return std::make_tuple(rect.L, rect.T, rect.R, rect.B);
             }}},
-        local_view{iplug_traits::base_view_type{wrapped_bounds}} {
-    mDblAsSingleClick = true;
-  }
+        local_view{iplug_traits::base_view_type{wrapped_bounds}} {}
 
+  void set_double_click_enabled(bool flag) { mDblAsSingleClick = !flag; }
+
+  // IControl
   void Draw(IGraphics &g) override {
     SkCanvas *canvas = static_cast<SkCanvas *>(g.GetDrawContext());
     if (canvas) {
@@ -70,6 +71,11 @@ public:
   void OnMouseOut() override {
     local_view.event(iplug_traits::mouse_traits::on_out_type{0.f, 0.f, GetUI()});
     IControl::OnMouseOut();
+  }
+
+  void OnMouseDblClick(float x, float y, const IMouseMod &mod) override {
+    local_view.event(iplug_traits::mouse_traits::on_double_click_type{0.f, 0.f, GetUI()});
+    IControl::OnMouseDblClick(x, y, mod);
   }
 
 protected:

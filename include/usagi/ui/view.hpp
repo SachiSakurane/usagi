@@ -68,6 +68,11 @@ public:
       child.event(mouse);
   }
 
+  virtual void event(typename mouse_traits::on_double_click_type mouse) {
+    for (auto &child : children)
+      child.event(mouse);
+  }
+
   virtual view_type &add_sub_view(view_type &&sub_view) {
     return children.emplace_back(std::forward<view_type>(sub_view));
   }
@@ -126,6 +131,7 @@ class view {
     void event(typename mouse_traits::on_up_type mouse) override { holder.event(mouse); }
     void event(typename mouse_traits::on_over_type mouse) override { holder.event(mouse); }
     void event(typename mouse_traits::on_out_type mouse) override { holder.event(mouse); }
+    void event(typename mouse_traits::on_double_click_type mouse) override { holder.event(mouse); }
 
     view_type &add_sub_view(view_type &&sub_view) override {
       return holder.add_sub_view(std::forward<view_type>(sub_view));
@@ -166,6 +172,7 @@ public:
   void event(typename mouse_traits::on_up_type mouse) { holder->event(mouse); }
   void event(typename mouse_traits::on_over_type mouse) { holder->event(mouse); }
   void event(typename mouse_traits::on_out_type mouse) { holder->event(mouse); }
+  void event(typename mouse_traits::on_double_click_type mouse) { holder->event(mouse); }
 
   view_type &add_sub_view(view_type &&sub_view) {
     return holder->add_sub_view(std::forward<view_type>(sub_view));

@@ -74,7 +74,7 @@ public:
   }
 
   void OnMouseDblClick(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_double_click_type{0.f, 0.f, GetUI()});
+    local_view.event(iplug_traits::mouse_traits::on_double_click_type{x, y, GetUI()});
     IControl::OnMouseDblClick(x, y, mod);
   }
 

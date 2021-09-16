@@ -14,83 +14,28 @@ inline constexpr bool operator!=(const usagi::concepts::geometry::point_concept 
   return !(lhs == rhs);
 }
 
-template <usagi::concepts::geometry::point_concept PointType>
-inline constexpr decltype(auto) operator+(typename PointType::value_type &&lhs,
-                                          const PointType &rhs) {
-  return usagi::geometry::tupled_point<typename PointType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs + rhs.x(), lhs + rhs.y()); }};
-}
+#define USAGI_POINT_OPERATORS(OP)                                                                  \
+  template <usagi::utility::arithmetic ValueType>                                                  \
+  inline constexpr decltype(auto) operator OP(ValueType lhs,                                       \
+                                              const usagi::geometry::point<ValueType> &rhs) {      \
+    return usagi::geometry::point<ValueType>{lhs OP rhs.x(), lhs OP rhs.y()};                      \
+  }                                                                                                \
+  template <usagi::utility::arithmetic ValueType>                                                  \
+  inline constexpr decltype(auto) operator OP(const usagi::geometry::point<ValueType> &lhs,        \
+                                              ValueType rhs) {                                     \
+    return usagi::geometry::point<ValueType>{lhs.x() OP rhs, lhs.y() OP rhs};                      \
+  }                                                                                                \
+  template <usagi::utility::arithmetic ValueType>                                                  \
+  inline constexpr decltype(auto) operator OP(const usagi::geometry::point<ValueType> &lhs,        \
+                                              const usagi::geometry::point<ValueType> &rhs) {      \
+    return usagi::geometry::point<ValueType>{lhs.x() OP rhs.x(), lhs.y() OP rhs.y()};              \
+  }
 
-template <usagi::concepts::geometry::point_concept PointType>
-inline constexpr decltype(auto) operator+(const PointType &lhs,
-                                          typename PointType::value_type &&rhs) {
-  return usagi::geometry::tupled_point<typename PointType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs.x() + rhs, lhs.y() + rhs); }};
-}
+USAGI_POINT_OPERATORS(+)
+USAGI_POINT_OPERATORS(-)
+USAGI_POINT_OPERATORS(*)
+USAGI_POINT_OPERATORS(/)
 
-template <usagi::concepts::geometry::point_concept PointType>
-inline constexpr decltype(auto) operator+(const PointType &lhs, const PointType &rhs) {
-  return usagi::geometry::tupled_point<typename PointType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs.x() + rhs.x(), lhs.y() + rhs.y()); }};
-}
+#undef USAGI_POINT_OPERATORS
 
-template <usagi::concepts::geometry::point_concept PointType>
-inline constexpr decltype(auto) operator-(typename PointType::value_type &&lhs,
-                                          const PointType &rhs) {
-  return usagi::geometry::tupled_point<typename PointType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs - rhs.x(), lhs - rhs.y()); }};
-}
-
-template <usagi::concepts::geometry::point_concept PointType>
-inline constexpr decltype(auto) operator-(const PointType &lhs,
-                                          typename PointType::value_type &&rhs) {
-  return usagi::geometry::tupled_point<typename PointType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs.x() - rhs, lhs.y() - rhs); }};
-}
-
-template <usagi::concepts::geometry::point_concept PointType>
-inline constexpr decltype(auto) operator-(const PointType &lhs, const PointType &rhs) {
-  return usagi::geometry::tupled_point<typename PointType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs.x() - rhs.x(), lhs.y() - rhs.y()); }};
-}
-
-template <usagi::concepts::geometry::point_concept PointType>
-inline constexpr decltype(auto) operator*(typename PointType::value_type &&lhs,
-                                          const PointType &rhs) {
-  return usagi::geometry::tupled_point<typename PointType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs * rhs.x(), lhs * rhs.y()); }};
-}
-
-template <usagi::concepts::geometry::point_concept PointType>
-inline constexpr decltype(auto) operator*(const PointType &lhs,
-                                          typename PointType::value_type &&rhs) {
-  return usagi::geometry::tupled_point<typename PointType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs.x() * rhs, lhs.y() * rhs); }};
-}
-
-template <usagi::concepts::geometry::point_concept PointType>
-inline constexpr decltype(auto) operator*(const PointType &lhs, const PointType &rhs) {
-  return usagi::geometry::tupled_point<typename PointType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs.x() * rhs.x(), lhs.y() * rhs.y()); }};
-}
-
-template <usagi::concepts::geometry::point_concept PointType>
-inline constexpr decltype(auto) operator/(typename PointType::value_type &&lhs,
-                                          const PointType &rhs) {
-  return usagi::geometry::tupled_point<typename PointType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs / rhs.x(), lhs / rhs.y()); }};
-}
-
-template <usagi::concepts::geometry::point_concept PointType>
-inline constexpr decltype(auto) operator/(const PointType &lhs,
-                                          typename PointType::value_type &&rhs) {
-  return usagi::geometry::tupled_point<typename PointType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs.x() / rhs, lhs.y() / rhs); }};
-}
-
-template <usagi::concepts::geometry::point_concept PointType>
-inline constexpr decltype(auto) operator/(const PointType &lhs, const PointType &rhs) {
-  return usagi::geometry::tupled_point<typename PointType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs.x() / rhs.x(), lhs.y() / rhs.y()); }};
-}
 } // namespace usagi::geometry

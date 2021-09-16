@@ -8,23 +8,20 @@
 namespace usagi::geometry {
 template <usagi::utility::arithmetic Type>
 struct point {
-  using value_type = typename usagi::variable_traits<Type>::value_type;
-  using variable_type = typename usagi::variable_traits<Type>::variable_type;
+  using value_type = Type;
 
   constexpr point() : x_{}, y_{} {}
   constexpr explicit point(const usagi::concepts::geometry::size_concept auto &s)
-      : x_{[s]() { return s.width(); }}, y_{[s]() { return s.height(); }} {}
-  constexpr point(variable_type x, variable_type y) : x_{x}, y_{y} {}
+      : x_{s.width()}, y_{s.height()} {}
+  constexpr point(value_type x, value_type y) : x_{x}, y_{y} {}
 
-  value_type x() const { return x_(); }
-  value_type y() const { return y_(); }
+  value_type x() const { return x_; }
+  value_type y() const { return y_; }
 
-  usagi::utility::mono_tuple<value_type, 2> operator()() const { return {x_(), y_()}; }
-
-  point<value_type> duplicate() const { return point<value_type>{x(), y()}; }
+  usagi::utility::mono_tuple<value_type, 2> operator()() const { return {x_, y_}; }
 
 private:
-  variable_type x_, y_;
+  const value_type x_, y_;
 };
 
 template <usagi::concepts::geometry::size_concept SizeType>
@@ -34,20 +31,20 @@ point(const SizeType &) -> point<typename SizeType::value_type>;
  * tuple特殊化
  */
 template <usagi::utility::arithmetic Type>
-struct tupled_point {
+struct variable_point {
   using value_type = Type;
   using pair_type = usagi::utility::mono_tuple<value_type, 2>;
   using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
 
-  constexpr tupled_point() : functor{} {}
-  constexpr explicit tupled_point(variable_type s) : functor{s} {}
+  constexpr variable_point() : functor{} {}
+  constexpr variable_point(variable_type s) : functor{s} {}
 
   value_type x() const { return std::get<0>(functor()); }
   value_type y() const { return std::get<1>(functor()); }
 
   usagi::utility::mono_tuple<value_type, 2> operator()() const { return {functor()}; }
 
-  tupled_point<value_type> duplicate() const { return tupled_point<value_type>{functor()}; }
+  variable_point<value_type> duplicate() const { return variable_point<value_type>{functor()}; }
 
 private:
   variable_type functor;

@@ -14,91 +14,44 @@ inline constexpr bool operator!=(const usagi::concepts::geometry::size_concept a
   return !(lhs == rhs);
 }
 
-template <usagi::concepts::geometry::size_concept SizeType>
-inline constexpr decltype(auto) operator+(typename SizeType::value_type &&lhs,
-                                          const SizeType &rhs) {
-  return usagi::geometry::tupled_size<typename SizeType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs + rhs.width(), lhs + rhs.height()); }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) operator+(const usagi::geometry::size<ValueType> &lhs,
+                                          const usagi::geometry::size<ValueType> &rhs) {
+  return usagi::geometry::size<ValueType>{lhs.width() + rhs.width(), lhs.height() + rhs.height()};
 }
 
-template <usagi::concepts::geometry::size_concept SizeType>
-inline constexpr decltype(auto) operator+(const SizeType &lhs,
-                                          typename SizeType::value_type &&rhs) {
-  return usagi::geometry::tupled_size<typename SizeType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs.width() + rhs, lhs.height() + rhs); }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) operator-(const usagi::geometry::size<ValueType> &lhs,
+                                          const usagi::geometry::size<ValueType> &rhs) {
+  return usagi::geometry::size<ValueType>{lhs.width() - rhs.width(), lhs.height() - rhs.height()};
 }
 
-template <usagi::concepts::geometry::size_concept SizeType>
-inline constexpr decltype(auto) operator+(const SizeType &lhs, const SizeType &rhs) {
-  return usagi::geometry::tupled_size<typename SizeType::value_type>{[lhs, rhs]() {
-    return std::make_tuple(lhs.width() + rhs.width(), lhs.height() + rhs.height());
-  }};
-}
-
-template <usagi::concepts::geometry::size_concept SizeType>
-inline constexpr decltype(auto) operator-(typename SizeType::value_type &&lhs,
-                                          const SizeType &rhs) {
-  return usagi::geometry::tupled_size<typename SizeType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs - rhs.width(), lhs - rhs.height()); }};
-}
-
-template <usagi::concepts::geometry::size_concept SizeType>
-inline constexpr decltype(auto) operator-(const SizeType &lhs,
-                                          typename SizeType::value_type &&rhs) {
-  return usagi::geometry::tupled_size<typename SizeType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs.width() - rhs, lhs.height() - rhs); }};
-}
-
-template <usagi::concepts::geometry::size_concept SizeType>
-inline constexpr decltype(auto) operator-(const SizeType &lhs, const SizeType &rhs) {
-  return usagi::geometry::tupled_size<typename SizeType::value_type>{[lhs, rhs]() {
-    return std::make_tuple(lhs.width() - rhs.width(), lhs.height() - rhs.height());
-  }};
-}
-
-template <usagi::concepts::geometry::size_concept SizeType>
-inline constexpr decltype(auto) operator*(typename SizeType::value_type &&lhs,
-                                          const SizeType &rhs) {
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) operator*(ValueType lhs,
+                                          const usagi::geometry::size<ValueType> &rhs) {
   assert(lhs >= 0);
-  return usagi::geometry::tupled_size<typename SizeType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs * rhs.width(), lhs * rhs.height()); }};
+  return usagi::geometry::size<ValueType>{lhs * rhs.width(), lhs * rhs.height()};
 }
 
-template <usagi::concepts::geometry::size_concept SizeType>
-inline constexpr decltype(auto) operator*(const SizeType &lhs,
-                                          typename SizeType::value_type &&rhs) {
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) operator*(const usagi::geometry::size<ValueType> &lhs,
+                                          ValueType rhs) {
   assert(rhs >= 0);
-  return usagi::geometry::tupled_size<typename SizeType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs.width() * rhs, lhs.height() * rhs); }};
+  return usagi::geometry::size<ValueType>{lhs.width() * rhs, lhs.height() * rhs};
 }
 
-template <usagi::concepts::geometry::size_concept SizeType>
-inline constexpr decltype(auto) operator*(const SizeType &lhs, const SizeType &rhs) {
-  return usagi::geometry::tupled_size<typename SizeType::value_type>{[lhs, rhs]() {
-    return std::make_tuple(lhs.width() * rhs.width(), lhs.height() * rhs.height());
-  }};
-}
-
-template <usagi::concepts::geometry::size_concept SizeType>
-inline constexpr decltype(auto) operator/(typename SizeType::value_type &&lhs,
-                                          const SizeType &rhs) {
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) operator/(ValueType lhs,
+                                          const usagi::geometry::size<ValueType> &rhs) {
   assert(lhs >= 0);
-  return usagi::geometry::tupled_size<typename SizeType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs / rhs.width(), lhs / rhs.height()); }};
+  return usagi::geometry::size<ValueType>{lhs / rhs.width(), lhs / rhs.height()};
 }
 
-template <usagi::concepts::geometry::size_concept SizeType>
-inline constexpr decltype(auto) operator/(const SizeType &lhs,
-                                          typename SizeType::value_type &&rhs) {
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) operator/(const usagi::geometry::size<ValueType> &lhs,
+                                          ValueType rhs) {
   assert(rhs > 0);
-  return usagi::geometry::tupled_size<typename SizeType::value_type>{
-      [lhs, rhs]() { return std::make_tuple(lhs.width() / rhs, lhs.height() / rhs); }};
+  return usagi::geometry::size<ValueType>{lhs.width() / rhs, lhs.height() / rhs};
 }
 
-template <usagi::concepts::geometry::size_concept SizeType>
-inline constexpr decltype(auto) operator/(const SizeType &lhs, const SizeType &rhs) {
-  return usagi::geometry::tupled_size<typename SizeType::value_type>{[lhs, rhs]() {
-    return std::make_tuple(lhs.width() / rhs.width(), lhs.height() / rhs.height());
-  }};
-}
 } // namespace usagi::geometry

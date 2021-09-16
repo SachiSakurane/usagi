@@ -27,7 +27,7 @@ TEST(RectFunctionTest, FromCase) {
     ASSERT_EQ(rr.b(), 14.0f);
   }
   {
-    auto rr = usagi::geometry::from_right(r, 10.0);
+    auto rr = usagi::geometry::from_right(r, 10.f);
     ASSERT_EQ(rr.l(), 32.f);
     ASSERT_EQ(rr.r(), 42.f);
   }
@@ -49,22 +49,30 @@ TEST(RectFunctionTest, FromCase) {
 TEST(RectFunctionTest, ReduceFromCase) {
   usagi::geometry::rect<float> rect{0.f, 0.f, 42.f, 42.f};
   {
-    auto rr = usagi::geometry::reduce_from_left(rect, 1.f);
+    auto [reduced, rr] = usagi::geometry::reduce_from_left(rect, 1.f);
+    ASSERT_EQ(reduced.l(), 0.f);
+    ASSERT_EQ(reduced.size().width(), 1.f);
     ASSERT_EQ(rr.l(), 1.f);
     ASSERT_EQ(rr.size().width(), 41.f);
   }
   {
-    auto rr = usagi::geometry::reduce_from_top(rect, 1.f);
+    auto [reduced, rr] = usagi::geometry::reduce_from_top(rect, 1.f);
+    ASSERT_EQ(reduced.t(), 0.f);
+    ASSERT_EQ(reduced.size().height(), 1.f);
     ASSERT_EQ(rr.t(), 1.f);
     ASSERT_EQ(rr.size().height(), 41.f);
   }
   {
-    auto rr = usagi::geometry::reduce_from_right(rect, 2.f);
+    auto [reduced, rr] = usagi::geometry::reduce_from_right(rect, 2.f);
+    ASSERT_EQ(reduced.r(), 42.f);
+    ASSERT_EQ(reduced.size().width(), 2.f);
     ASSERT_EQ(rr.r(), 40.f);
     ASSERT_EQ(rr.size().width(), 40.f);
   }
   {
-    auto rr = usagi::geometry::reduce_from_bottom(rect, 2.f);
+    auto [reduced, rr] = usagi::geometry::reduce_from_bottom(rect, 2.f);
+    ASSERT_EQ(reduced.b(), 42.f);
+    ASSERT_EQ(reduced.size().height(), 2.f);
     ASSERT_EQ(rr.b(), 40.f);
     ASSERT_EQ(rr.size().height(), 40.f);
   }

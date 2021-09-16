@@ -11,79 +11,48 @@ namespace usagi::geometry {
 template <usagi::utility::arithmetic Type>
 struct rect {
 public:
-  using value_type = typename usagi::variable_traits<Type>::value_type;
-  using variable_type = typename usagi::variable_traits<value_type>::variable_type;
+  using value_type = Type;
   using size_type = usagi::geometry::size<value_type>;
   using point_type = usagi::geometry::point<value_type>;
 
   constexpr rect() : left{}, top{}, right{}, bottom{} {}
 
-  constexpr rect(variable_type l, variable_type t, variable_type r, variable_type b)
-      : left{l}, top{t}, right{r}, bottom{b} {}
+  constexpr rect(value_type l, value_type t, value_type r, value_type b)
+      : left{l}, top{t}, right{r}, bottom{b} {
+    assert(left <= right);
+    assert(top <= bottom);
+  }
 
   constexpr explicit rect(const concepts::geometry::size_concept auto &size)
       : rect(point_type{}, size) {}
 
   constexpr rect(const concepts::geometry::point_concept auto &point,
                  const concepts::geometry::size_concept auto &size)
-      : left{[point]() { return point.x(); }}, top{[point]() { return point.y(); }},
-        right([size, point]() { return point.x() + size.width(); }), bottom{[size, point]() {
-          return point.y() + size.height();
-        }} {}
+      : left{point.x()}, top{point.y()}, right{point.x() + size.width()}, bottom{point.y() +
+                                                                                 size.height()} {
+    assert(left <= right);
+    assert(top <= bottom);
+  }
 
   constexpr explicit rect(const concepts::geometry::rect_concept auto &r)
-      : left{[r]() { return r.l(); }}, top{[r]() { return r.t(); }},
-        right([r]() { return r.r(); }), bottom{[r]() { return r.b(); }} {}
+      : left{r.l()}, top{r.t()}, right{r.r()}, bottom{r.b()} {}
 
-  decltype(auto) l() const {
-    decltype(auto) v = left();
-    assert(v <= right());
-    return v;
-  }
+  value_type l() const { return left; }
+  value_type t() const { return top; }
+  value_type r() const { return right; }
+  value_type b() const { return bottom; }
 
-  decltype(auto) t() const {
-    decltype(auto) v = top();
-    assert(v <= bottom());
-    return v;
-  }
-
-  decltype(auto) r() const {
-    decltype(auto) v = right();
-    assert(left() <= v);
-    return v;
-  }
-
-  decltype(auto) b() const {
-    decltype(auto) v = bottom();
-    assert(top() <= v);
-    return v;
-  }
-
-  size_type size() const {
-    return size_type{[r = this->right, l = this->left]() { return r() - l(); },
-                     [b = this->bottom, t = this->top]() { return b() - t(); }};
-  }
+  size_type size() const { return size_type{r() - l(), b() - t()}; }
 
   point_type center() const {
-    return point_type{
-        [r = this->right, l = this->left]() { return (r() + l()) / static_cast<value_type>(2); },
-        [b = this->bottom, t = this->top]() { return (b() + t()) / static_cast<value_type>(2); }};
+    return point_type{(r() + l()) / static_cast<value_type>(2),
+                      (b() + t()) / static_cast<value_type>(2)};
   }
 
-  usagi::utility::mono_tuple<value_type, 4> operator()() const {
-    decltype(auto) l = left();
-    decltype(auto) t = top();
-    decltype(auto) r = right();
-    decltype(auto) b = bottom();
-    assert(l <= r);
-    assert(t <= b);
-    return {l, t, r, b};
-  }
-
-  rect<value_type> duplicate() const { return rect<value_type>{left(), top(), right(), bottom()}; }
+  usagi::utility::mono_tuple<value_type, 4> operator()() const { return {l(), t(), r(), b()}; }
 
 private:
-  variable_type left, top, right, bottom;
+  const value_type left, top, right, bottom;
 };
 
 template <usagi::concepts::geometry::size_concept SizeType>
@@ -99,7 +68,7 @@ rect(const PointType &, const SizeType &) -> rect<typename SizeType::value_type>
  * tupled特殊化
  */
 template <usagi::utility::arithmetic Type>
-struct tupled_rect {
+struct variable_rect {
 public:
   using value_type = typename usagi::variable_traits<Type>::value_type;
   using pair_type = utility::mono_tuple<value_type, 4>;
@@ -107,8 +76,8 @@ public:
   using size_type = geometry::size<value_type>;
   using point_type = geometry::point<value_type>;
 
-  constexpr tupled_rect() : functor{} {}
-  constexpr explicit tupled_rect(variable_type v) : functor{v} {}
+  constexpr variable_rect() : functor{} {}
+  constexpr explicit variable_rect(variable_type v) : functor{v} {}
 
   value_type l() const {
     auto v = std::get<0>(functor());
@@ -155,7 +124,7 @@ public:
     return {l, t, r, b};
   }
 
-  tupled_rect<value_type> duplicate() const { return tupled_rect<value_type>{functor()}; }
+  variable_rect<value_type> duplicate() const { return variable_rect<value_type>{functor()}; }
 
 private:
   variable_type functor;

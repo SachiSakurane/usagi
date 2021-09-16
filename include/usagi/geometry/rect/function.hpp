@@ -77,32 +77,32 @@ template <usagi::utility::arithmetic ValueType>
 inline constexpr decltype(auto) reduce_from_left(const usagi::geometry::rect<ValueType> &rect,
                                                  ValueType l) {
   ValueType sep = rect.l() + l;
-  return std::make_tuple(usagi::geometry::rect<ValueType>{sep, rect.t(), rect.r(), rect.b()},
-                         usagi::geometry::rect<ValueType>{rect.l(), rect.t(), sep, rect.b()});
+  return std::make_tuple(usagi::geometry::rect<ValueType>{rect.l(), rect.t(), sep, rect.b()},
+                         usagi::geometry::rect<ValueType>{sep, rect.t(), rect.r(), rect.b()});
 }
 
 template <usagi::utility::arithmetic ValueType>
 inline constexpr decltype(auto) reduce_from_top(const usagi::geometry::rect<ValueType> &rect,
                                                 ValueType t) {
   ValueType sep = rect.t() + t;
-  return std::make_tuple(usagi::geometry::rect<ValueType>{rect.l(), sep, rect.r(), rect.b()},
-                         usagi::geometry::rect<ValueType>{rect.l(), rect.t(), rect.r(), sep});
+  return std::make_tuple(usagi::geometry::rect<ValueType>{rect.l(), rect.t(), rect.r(), sep},
+                         usagi::geometry::rect<ValueType>{rect.l(), sep, rect.r(), rect.b()});
 }
 
 template <usagi::utility::arithmetic ValueType>
 inline constexpr decltype(auto) reduce_from_right(const usagi::geometry::rect<ValueType> &rect,
                                                   ValueType r) {
   ValueType sep = rect.r() - r;
-  return std::make_tuple(usagi::geometry::rect<ValueType>{rect.l(), rect.t(), sep, rect.b()},
-                         usagi::geometry::rect<ValueType>{sep, rect.t(), rect.r(), rect.b()});
+  return std::make_tuple(usagi::geometry::rect<ValueType>{sep, rect.t(), rect.r(), rect.b()},
+                         usagi::geometry::rect<ValueType>{rect.l(), rect.t(), sep, rect.b()});
 }
 
 template <usagi::utility::arithmetic ValueType>
 inline constexpr decltype(auto) reduce_from_bottom(const usagi::geometry::rect<ValueType> &rect,
                                                    ValueType b) {
   ValueType sep = rect.b() - b;
-  return std::make_tuple(usagi::geometry::rect<ValueType>{rect.l(), rect.t(), rect.r(), sep},
-                         usagi::geometry::rect<ValueType>{rect.l(), sep, rect.r(), rect.b()});
+  return std::make_tuple(usagi::geometry::rect<ValueType>{rect.l(), sep, rect.r(), rect.b()},
+                         usagi::geometry::rect<ValueType>{rect.l(), rect.t(), rect.r(), sep});
 }
 
 inline constexpr bool contain(const concepts::geometry::rect_concept auto &r,

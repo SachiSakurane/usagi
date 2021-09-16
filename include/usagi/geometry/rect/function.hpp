@@ -3,109 +3,106 @@
 #include <algorithm>
 
 #include <usagi/concepts/geometry.hpp>
+#include <usagi/geometry/point/point.hpp>
 #include <usagi/geometry/rect/rect.hpp>
+#include <usagi/geometry/size/size.hpp>
 
 namespace usagi::geometry {
-template <concepts::geometry::point_concept PointType, concepts::geometry::size_concept SizeType>
-requires std::is_same_v<typename PointType::value_type, typename SizeType::value_type>
-inline constexpr decltype(auto) make_from_center(const PointType &center, const SizeType &size) {
-  using value_type = typename PointType::value_type;
-  constexpr auto two = static_cast<value_type>(2);
-  return tupled_rect<value_type>{[center, size]() {
-    return std::make_tuple(center.x() - size.width() / two, center.y() - size.height() / two,
-                           center.x() + size.width() / two, center.y() + size.height() / two);
-  }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) make_from_center(const usagi::geometry::point<ValueType> &center,
+                                                 const usagi::geometry::size<ValueType> &size) {
+  constexpr usagi::utility::arithmetic auto two = static_cast<ValueType>(2);
+  return usagi::geometry::rect<ValueType>{
+      center.x() - size.width() / two, center.y() - size.height() / two,
+      center.x() + size.width() / two, center.y() + size.height() / two};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) transform(const RectType &rect, typename RectType::value_type x,
-                                          typename RectType::value_type y) {
-  return tupled_rect<typename RectType::value_type>{[rect, x, y]() {
-    return std::make_tuple(rect.l() + x, rect.t() + y, rect.r() + x, rect.b() + y);
-  }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) transform(const usagi::geometry::rect<ValueType> &rect, ValueType x,
+                                          ValueType y) {
+  return usagi::geometry::rect<ValueType>{rect.l() + x, rect.t() + y, rect.r() + x, rect.b() + y};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) from_left(const RectType &rect, typename RectType::value_type l) {
-  return tupled_rect<typename RectType::value_type>{
-      [rect, l]() { return std::make_tuple(rect.l(), rect.t(), rect.l() + l, rect.b()); }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) from_left(const usagi::geometry::rect<ValueType> &rect,
+                                          ValueType l) {
+  return usagi::geometry::rect<ValueType>{rect.l(), rect.t(), rect.l() + l, rect.b()};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) from_top(const RectType &rect, typename RectType::value_type t) {
-  return tupled_rect<typename RectType::value_type>{
-      [rect, t]() { return std::make_tuple(rect.l(), rect.t(), rect.r(), rect.t() + t); }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) from_top(const usagi::geometry::rect<ValueType> &rect,
+                                         ValueType t) {
+  return usagi::geometry::rect<ValueType>{rect.l(), rect.t(), rect.r(), rect.t() + t};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) from_right(const RectType &rect, typename RectType::value_type r) {
-  return tupled_rect<typename RectType::value_type>{
-      [rect, r]() { return std::make_tuple(rect.r() - r, rect.t(), rect.r(), rect.b()); }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) from_right(const usagi::geometry::rect<ValueType> &rect,
+                                           ValueType r) {
+  return usagi::geometry::rect<ValueType>{rect.r() - r, rect.t(), rect.r(), rect.b()};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) from_bottom(const RectType &rect, typename RectType::value_type b) {
-  return tupled_rect<typename RectType::value_type>{
-      [rect, b]() { return std::make_tuple(rect.l(), rect.b() - b, rect.r(), rect.b()); }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) from_bottom(const usagi::geometry::rect<ValueType> &rect,
+                                            ValueType b) {
+  return usagi::geometry::rect<ValueType>{rect.l(), rect.b() - b, rect.r(), rect.b()};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) from_width(const RectType &rect, typename RectType::value_type w) {
-  return tupled_rect<typename RectType::value_type>{[rect, w]() {
-    auto cx = rect.center().x();
-    return std::make_tuple(cx - w * static_cast<typename RectType::value_type>(0.5f), rect.t(),
-                           cx + w * static_cast<typename RectType::value_type>(0.5f), rect.b());
-  }};
+template <usagi::utility::floating_point ValueType>
+inline constexpr decltype(auto) from_width(const usagi::geometry::rect<ValueType> &rect,
+                                           ValueType w) {
+  auto cx = rect.center().x();
+  return usagi::geometry::rect<ValueType>{cx - w * static_cast<ValueType>(0.5), rect.t(),
+                                          cx + w * static_cast<ValueType>(0.5), rect.b()};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) from_height(const RectType &rect, typename RectType::value_type h) {
-  return tupled_rect<typename RectType::value_type>{[rect, h]() {
-    auto cy = rect.center().y();
-    return std::make_tuple(rect.l(), cy - h * static_cast<typename RectType::value_type>(0.5f),
-                           rect.r(), cy + h * static_cast<typename RectType::value_type>(0.5f));
-  }};
+template <usagi::utility::floating_point ValueType>
+inline constexpr decltype(auto) from_height(const usagi::geometry::rect<ValueType> &rect,
+                                            ValueType h) {
+  auto cy = rect.center().y();
+  return usagi::geometry::rect<ValueType>{rect.l(), cy - h * static_cast<ValueType>(0.5), rect.r(),
+                                          cy + h * static_cast<ValueType>(0.5)};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) from_size(const RectType &rect, typename RectType::value_type w,
-                                          typename RectType::value_type h) {
-  return tupled_rect<typename RectType::value_type>{[rect, w, h]() {
-    auto cx = rect.center().x();
-    auto cy = rect.center().y();
-    return std::make_tuple(cx - w * static_cast<typename RectType::value_type>(0.5f),
-                           cy - h * static_cast<typename RectType::value_type>(0.5f),
-                           cx + w * static_cast<typename RectType::value_type>(0.5f),
-                           cy + h * static_cast<typename RectType::value_type>(0.5f));
-  }};
+template <usagi::utility::floating_point ValueType>
+inline constexpr decltype(auto) from_size(const usagi::geometry::rect<ValueType> &rect, ValueType w,
+                                          ValueType h) {
+  auto cx = rect.center().x();
+  auto cy = rect.center().y();
+  return usagi::geometry::rect<ValueType>{
+      cx - w * static_cast<ValueType>(0.5), cy - h * static_cast<ValueType>(0.5),
+      cx + w * static_cast<ValueType>(0.5), cy + h * static_cast<ValueType>(0.5)};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) reduce_from_left(const RectType &rect,
-                                                 typename RectType::value_type l) {
-  return tupled_rect<typename RectType::value_type>{
-      [rect, l]() { return std::make_tuple(rect.l() + l, rect.t(), rect.r(), rect.b()); }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) reduce_from_left(const usagi::geometry::rect<ValueType> &rect,
+                                                 ValueType l) {
+  ValueType sep = rect.l() + l;
+  return std::make_tuple(usagi::geometry::rect<ValueType>{sep, rect.t(), rect.r(), rect.b()},
+                         usagi::geometry::rect<ValueType>{rect.l(), rect.t(), sep, rect.b()});
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) reduce_from_top(const RectType &rect,
-                                                typename RectType::value_type t) {
-  return tupled_rect<typename RectType::value_type>{
-      [rect, t]() { return std::make_tuple(rect.l(), rect.t() + t, rect.r(), rect.b()); }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) reduce_from_top(const usagi::geometry::rect<ValueType> &rect,
+                                                ValueType t) {
+  ValueType sep = rect.t() + t;
+  return std::make_tuple(usagi::geometry::rect<ValueType>{rect.l(), sep, rect.r(), rect.b()},
+                         usagi::geometry::rect<ValueType>{rect.l(), rect.t(), rect.r(), sep});
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) reduce_from_right(const RectType &rect,
-                                                  typename RectType::value_type r) {
-  return tupled_rect<typename RectType::value_type>{
-      [rect, r]() { return std::make_tuple(rect.l(), rect.t(), rect.r() - r, rect.b()); }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) reduce_from_right(const usagi::geometry::rect<ValueType> &rect,
+                                                  ValueType r) {
+  ValueType sep = rect.r() - r;
+  return std::make_tuple(usagi::geometry::rect<ValueType>{rect.l(), rect.t(), sep, rect.b()},
+                         usagi::geometry::rect<ValueType>{sep, rect.t(), rect.r(), rect.b()});
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) reduce_from_bottom(const RectType &rect,
-                                                   typename RectType::value_type b) {
-  return tupled_rect<typename RectType::value_type>{
-      [rect, b]() { return std::make_tuple(rect.l(), rect.t(), rect.r(), rect.b() - b); }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) reduce_from_bottom(const usagi::geometry::rect<ValueType> &rect,
+                                                   ValueType b) {
+  ValueType sep = rect.b() - b;
+  return std::make_tuple(usagi::geometry::rect<ValueType>{rect.l(), rect.t(), rect.r(), sep},
+                         usagi::geometry::rect<ValueType>{rect.l(), sep, rect.r(), rect.b()});
 }
 
 inline constexpr bool contain(const concepts::geometry::rect_concept auto &r,
@@ -113,80 +110,66 @@ inline constexpr bool contain(const concepts::geometry::rect_concept auto &r,
   return (r.l() <= p.x() && p.x() <= r.r()) && (r.t() <= p.y() && p.y() <= r.b());
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) padding(const RectType &rect, typename RectType::value_type v) {
-  return tupled_rect<typename RectType::value_type>{[rect, v]() {
-    auto l = rect.l() + v;
-    auto t = rect.t() + v;
-    auto r = rect.r() - v;
-    auto b = rect.b() - v;
-    bool w = l < r;
-    bool h = t < b;
-    return std::make_tuple(w ? l : (l + r) / static_cast<typename RectType::value_type>(2),
-                           h ? t : (t + b) / static_cast<typename RectType::value_type>(2),
-                           w ? r : (l + r) / static_cast<typename RectType::value_type>(2),
-                           h ? b : (t + b) / static_cast<typename RectType::value_type>(2));
-  }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) padding(const usagi::geometry::rect<ValueType> &rect, ValueType v) {
+  constexpr usagi::utility::arithmetic auto two = static_cast<ValueType>(2);
+  auto l = rect.l() + v;
+  auto t = rect.t() + v;
+  auto r = rect.r() - v;
+  auto b = rect.b() - v;
+  bool w = l < r;
+  bool h = t < b;
+  return usagi::geometry::rect<ValueType>{w ? l : (l + r) / two, h ? t : (t + b) / two,
+                                          w ? r : (l + r) / two, h ? b : (t + b) / two};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) padding(const RectType &rect, typename RectType::value_type tb,
-                                        typename RectType::value_type lr) {
-  return tupled_rect<typename RectType::value_type>{[rect, tb, lr]() {
-    auto l = rect.l() + lr;
-    auto t = rect.t() + tb;
-    auto r = rect.r() - lr;
-    auto b = rect.b() - tb;
-    bool wb = l < r;
-    bool hb = t < b;
-    return std::make_tuple(wb ? l : (l + r) / static_cast<typename RectType::value_type>(2),
-                           hb ? t : (t + b) / static_cast<typename RectType::value_type>(2),
-                           wb ? r : (l + r) / static_cast<typename RectType::value_type>(2),
-                           hb ? b : (t + b) / static_cast<typename RectType::value_type>(2));
-  }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) padding(const usagi::geometry::rect<ValueType> &rect, ValueType tb,
+                                        ValueType lr) {
+  constexpr usagi::utility::arithmetic auto two = static_cast<ValueType>(2);
+  auto l = rect.l() + lr;
+  auto t = rect.t() + tb;
+  auto r = rect.r() - lr;
+  auto b = rect.b() - tb;
+  bool wb = l < r;
+  bool hb = t < b;
+  return usagi::geometry::rect<ValueType>{wb ? l : (l + r) / two, hb ? t : (t + b) / two,
+                                          wb ? r : (l + r) / two, hb ? b : (t + b) / two};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) padding(const RectType &rect, typename RectType::value_type t,
-                                        typename RectType::value_type lr,
-                                        typename RectType::value_type b) {
-  return tupled_rect<typename RectType::value_type>{[rect, t, lr, b]() {
-    auto l_ = rect.l() + lr;
-    auto t_ = rect.t() + t;
-    auto r_ = rect.r() - lr;
-    auto b_ = rect.b() - b;
-    bool wb = l_ < r_;
-    bool hb = t_ < b_;
-    return std::make_tuple(wb ? l_ : (l_ + r_) / static_cast<typename RectType::value_type>(2),
-                           hb ? t_ : (t_ + b_) / static_cast<typename RectType::value_type>(2),
-                           wb ? r_ : (l_ + r_) / static_cast<typename RectType::value_type>(2),
-                           hb ? b_ : (t_ + b_) / static_cast<typename RectType::value_type>(2));
-  }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) padding(const usagi::geometry::rect<ValueType> &rect, ValueType t,
+                                        ValueType lr, ValueType b) {
+  constexpr usagi::utility::arithmetic auto two = static_cast<ValueType>(2);
+  auto l_ = rect.l() + lr;
+  auto t_ = rect.t() + t;
+  auto r_ = rect.r() - lr;
+  auto b_ = rect.b() - b;
+  bool wb = l_ < r_;
+  bool hb = t_ < b_;
+  return usagi::geometry::rect<ValueType>{wb ? l_ : (l_ + r_) / two, hb ? t_ : (t_ + b_) / two,
+                                          wb ? r_ : (l_ + r_) / two, hb ? b_ : (t_ + b_) / two};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) padding_width(const RectType &rect,
-                                              typename RectType::value_type v) {
-  return tupled_rect<typename RectType::value_type>{[rect, v]() {
-    auto l = rect.l() + v;
-    auto r = rect.r() - v;
-    bool w = l < r;
-    return std::make_tuple(
-        w ? l : (l + r) / static_cast<typename RectType::value_type>(2), rect.t(),
-        w ? r : (l + r) / static_cast<typename RectType::value_type>(2), rect.b());
-  }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) padding_width(const usagi::geometry::rect<ValueType> &rect,
+                                              ValueType v) {
+  constexpr usagi::utility::arithmetic auto two = static_cast<ValueType>(2);
+  auto l = rect.l() + v;
+  auto r = rect.r() - v;
+  bool w = l < r;
+  return usagi::geometry::rect<ValueType>{w ? l : (l + r) / two, rect.t(), w ? r : (l + r) / two,
+                                          rect.b()};
 }
 
-template <concepts::geometry::rect_concept RectType>
-inline constexpr decltype(auto) padding_height(const RectType &rect,
-                                               typename RectType::value_type v) {
-  return tupled_rect<typename RectType::value_type>{[rect, v]() {
-    auto t = rect.t() + v;
-    auto b = rect.b() - v;
-    bool h = t < b;
-    return std::make_tuple(
-        rect.l(), h ? t : (t + b) / static_cast<typename RectType::value_type>(2), rect.r(),
-        h ? b : (t + b) / static_cast<typename RectType::value_type>(2));
-  }};
+template <usagi::utility::arithmetic ValueType>
+inline constexpr decltype(auto) padding_height(const usagi::geometry::rect<ValueType> &rect,
+                                               ValueType v) {
+  constexpr usagi::utility::arithmetic auto two = static_cast<ValueType>(2);
+  auto t = rect.t() + v;
+  auto b = rect.b() - v;
+  bool h = t < b;
+  return usagi::geometry::rect<ValueType>{rect.l(), h ? t : (t + b) / two, rect.r(),
+                                          h ? b : (t + b) / two};
 }
 } // namespace usagi::geometry

@@ -12,50 +12,42 @@ namespace usagi::geometry {
  */
 template <usagi::utility::arithmetic Type>
 struct size {
-  using value_type = typename usagi::variable_traits<Type>::value_type;
-  using variable_type = typename usagi::variable_traits<Type>::variable_type;
+  using value_type = Type;
 
   constexpr size() : width_{}, height_{} {}
-  constexpr size(variable_type w, variable_type h) : width_{w}, height_{h} {}
+  constexpr size(value_type w, value_type h) : width_{w}, height_{h} {
+    assert(width_ >= 0);
+    assert(height_ >= 0);
+  }
 
   value_type width() const {
-    decltype(auto) w = width_();
-    assert(w >= 0);
-    return w;
+    return width_;
   }
 
   value_type height() const {
-    decltype(auto) h = height_();
-    assert(h >= 0);
-    return h;
+    return height_;
   }
 
   usagi::utility::mono_tuple<value_type, 2> operator()() const {
-    decltype(auto) w = width_();
-    decltype(auto) h = height_();
-    assert(w >= 0);
-    assert(h >= 0);
-    return {w, h};
+    return {width_, height_};
   }
 
-  size<value_type> duplicate() const { return size<value_type>{width(), height()}; }
-
 private:
-  variable_type width_, height_;
+  const value_type width_, height_;
 };
 
 /**
- * tuple特殊化
+ * variable特殊化
  */
 template <usagi::utility::arithmetic Type>
-struct tupled_size {
+struct variable_size {
   using value_type = Type;
   using pair_type = usagi::utility::mono_tuple<value_type, 2>;
   using size_type = typename usagi::variable_traits<pair_type>::value_type;
   using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
 
-  constexpr tupled_size() : functor{} {}
-  constexpr tupled_size(variable_type s) : functor{s} {}
+  constexpr variable_size() : functor{} {}
+  constexpr explicit variable_size(variable_type s) : functor{s} {}
 
   value_type width() const {
     auto w = std::get<0>(functor());
@@ -76,7 +68,7 @@ struct tupled_size {
     return {w, h};
   }
 
-  tupled_size<value_type> duplicate() const { return tupled_size<value_type>{functor()}; }
+  variable_size<value_type> duplicate() const { return variable_size<value_type>{functor()}; }
 
 private:
   variable_type functor;

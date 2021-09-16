@@ -4,7 +4,7 @@
 
 namespace {
 static_assert(usagi::concepts::geometry::size_concept<usagi::geometry::size<int>>);
-static_assert(usagi::concepts::geometry::size_concept<usagi::geometry::tupled_size<int>>);
+static_assert(usagi::concepts::geometry::size_concept<usagi::geometry::variable_size<int>>);
 } // namespace
 
 TEST(SizeTest, ConstructorCase) {
@@ -15,53 +15,39 @@ TEST(SizeTest, ConstructorCase) {
   }
 
   {
-    usagi::geometry::size<float> s{42.f, []() { return 24.f; }};
+    usagi::geometry::size<float> s{42.f, 24.f};
     ASSERT_EQ(s.width(), 42.f);
     ASSERT_EQ(s.height(), 24.f);
   }
 
   {
-    usagi::geometry::tupled_size<float> s{std::make_tuple(42.f, 24.f)};
+    usagi::geometry::variable_size<float> s{[]() { return std::make_tuple(42.f, 24.f); }};
     ASSERT_EQ(s.width(), 42.f);
     ASSERT_EQ(s.height(), 24.f);
   }
-}
 
-TEST(SizeTest, CommonCase) {
-  usagi::geometry::size<float> s{42.f, []() { return 42.f; }};
-  ASSERT_EQ(s.width(), 42);
-  ASSERT_EQ(s.height(), 42);
-  auto ss = s;
-  s = {24.f, []() { return 24.f; }};
-  ASSERT_EQ(s.width(), 24);
-  ASSERT_EQ(s.height(), 24);
-  ASSERT_EQ(ss.width(), 42);
-  ASSERT_EQ(ss.height(), 42);
+  {
+    float side = 42.f;
+    usagi::geometry::variable_size<float> p{[&side]() { return std::make_tuple(42.f, side); }};
+    ASSERT_EQ(p.width(), 42.f);
+    ASSERT_EQ(p.height(), 42.f);
+    side = 20;
+    ASSERT_EQ(p.height(), 20.f);
+  }
 }
 
 TEST(SizeTest, BindCase) {
   {
-    usagi::geometry::size<float> s{42.f, []() { return 24.f; }};
+    usagi::geometry::size<float> s{42.f, 24.f};
     auto [w, h] = s();
     ASSERT_EQ(s.width(), w);
     ASSERT_EQ(s.height(), h);
   }
 
   {
-    usagi::geometry::tupled_size<float> s{std::make_tuple(42.f, 24.f)};
+    usagi::geometry::variable_size<float> s{[]() { return std::make_tuple(42.f, 24.f); }};
     auto [w, h] = s();
     ASSERT_EQ(s.width(), w);
     ASSERT_EQ(s.height(), h);
   }
-}
-
-TEST(SizeTest, DuplicateCase) {
-  float side = 42.f;
-  usagi::geometry::size<float> s{42.f, [&side]() { return side; }};
-  auto c = s.duplicate();
-  ASSERT_EQ(c.width(), 42);
-  ASSERT_EQ(c.height(), 42);
-  side = 20;
-  ASSERT_EQ(s.height(), 20);
-  ASSERT_EQ(c.height(), 42);
 }

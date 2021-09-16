@@ -29,12 +29,8 @@ struct iplug_traits {
 class view_wrapper : public IControl {
 public:
   explicit view_wrapper(const IRECT &bounds)
-      : IControl{bounds}, local_rect{bounds},
-        wrapped_bounds{
-            usagi::geometry::tupled_rect<iplug_traits::value_type>{[&rect = this->local_rect]() {
-              return std::make_tuple(rect.L, rect.T, rect.R, rect.B);
-            }}},
-        local_view{iplug_traits::base_view_type{wrapped_bounds}} {}
+      : IControl{bounds}, local_view{iplug_traits::base_view_type{
+                              iplug_traits::rect_type{bounds.L, bounds.T, bounds.R, bounds.B}}} {}
 
   void set_double_click_enabled(bool flag) { mDblAsSingleClick = !flag; }
 
@@ -45,8 +41,6 @@ public:
       local_view.draw(*canvas);
     }
   }
-
-  void OnResize() override { local_rect = GetRECT(); }
 
   void OnMouseDown(float x, float y, const IMouseMod &mod) override {
     local_view.event(iplug_traits::mouse_traits::on_down_type{x, y, GetUI()});
@@ -79,8 +73,6 @@ public:
   }
 
 protected:
-  IRECT local_rect;
-  iplug_traits::rect_type wrapped_bounds;
   iplug_traits::view_type local_view;
 };
 } // namespace usagi::wrapper::icontrol

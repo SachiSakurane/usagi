@@ -11,6 +11,10 @@ struct Clickable {
   void event(typename mouse_traits::on_up_type);
   void event(typename mouse_traits::on_over_type);
   void event(typename mouse_traits::on_out_type);
+  void set_mouse_down(bool flag);
+  void set_mouse_over(bool flag);
+  bool is_mouse_downed();
+  bool is_mouse_overed();
 };
 
 template <class ValueType>

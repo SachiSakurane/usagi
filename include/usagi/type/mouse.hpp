@@ -44,6 +44,7 @@ struct mouse {
     on_out() = default;
     template <class... Args>
     explicit on_out(Args &&...args) : ParameterType{std::forward<Args>(args)...} {}
+    on_out(const ParameterType& p) : ParameterType{p} {}
   };
 
   template <class ParameterType>

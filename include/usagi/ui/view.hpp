@@ -42,36 +42,67 @@ public:
   virtual rect_type frame() const { return content; }
 
   virtual void event(typename mouse_traits::on_down_type mouse) {
-    if (usagi::geometry::contain(frame(), point_type{mouse.x, mouse.y}))
-      for (auto &child : children)
+    set_mouse_down(true);
+    auto point = point_type{mouse.x, mouse.y};
+    for (auto &child : children) {
+      if (usagi::geometry::contain(child.frame(), point)) {
+        child.set_mouse_down(true);
         child.event(mouse);
+      }
+    }
   }
 
   virtual void event(typename mouse_traits::on_drag_type mouse) {
     for (auto &child : children)
-      child.event(mouse);
+      if (child.is_mouse_downed()) {
+        child.event(mouse);
+      }
   }
 
   virtual void event(typename mouse_traits::on_up_type mouse) {
-    for (auto &child : children)
-      child.event(mouse);
+    set_mouse_down(false);
+    auto point = point_type{mouse.x, mouse.y};
+    for (auto &child : children) {
+      if (child.is_mouse_downed()) {
+        child.set_mouse_down(false);
+        child.event(mouse);
+      }
+    }
   }
 
+  // ここに来るイベントは contain を想定する
   virtual void event(typename mouse_traits::on_over_type mouse) {
-    if (usagi::geometry::contain(frame(), point_type{mouse.x, mouse.y}))
-      for (auto &child : children)
+    set_mouse_over(true);
+    auto point = point_type{mouse.x, mouse.y};
+    for (auto &child : children) {
+      if (usagi::geometry::contain(child.frame(), point)) {
+        child.set_mouse_over(true);
         child.event(mouse);
+      } else if (child.is_mouse_overed() == true) {
+        child.set_mouse_over(false);
+        child.event(typename mouse_traits::on_out_type{mouse});
+      }
+    }
   }
 
   virtual void event(typename mouse_traits::on_out_type mouse) {
+    set_mouse_over(false);
     for (auto &child : children)
       child.event(mouse);
   }
 
   virtual void event(typename mouse_traits::on_double_click_type mouse) {
+    auto point = point_type{mouse.x, mouse.y};
     for (auto &child : children)
-      child.event(mouse);
+      if (usagi::geometry::contain(child.frame(), point))
+        child.event(mouse);
   }
+
+  virtual void set_mouse_down(bool flag) { mouse_downed = flag; }
+  virtual void set_mouse_over(bool flag) { mouse_overed = flag; }
+
+  [[nodiscard]] virtual bool is_mouse_downed() const { return mouse_downed; }
+  [[nodiscard]] virtual bool is_mouse_overed() const { return mouse_overed; }
 
   virtual view_type &add_sub_view(view_type &&sub_view) {
     return children.emplace_back(std::forward<view_type>(sub_view));
@@ -94,6 +125,8 @@ public:
 private:
   rect_type content{};
   std::vector<view_type> children;
+  bool mouse_downed{false};
+  bool mouse_overed{false};
 };
 
 /**
@@ -132,6 +165,11 @@ class view {
     void event(typename mouse_traits::on_over_type mouse) override { holder.event(mouse); }
     void event(typename mouse_traits::on_out_type mouse) override { holder.event(mouse); }
     void event(typename mouse_traits::on_double_click_type mouse) override { holder.event(mouse); }
+
+    void set_mouse_down(bool flag) override { holder.set_mouse_down(flag); }
+    void set_mouse_over(bool flag) override { holder.set_mouse_over(flag); }
+    [[nodiscard]] bool is_mouse_downed() const override { return holder.is_mouse_downed(); }
+    [[nodiscard]] bool is_mouse_overed() const override { return holder.is_mouse_overed(); }
 
     view_type &add_sub_view(view_type &&sub_view) override {
       return holder.add_sub_view(std::forward<view_type>(sub_view));
@@ -173,6 +211,11 @@ public:
   void event(typename mouse_traits::on_over_type mouse) { holder->event(mouse); }
   void event(typename mouse_traits::on_out_type mouse) { holder->event(mouse); }
   void event(typename mouse_traits::on_double_click_type mouse) { holder->event(mouse); }
+
+  void set_mouse_down(bool flag) { holder->set_mouse_down(flag); }
+  void set_mouse_over(bool flag) { holder->set_mouse_over(flag); }
+  [[nodiscard]] bool is_mouse_downed() const { return holder->is_mouse_downed(); }
+  [[nodiscard]] bool is_mouse_overed() const { return holder->is_mouse_overed(); }
 
   view_type &add_sub_view(view_type &&sub_view) {
     return holder->add_sub_view(std::forward<view_type>(sub_view));

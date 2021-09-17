@@ -151,6 +151,11 @@ struct gesture {
     holder.event(mouse);
   }
 
+  void set_mouse_down(bool flag) { holder.set_mouse_down(flag); }
+  void set_mouse_over(bool flag) { holder.set_mouse_over(flag); }
+  [[nodiscard]] bool is_mouse_downed() const { return holder.is_mouse_downed(); }
+  [[nodiscard]] bool is_mouse_overed() const { return holder.is_mouse_overed(); }
+
   view_type &add_sub_view(view_type &&sub_view) {
     return holder.add_sub_view(std::forward<view_type>(sub_view));
   }

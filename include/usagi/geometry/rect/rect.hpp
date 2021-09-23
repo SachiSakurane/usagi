@@ -52,7 +52,7 @@ public:
   usagi::utility::mono_tuple<value_type, 4> operator()() const { return {l(), t(), r(), b()}; }
 
 private:
-  const value_type left, top, right, bottom;
+  value_type left, top, right, bottom;
 };
 
 template <usagi::concepts::geometry::size_concept SizeType>

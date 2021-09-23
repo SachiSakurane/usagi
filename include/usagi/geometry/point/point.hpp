@@ -21,7 +21,7 @@ struct point {
   usagi::utility::mono_tuple<value_type, 2> operator()() const { return {x_, y_}; }
 
 private:
-  const value_type x_, y_;
+  value_type x_, y_;
 };
 
 template <usagi::concepts::geometry::size_concept SizeType>

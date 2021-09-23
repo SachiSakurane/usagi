@@ -33,7 +33,7 @@ struct size {
   }
 
 private:
-  const value_type width_, height_;
+  value_type width_, height_;
 };
 
 /**

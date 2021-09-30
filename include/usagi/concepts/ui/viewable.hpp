@@ -35,8 +35,15 @@ concept viewable = usagi::concepts::ui::clickable<ViewType> &&
   { v.bounds() } -> usagi::concepts::geometry::size_concept;
   { v.frame() } -> usagi::concepts::geometry::rect_concept;
 
+  v.set_enabled(std::declval<bool>());
+  { v.is_enabled() } -> std::same_as<bool>;
+
   {
     v.add_sub_view(std::declval<typename ViewType::view_type>())
+    } -> usagi::utility::convertible_to<std::add_lvalue_reference_t<typename ViewType::view_type>>;
+
+  {
+    v.get_sub_view(std::declval<std::size_t>())
     } -> usagi::utility::convertible_to<std::add_lvalue_reference_t<typename ViewType::view_type>>;
 
   { v.remove_sub_view(std::declval<std::size_t>()) } -> std::same_as<bool>;

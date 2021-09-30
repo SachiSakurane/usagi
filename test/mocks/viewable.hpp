@@ -18,8 +18,11 @@ struct Viewable : Clickable<ValueType>, Drawable<ValueType, DrawContext> {
   size_type bounds() const;
   rect_type frame() const;
   view_type &add_sub_view(view_type &&);
+  view_type &get_sub_view(size_t);
   bool remove_sub_view(size_t);
   size_t sub_view_size() const;
+  void set_enabled(bool flag);
+  bool is_enabled() const;
 };
 
 template <usagi::utility::arithmetic ValueType>

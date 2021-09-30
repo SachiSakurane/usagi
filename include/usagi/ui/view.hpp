@@ -34,7 +34,9 @@ public:
 
   virtual void draw(draw_context_type &context) {
     for (auto &child : children) {
-      child.draw(context);
+      if (child.is_enabled()) {
+        child.draw(context);
+      }
     }
   }
 
@@ -45,7 +47,7 @@ public:
     set_mouse_down(true);
     auto point = point_type{mouse.x, mouse.y};
     for (auto &child : children) {
-      if (usagi::geometry::contain(child.frame(), point)) {
+      if (child.is_enabled() && usagi::geometry::contain(child.frame(), point)) {
         child.set_mouse_down(true);
         child.event(mouse);
       }
@@ -75,7 +77,7 @@ public:
     set_mouse_over(true);
     auto point = point_type{mouse.x, mouse.y};
     for (auto &child : children) {
-      if (usagi::geometry::contain(child.frame(), point)) {
+      if (child.is_enabled() && usagi::geometry::contain(child.frame(), point)) {
         child.set_mouse_over(true);
         child.event(mouse);
       } else if (child.is_mouse_overed() == true) {
@@ -94,7 +96,7 @@ public:
   virtual void event(typename mouse_traits::on_double_click_type mouse) {
     auto point = point_type{mouse.x, mouse.y};
     for (auto &child : children)
-      if (usagi::geometry::contain(child.frame(), point))
+      if (child.is_enabled() && usagi::geometry::contain(child.frame(), point))
         child.event(mouse);
   }
 
@@ -107,6 +109,8 @@ public:
   virtual view_type &add_sub_view(view_type &&sub_view) {
     return children.emplace_back(std::forward<view_type>(sub_view));
   }
+
+  virtual view_type &get_sub_view(size_t index) { return children[index]; }
 
   virtual bool remove_sub_view(size_t index) {
     if (index < children.size()) {
@@ -122,11 +126,15 @@ public:
 
   [[nodiscard]] virtual size_t sub_view_size() const { return children.size(); }
 
+  virtual void set_enabled(bool flag) { enabled = flag; }
+  [[nodiscard]] virtual bool is_enabled() const { return enabled; }
+
 private:
   rect_type content{};
   std::vector<view_type> children;
   bool mouse_downed{false};
   bool mouse_overed{false};
+  bool enabled{true};
 };
 
 /**
@@ -175,9 +183,14 @@ class view {
       return holder.add_sub_view(std::forward<view_type>(sub_view));
     }
 
+    view_type &get_sub_view(size_t index) override { return holder.get_sub_view(index); }
+
     bool remove_sub_view(size_t index) override { return holder.remove_sub_view(index); }
 
     [[nodiscard]] size_t sub_view_size() const override { return holder.sub_view_size(); }
+
+    void set_enabled(bool flag) override { holder.set_enabled(flag); }
+    [[nodiscard]] bool is_enabled() const override { return holder.is_enabled(); }
 
   private:
     ViewType holder;
@@ -221,9 +234,14 @@ public:
     return holder->add_sub_view(std::forward<view_type>(sub_view));
   }
 
+  view_type &get_sub_view(size_t index) { return holder->get_sub_view(index); }
+
   bool remove_sub_view(size_t index) { return holder->remove_sub_view(index); }
 
   [[nodiscard]] size_t sub_view_size() const { return holder->sub_view_size(); }
+
+  void set_enabled(bool flag) { holder->set_enabled(flag); }
+  [[nodiscard]] bool is_enabled() const { return holder->is_enabled(); }
 
   explicit operator bool() const { return holder.operator bool(); }
 

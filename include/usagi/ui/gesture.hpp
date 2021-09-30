@@ -160,9 +160,14 @@ struct gesture {
     return holder.add_sub_view(std::forward<view_type>(sub_view));
   }
 
+  view_type &get_sub_view(size_t index) { return holder.get_sub_view(index); }
+
   bool remove_sub_view(size_t index) { return holder.remove_sub_view(index); }
 
   [[nodiscard]] size_t sub_view_size() const { return holder.sub_view_size(); }
+
+  void set_enabled(bool flag) { holder.set_enabled(flag); }
+  [[nodiscard]] bool is_enabled() const { return holder.is_enabled(); }
 
 private:
   ViewType holder;

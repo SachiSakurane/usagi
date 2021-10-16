@@ -133,12 +133,10 @@ public:
   }
 
   virtual bool remove_sub_view(children_key_type index) {
-    if (index < children.size()) {
-      const auto it = std::next(std::cbegin(children), index);
-      if (it != std::cend(children)) {
-        children.erase(it);
-        return true;
-      }
+    if (auto it = children.find(index); it != std::end(children))
+    {
+      children.erase(it);
+      return true;
     }
     return false;
   }

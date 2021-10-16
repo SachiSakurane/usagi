@@ -60,16 +60,22 @@ TEST(ViewTest, SubViewCase) {
   {
     decltype(auto) sub = v.add_sub_view(SpecificView{});
     ASSERT_TRUE(static_cast<bool>(sub.second));
+    decltype(auto) get_sub = v.get_sub_view(sub.first);
+    ASSERT_EQ(&sub.second, &get_sub);
+    ASSERT_TRUE(v.remove_sub_view(sub.first));
   }
+  ASSERT_EQ(v.sub_view_size(), 0);
+
+  decltype(auto) sub1 = v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
   ASSERT_EQ(v.sub_view_size(), 1);
 
-  v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
+  decltype(auto) sub2 = v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
   ASSERT_EQ(v.sub_view_size(), 2);
 
-  ASSERT_TRUE(v.remove_sub_view(1));
+  ASSERT_TRUE(v.remove_sub_view(sub2.first));
   ASSERT_EQ(v.sub_view_size(), 1);
 
-  ASSERT_TRUE(v.remove_sub_view(0));
+  ASSERT_TRUE(v.remove_sub_view(sub1.first));
   ASSERT_EQ(v.sub_view_size(), 0);
 
   ASSERT_FALSE(v.remove_sub_view(0));

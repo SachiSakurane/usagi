@@ -32,8 +32,6 @@ template <class ViewType>
 concept viewable = usagi::concepts::ui::clickable<ViewType> &&
     usagi::concepts::ui::drawable<ViewType> && usagi::concepts::ui::hierarchy<ViewType> &&
     requires(ViewType &v) {
-  typename ViewType::view_type;
-
   { v.bounds() } -> usagi::concepts::geometry::size_concept;
   { v.frame() } -> usagi::concepts::geometry::rect_concept;
 

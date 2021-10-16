@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iterator>
+#include <map>
 #include <memory>
-#include <vector>
 
 #include <usagi/concepts/geometry.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
@@ -24,6 +24,11 @@ public:
   using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
   using view_type = usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
 
+  using children_mapped_type = view_type;
+  using children_key_type = size_t;
+  using children_type = std::map<children_key_type, children_mapped_type>;
+  using children_value_type = typename children_type::value_type;
+
   base_view() = default;
   explicit base_view(const usagi::concepts::geometry::rect_concept auto &frame) : content{frame} {}
 
@@ -33,7 +38,8 @@ public:
   virtual ~base_view() = default;
 
   virtual void draw(draw_context_type &context) {
-    for (auto &child : children) {
+    for (auto &value : children) {
+      auto &child = value.second;
       if (child.is_enabled()) {
         child.draw(context);
       }
@@ -46,7 +52,8 @@ public:
   virtual void event(typename mouse_traits::on_down_type mouse) {
     set_mouse_down(true);
     auto point = point_type{mouse.x, mouse.y};
-    for (auto &child : children) {
+    for (auto &value : children) {
+      auto &child = value.second;
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), point)) {
         child.set_mouse_down(true);
         child.event(mouse);
@@ -55,16 +62,19 @@ public:
   }
 
   virtual void event(typename mouse_traits::on_drag_type mouse) {
-    for (auto &child : children)
+    for (auto &value : children) {
+      auto &child = value.second;
       if (child.is_mouse_downed()) {
         child.event(mouse);
       }
+    }
   }
 
   virtual void event(typename mouse_traits::on_up_type mouse) {
     set_mouse_down(false);
     auto point = point_type{mouse.x, mouse.y};
-    for (auto &child : children) {
+    for (auto &value : children) {
+      auto &child = value.second;
       if (child.is_mouse_downed()) {
         child.set_mouse_down(false);
         child.event(mouse);
@@ -76,7 +86,8 @@ public:
   virtual void event(typename mouse_traits::on_over_type mouse) {
     set_mouse_over(true);
     auto point = point_type{mouse.x, mouse.y};
-    for (auto &child : children) {
+    for (auto &value : children) {
+      auto &child = value.second;
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), point)) {
         child.set_mouse_over(true);
         child.event(mouse);
@@ -89,15 +100,19 @@ public:
 
   virtual void event(typename mouse_traits::on_out_type mouse) {
     set_mouse_over(false);
-    for (auto &child : children)
+    for (auto &value : children) {
+      auto &child = value.second;
       child.event(mouse);
+    }
   }
 
   virtual void event(typename mouse_traits::on_double_click_type mouse) {
     auto point = point_type{mouse.x, mouse.y};
-    for (auto &child : children)
+    for (auto &value : children) {
+      auto &child = value.second;
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), point))
         child.event(mouse);
+    }
   }
 
   virtual void set_mouse_down(bool flag) { mouse_downed = flag; }
@@ -106,13 +121,19 @@ public:
   [[nodiscard]] virtual bool is_mouse_downed() const { return mouse_downed; }
   [[nodiscard]] virtual bool is_mouse_overed() const { return mouse_overed; }
 
-  virtual view_type &add_sub_view(view_type &&sub_view) {
-    return children.emplace_back(std::forward<view_type>(sub_view));
+  virtual children_value_type &add_sub_view(children_mapped_type &&sub_view) {
+    const auto current_index = children_next_index;
+    children_next_index += 1;
+    return *children.try_emplace(std::cend(children), current_index,
+                                 std::forward<children_mapped_type>(sub_view));
   }
 
-  virtual view_type &get_sub_view(size_t index) { return children[index]; }
+  virtual children_mapped_type &get_sub_view(children_key_type index) {
+    assert(children.find(index) != std::end(children));
+    return children.at(index);
+  }
 
-  virtual bool remove_sub_view(size_t index) {
+  virtual bool remove_sub_view(children_key_type index) {
     if (index < children.size()) {
       auto it = std::begin(children);
       std::advance(it, index);
@@ -131,7 +152,8 @@ public:
 
 private:
   rect_type content{};
-  std::vector<view_type> children;
+  size_t children_next_index{0};
+  children_type children;
   bool mouse_downed{false};
   bool mouse_overed{false};
   bool enabled{true};
@@ -156,6 +178,11 @@ class view {
     using mouse_traits = typename base_view_type::mouse_traits;
     using view_type = typename base_view_type::view_type;
 
+    using children_type = typename base_view_type::children_type;
+    using children_key_type = typename base_view_type::children_key_type;
+    using children_mapped_type = typename base_view_type::children_mapped_type;
+    using children_value_type = typename base_view_type::children_value_type;
+
     explicit view_holder(const ViewType &v) : holder{v} {}
     explicit view_holder(ViewType &&v) : holder{std::move(v)} {}
 
@@ -179,13 +206,15 @@ class view {
     [[nodiscard]] bool is_mouse_downed() const override { return holder.is_mouse_downed(); }
     [[nodiscard]] bool is_mouse_overed() const override { return holder.is_mouse_overed(); }
 
-    view_type &add_sub_view(view_type &&sub_view) override {
-      return holder.add_sub_view(std::forward<view_type>(sub_view));
+    children_value_type &add_sub_view(children_mapped_type &&sub_view) override {
+      return holder.add_sub_view(std::forward<children_mapped_type>(sub_view));
     }
 
-    view_type &get_sub_view(size_t index) override { return holder.get_sub_view(index); }
+    children_mapped_type &get_sub_view(children_key_type index) override {
+      return holder.get_sub_view(index);
+    }
 
-    bool remove_sub_view(size_t index) override { return holder.remove_sub_view(index); }
+    bool remove_sub_view(children_key_type index) override { return holder.remove_sub_view(index); }
 
     [[nodiscard]] size_t sub_view_size() const override { return holder.sub_view_size(); }
 
@@ -198,12 +227,18 @@ class view {
 
 public:
   using value_type = ValueType;
+  using point_type = typename usagi::geometry::geometry_traits<value_type>::point_type;
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = DrawContextType;
   using mouse_parameter_type = MouseParameterType;
   using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
   using view_type = usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
+
+  using children_mapped_type = view_type;
+  using children_key_type = size_t;
+  using children_type = std::map<children_key_type, children_mapped_type>;
+  using children_value_type = typename children_type::value_type;
 
   view() : holder{nullptr} {}
 
@@ -230,13 +265,15 @@ public:
   [[nodiscard]] bool is_mouse_downed() const { return holder->is_mouse_downed(); }
   [[nodiscard]] bool is_mouse_overed() const { return holder->is_mouse_overed(); }
 
-  view_type &add_sub_view(view_type &&sub_view) {
-    return holder->add_sub_view(std::forward<view_type>(sub_view));
+  children_value_type &add_sub_view(children_mapped_type &&sub_view) {
+    return holder->add_sub_view(std::forward<children_mapped_type>(sub_view));
   }
 
-  view_type &get_sub_view(size_t index) { return holder->get_sub_view(index); }
+  children_mapped_type &get_sub_view(children_key_type index) {
+    return holder->get_sub_view(index);
+  }
 
-  bool remove_sub_view(size_t index) { return holder->remove_sub_view(index); }
+  bool remove_sub_view(children_key_type index) { return holder->remove_sub_view(index); }
 
   [[nodiscard]] size_t sub_view_size() const { return holder->sub_view_size(); }
 

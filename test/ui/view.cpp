@@ -58,8 +58,8 @@ TEST(ViewTest, SubViewCase) {
   ASSERT_FALSE(v.remove_sub_view(0));
 
   {
-    auto &sub = v.add_sub_view(SpecificView{});
-    ASSERT_TRUE(static_cast<bool>(sub));
+    decltype(auto) sub = v.add_sub_view(SpecificView{});
+    ASSERT_TRUE(static_cast<bool>(sub.second));
   }
   ASSERT_EQ(v.sub_view_size(), 1);
 

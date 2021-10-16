@@ -27,6 +27,11 @@ struct surface {
   using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
   using view_type = typename ViewType::view_type;
 
+  using children_type = typename ViewType::children_type;
+  using children_key_type = typename ViewType::children_key_type;
+  using children_mapped_type = typename ViewType::children_mapped_type;
+  using children_value_type = typename ViewType::children_value_type;
+
   surface(ViewType &&v, FunctionType f) : holder{std::move(v)}, drawer{f} {}
 
   void draw(draw_context_type &context) {
@@ -49,13 +54,13 @@ struct surface {
   [[nodiscard]] bool is_mouse_downed() const { return holder.is_mouse_downed(); }
   [[nodiscard]] bool is_mouse_overed() const { return holder.is_mouse_overed(); }
 
-  view_type &add_sub_view(view_type &&sub_view) {
-    return holder.add_sub_view(std::forward<view_type>(sub_view));
+  children_value_type &add_sub_view(children_mapped_type &&sub_view) {
+    return holder.add_sub_view(std::forward<children_mapped_type>(sub_view));
   }
 
-  view_type &get_sub_view(size_t index) { return holder.get_sub_view(index); }
+  children_mapped_type &get_sub_view(children_key_type index) { return holder.get_sub_view(index); }
 
-  bool remove_sub_view(size_t index) { return holder.remove_sub_view(index); }
+  bool remove_sub_view(children_key_type index) { return holder.remove_sub_view(index); }
 
   [[nodiscard]] size_t sub_view_size() const { return holder.sub_view_size(); }
 

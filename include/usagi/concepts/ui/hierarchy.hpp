@@ -10,19 +10,24 @@ namespace usagi::concepts::ui {
  */
 template <class HierarchyType>
 concept hierarchy = requires(HierarchyType &h) {
-  typename HierarchyType::view_type;
+  typename HierarchyType::children_key_type;
+  typename HierarchyType::children_mapped_type;
+  typename HierarchyType::children_value_type;
 
   {
-    h.add_sub_view(std::declval<typename HierarchyType::view_type>())
+    h.add_sub_view(std::declval<typename HierarchyType::children_mapped_type>())
     } -> usagi::utility::convertible_to<
-        std::add_lvalue_reference_t<typename HierarchyType::view_type>>;
+        std::add_lvalue_reference_t<typename HierarchyType::children_value_type>>;
 
   {
-    h.get_sub_view(std::declval<std::size_t>())
+    h.get_sub_view(std::declval<typename HierarchyType::children_key_type>())
     } -> usagi::utility::convertible_to<
-        std::add_lvalue_reference_t<typename HierarchyType::view_type>>;
+        std::add_lvalue_reference_t<typename HierarchyType::children_mapped_type>>;
 
-  { h.remove_sub_view(std::declval<std::size_t>()) } -> std::same_as<bool>;
-  { h.sub_view_size() } -> std::same_as<std::size_t>;
+  {
+    h.remove_sub_view(std::declval<typename HierarchyType::children_key_type>())
+    } -> std::same_as<bool>;
+
+  { h.sub_view_size() } -> std::same_as<size_t>;
 };
 } // namespace usagi::concepts::ui

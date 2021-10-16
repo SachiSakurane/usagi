@@ -8,6 +8,7 @@
 #include <usagi/concepts/geometry/size_concept.hpp>
 #include <usagi/concepts/ui/clickable.hpp>
 #include <usagi/concepts/ui/drawable.hpp>
+#include <usagi/concepts/ui/hierarchy.hpp>
 #include <usagi/type/mouse.hpp>
 #include <usagi/utility/arithmetic.hpp>
 #include <usagi/utility/convertible_to.hpp>
@@ -29,7 +30,8 @@ namespace usagi::concepts::ui {
  */
 template <class ViewType>
 concept viewable = usagi::concepts::ui::clickable<ViewType> &&
-    usagi::concepts::ui::drawable<ViewType> && requires(ViewType &v) {
+    usagi::concepts::ui::drawable<ViewType> && usagi::concepts::ui::hierarchy<ViewType> &&
+    requires(ViewType &v) {
   typename ViewType::view_type;
 
   { v.bounds() } -> usagi::concepts::geometry::size_concept;
@@ -37,16 +39,5 @@ concept viewable = usagi::concepts::ui::clickable<ViewType> &&
 
   v.set_enabled(std::declval<bool>());
   { v.is_enabled() } -> std::same_as<bool>;
-
-  {
-    v.add_sub_view(std::declval<typename ViewType::view_type>())
-    } -> usagi::utility::convertible_to<std::add_lvalue_reference_t<typename ViewType::view_type>>;
-
-  {
-    v.get_sub_view(std::declval<std::size_t>())
-    } -> usagi::utility::convertible_to<std::add_lvalue_reference_t<typename ViewType::view_type>>;
-
-  { v.remove_sub_view(std::declval<std::size_t>()) } -> std::same_as<bool>;
-  { v.sub_view_size() } -> std::same_as<std::size_t>;
 };
 } // namespace usagi::concepts::ui

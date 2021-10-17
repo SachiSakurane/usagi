@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <utility>
 
 #include <usagi/utility/convertible_to.hpp>
 

@@ -72,10 +72,10 @@ TEST(ViewTest, SubViewCase) {
   decltype(auto) sub2 = v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
   ASSERT_EQ(v.sub_view_size(), 2);
 
-  ASSERT_TRUE(v.remove_sub_view(sub2.first));
+  ASSERT_TRUE(v.remove_sub_view(sub1.first));
   ASSERT_EQ(v.sub_view_size(), 1);
 
-  ASSERT_TRUE(v.remove_sub_view(sub1.first));
+  ASSERT_TRUE(v.remove_sub_view(sub2.first));
   ASSERT_EQ(v.sub_view_size(), 0);
 
   ASSERT_FALSE(v.remove_sub_view(0));

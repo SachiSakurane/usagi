@@ -3,31 +3,31 @@
 #include <usagi/graphics/color/color.hpp>
 
 namespace {
-static_assert(usagi::concepts::graphics::color_concept<usagi::graphics::color<int>>);
-static_assert(usagi::concepts::graphics::color_concept<usagi::graphics::tupled_color<int>>);
+static_assert(usagi::concepts::graphics::basic_color_concept<usagi::graphics::basic_color<int>>);
+static_assert(usagi::concepts::graphics::basic_color_concept<usagi::graphics::variable_color<int>>);
 } // namespace
 
 TEST(ColorTest, CommonCase) {
-  usagi::graphics::color<float> c{42.f, 4.2f, 0.42f, []() { return 0.042f; }};
-  ASSERT_EQ(c.r(), 42.f);
-  ASSERT_EQ(c.g(), 4.2f);
-  ASSERT_EQ(c.b(), 0.42f);
-  ASSERT_EQ(c.a(), 0.042f);
+  usagi::graphics::basic_color<float> c{0.042f, 42.f, 4.2f, 0.42f};
+  ASSERT_EQ(c.red(), 42.f);
+  ASSERT_EQ(c.green(), 4.2f);
+  ASSERT_EQ(c.blue(), 0.42f);
+  ASSERT_EQ(c.alpha(), 0.042f);
   auto cc = c;
-  c = {24.f, 2.4f, 0.24f, []() { return 0.024f; }};
-  ASSERT_EQ(c.r(), 24.f);
-  ASSERT_EQ(c.a(), 0.024f);
-  ASSERT_EQ(cc.r(), 42.f);
-  ASSERT_EQ(cc.a(), 0.042f);
+  c = {0.024f, 24.f, 2.4f, 0.24f};
+  ASSERT_EQ(c.red(), 24.f);
+  ASSERT_EQ(c.alpha(), 0.024f);
+  ASSERT_EQ(cc.red(), 42.f);
+  ASSERT_EQ(cc.alpha(), 0.042f);
 }
 
 TEST(ColorTest, DuplicateCase) {
   float side = 0.042f;
-  usagi::graphics::color<float> c{42.f, 4.2f, 0.42f, [&side]() { return side; }};
+  usagi::graphics::variable_color<float> c{[&side]() { return side; }, 42.f, 4.2f, 0.42f};
   auto copied = c.duplicate();
-  ASSERT_EQ(copied.r(), 42.f);
-  ASSERT_EQ(copied.a(), 0.042f);
+  ASSERT_EQ(copied.red(), 42.f);
+  ASSERT_EQ(copied.alpha(), 0.042f);
   side = 20.f;
-  ASSERT_EQ(c.a(), 20.f);
-  ASSERT_EQ(copied.a(), 0.042f);
+  ASSERT_EQ(c.alpha(), 20.f);
+  ASSERT_EQ(copied.alpha(), 0.042f);
 }

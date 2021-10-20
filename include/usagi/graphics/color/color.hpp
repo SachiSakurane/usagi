@@ -1,61 +1,67 @@
 #pragma once
 
 #include <usagi/utility/arithmetic.hpp>
+#include <usagi/utility/floating_point.hpp>
 #include <usagi/utility/mono_tuple.hpp>
 #include <usagi/variable/variable_traits.hpp>
 
 namespace usagi::graphics {
 template <usagi::utility::arithmetic Type>
-struct color {
+struct basic_color {
+  using value_type = Type;
+
+  constexpr basic_color() : a_{}, r_{}, g_{}, b_{} {}
+  constexpr basic_color(value_type a, value_type r, value_type g, value_type b)
+      : a_{a}, r_{r}, g_{g}, b_{b} {
+    assert(a >= 0);
+    assert(r >= 0);
+    assert(g >= 0);
+    assert(b >= 0);
+  }
+
+  value_type alpha() const { return a_; }
+
+  value_type red() const { return r_; }
+
+  value_type green() const { return g_; }
+
+  value_type blue() const { return b_; }
+
+  usagi::utility::mono_tuple<value_type, 4> operator()() const {
+    return {alpha(), red(), green(), blue()};
+  }
+
+private:
+  value_type a_, r_, g_, b_;
+};
+
+template <usagi::utility::floating_point FloatType>
+using float_color = basic_color<FloatType>;
+
+template <usagi::utility::arithmetic Type>
+struct variable_color {
   using value_type = typename usagi::variable_traits<Type>::value_type;
   using variable_type = typename usagi::variable_traits<Type>::variable_type;
 
-  constexpr color() : r_{}, g_{}, b_{}, a_{} {}
-  constexpr color(variable_type r, variable_type g, variable_type b, variable_type a)
-      : r_{r}, g_{g}, b_{b}, a_{a} {}
+  constexpr variable_color() : a_{}, r_{}, g_{}, b_{} {}
+  constexpr variable_color(variable_type a, variable_type r, variable_type g, variable_type b)
+      : a_{a}, r_{r}, g_{g}, b_{b} {}
 
-  value_type r() const { return r_(); }
+  value_type red() const { return r_(); }
 
-  value_type g() const { return g_(); }
+  value_type green() const { return g_(); }
 
-  value_type b() const { return b_(); }
+  value_type blue() const { return b_(); }
 
-  value_type a() const { return a_(); }
+  value_type alpha() const { return a_(); }
 
-  usagi::utility::mono_tuple<value_type, 4> operator()() const { return {r_(), g_(), b_(), a_()}; }
+  usagi::utility::mono_tuple<value_type, 4> operator()() const { return {a_(), r_(), g_(), b_()}; }
 
-  color<value_type> duplicate() const { return color<value_type>{r(), g(), b(), a()}; }
-
-private:
-  variable_type r_, g_, b_, a_;
-};
-
-/**
- * pair特殊化
- */
-template <usagi::utility::arithmetic Type>
-struct tupled_color {
-  using value_type = Type;
-  using pair_type = usagi::utility::mono_tuple<value_type, 4>;
-  using size_type = typename usagi::variable_traits<pair_type>::value_type;
-  using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
-
-  constexpr tupled_color() : functor{} {}
-  constexpr tupled_color(variable_type c) : functor{c} {}
-
-  value_type r() const { return std::get<0>(functor()); }
-
-  value_type g() const { return std::get<1>(functor()); }
-
-  value_type b() const { return std::get<2>(functor()); }
-
-  value_type a() const { return std::get<3>(functor()); }
-
-  usagi::utility::mono_tuple<value_type, 4> operator()() const { return functor(); }
-
-  tupled_color<value_type> duplicate() const { return tupled_color<value_type>{functor()}; }
+  variable_color<value_type> duplicate() const {
+    return variable_color<value_type>{alpha(), red(), green(), blue()};
+  }
 
 private:
-  variable_type functor;
+  variable_type a_, r_, g_, b_;
 };
 } // namespace usagi::graphics

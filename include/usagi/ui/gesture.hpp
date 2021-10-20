@@ -185,6 +185,7 @@ inline constexpr decltype(auto) operator|(ViewType &&v, gesture_holder<TupleType
                            std::forward<gesture_holder<TupleType>>(wrapped).elem};
 }
 
+// FIXME: 順序が定義通りじゃないとダメっぽい
 template <class... FunctionTypes>
 inline constexpr decltype(auto) gestured(FunctionTypes &&...funcs) {
   return gesture_holder{std::make_tuple(std::forward<FunctionTypes>(funcs)...)};

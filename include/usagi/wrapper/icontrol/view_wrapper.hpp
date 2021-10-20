@@ -10,6 +10,7 @@ template <usagi::utility::arithmetic ValueType>
 struct iplug_mouse_parameter {
   ValueType x, y;
   // update mouse pointer
+  IControl *control;
   IGraphics *graphics;
 };
 
@@ -43,32 +44,32 @@ public:
   }
 
   void OnMouseDown(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_down_type{x, y, GetUI()});
+    local_view.event(iplug_traits::mouse_traits::on_down_type{x, y, this, GetUI()});
     IControl::OnMouseDown(x, y, mod);
   }
 
   void OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_drag_type{x, y, GetUI()});
+    local_view.event(iplug_traits::mouse_traits::on_drag_type{x, y, this, GetUI()});
     IControl::OnMouseDrag(x, y, dX, dY, mod);
   }
 
   void OnMouseUp(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_up_type{x, y, GetUI()});
+    local_view.event(iplug_traits::mouse_traits::on_up_type{x, y, this, GetUI()});
     IControl::OnMouseUp(x, y, mod);
   }
 
   void OnMouseOver(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_over_type{x, y, GetUI()});
+    local_view.event(iplug_traits::mouse_traits::on_over_type{x, y, this, GetUI()});
     IControl::OnMouseOver(x, y, mod);
   }
 
   void OnMouseOut() override {
-    local_view.event(iplug_traits::mouse_traits::on_out_type{0.f, 0.f, GetUI()});
+    local_view.event(iplug_traits::mouse_traits::on_out_type{0.f, 0.f, this, GetUI()});
     IControl::OnMouseOut();
   }
 
   void OnMouseDblClick(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_double_click_type{x, y, GetUI()});
+    local_view.event(iplug_traits::mouse_traits::on_double_click_type{x, y, this, GetUI()});
     IControl::OnMouseDblClick(x, y, mod);
   }
 

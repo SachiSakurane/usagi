@@ -5,13 +5,13 @@
 #include <usagi/ui/view.hpp>
 #include <usagi/utility/arithmetic.hpp>
 
-namespace usagi::wrapper::icontrol {
+namespace usagi::wrapper::iplug2 {
 template <usagi::utility::arithmetic ValueType>
 struct iplug_mouse_parameter {
   ValueType x, y;
   // update mouse pointer
-  IControl *control;
-  IGraphics *graphics;
+  iplug::igraphics::IControl *control;
+  iplug::igraphics::IGraphics *graphics;
 };
 
 struct iplug_traits {
@@ -76,4 +76,4 @@ public:
 protected:
   iplug_traits::view_type local_view;
 };
-} // namespace usagi::wrapper::icontrol
+} // namespace usagi::wrapper::iplug2

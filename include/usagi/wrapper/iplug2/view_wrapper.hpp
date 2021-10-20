@@ -1,17 +1,30 @@
 #pragma once
 
-#include <usagi/geometry/geometry_traits.hpp>
+#include <functional>
+#include <unordered_map>
+
 #include <usagi/type/mouse.hpp>
 #include <usagi/ui/view.hpp>
 #include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::wrapper::iplug2 {
+
+struct igraphic_control {
+  struct listener {
+    virtual void on_text_entry_completion(const char *str, igraphic_control) = 0;
+  };
+
+  const std::function<void(iplug::igraphics::ECursor)> set_mouse_cursor;
+  const std::function<void(bool)> set_mouse_cursor_hidden;
+  const std::function<void(const iplug::igraphics::IText &, const iplug::igraphics::IRECT &,
+                           const char *str, listener *)>
+      create_text_entry;
+};
+
 template <usagi::utility::arithmetic ValueType>
 struct iplug_mouse_parameter {
   ValueType x, y;
-  // update mouse pointer
-  iplug::igraphics::IControl *control;
-  iplug::igraphics::IGraphics *graphics;
+  igraphic_control control;
 };
 
 struct iplug_traits {
@@ -44,36 +57,58 @@ public:
   }
 
   void OnMouseDown(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_down_type{x, y, this, GetUI()});
+    local_view.event(iplug_traits::mouse_traits::on_down_type{x, y, make_igraphic_control()});
     IControl::OnMouseDown(x, y, mod);
   }
 
   void OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_drag_type{x, y, this, GetUI()});
+    local_view.event(iplug_traits::mouse_traits::on_drag_type{x, y, make_igraphic_control()});
     IControl::OnMouseDrag(x, y, dX, dY, mod);
   }
 
   void OnMouseUp(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_up_type{x, y, this, GetUI()});
+    local_view.event(iplug_traits::mouse_traits::on_up_type{x, y, make_igraphic_control()});
     IControl::OnMouseUp(x, y, mod);
   }
 
   void OnMouseOver(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_over_type{x, y, this, GetUI()});
+    local_view.event(iplug_traits::mouse_traits::on_over_type{x, y, make_igraphic_control()});
     IControl::OnMouseOver(x, y, mod);
   }
 
   void OnMouseOut() override {
-    local_view.event(iplug_traits::mouse_traits::on_out_type{0.f, 0.f, this, GetUI()});
+    local_view.event(iplug_traits::mouse_traits::on_out_type{0.f, 0.f, make_igraphic_control()});
     IControl::OnMouseOut();
   }
 
   void OnMouseDblClick(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_double_click_type{x, y, this, GetUI()});
+    local_view.event(
+        iplug_traits::mouse_traits::on_double_click_type{x, y, make_igraphic_control()});
     IControl::OnMouseDblClick(x, y, mod);
+  }
+
+  void OnTextEntryCompletion(const char *str, int) override {
+    if (text_control_listener) {
+      text_control_listener->on_text_entry_completion(str, make_igraphic_control());
+      text_control_listener = nullptr;
+    }
   }
 
 protected:
   iplug_traits::view_type local_view;
+  igraphic_control::listener *text_control_listener{nullptr};
+
+  igraphic_control make_igraphic_control() {
+    return igraphic_control{
+        .set_mouse_cursor = [this](iplug::igraphics::ECursor c) { GetUI()->SetMouseCursor(c); },
+        .set_mouse_cursor_hidden = [this](bool flag) { GetUI()->HideMouseCursor(flag, false); },
+        .create_text_entry =
+            [this](const iplug::igraphics::IText &t, const iplug::igraphics::IRECT &r,
+                   const char *str, igraphic_control::listener *listener) {
+              assert(text_control_listener == nullptr);
+              text_control_listener = listener;
+              GetUI()->CreateTextEntry(*this, t, r, str);
+            }};
+  }
 };
 } // namespace usagi::wrapper::iplug2

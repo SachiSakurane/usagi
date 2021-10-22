@@ -8,7 +8,7 @@ namespace usagi::type {
 struct mouse {
   template <usagi::utility::arithmetic ValueType>
   struct default_parameter {
-    ValueType x, y;
+    ValueType x, y, d;
   };
 
   template <class ParameterType>
@@ -53,6 +53,13 @@ struct mouse {
     template <class... Args>
     explicit on_double_click(Args &&...args) : ParameterType{std::forward<Args>(args)...} {}
   };
+
+  template <class ParameterType>
+  struct on_wheel : ParameterType {
+    on_wheel() = default;
+    template <class... Args>
+    explicit on_wheel(Args &&...args) : ParameterType{std::forward<Args>(args)...} {}
+  };
 };
 
 template <class ParameterType>
@@ -63,5 +70,6 @@ struct mouse_traits {
   using on_over_type = mouse::on_over<ParameterType>;
   using on_out_type = mouse::on_out<ParameterType>;
   using on_double_click_type = mouse::on_double_click<ParameterType>;
+  using on_wheel_type = mouse::on_wheel<ParameterType>;
 };
 } // namespace usagi::type

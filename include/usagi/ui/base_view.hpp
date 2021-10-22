@@ -114,6 +114,15 @@ public:
     }
   }
 
+  virtual void event(typename mouse_traits::on_wheel_type mouse) {
+    auto point = point_type{mouse.x, mouse.y};
+    for (auto &value : children) {
+      auto &child = value.second;
+      if (child.is_enabled() && usagi::geometry::contain(child.frame(), point))
+        child.event(mouse);
+    }
+  }
+
   virtual void set_mouse_down(bool flag) { mouse_downed = flag; }
   virtual void set_mouse_over(bool flag) { mouse_overed = flag; }
 

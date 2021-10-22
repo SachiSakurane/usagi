@@ -30,6 +30,8 @@ concept clickable = requires(ClickableType &c) {
               typename ClickableType::mouse_parameter_type>::on_up_type>());
   c.event(std::declval<typename usagi::type::mouse_traits<
               typename ClickableType::mouse_parameter_type>::on_out_type>());
+  c.event(std::declval<typename usagi::type::mouse_traits<
+              typename ClickableType::mouse_parameter_type>::on_wheel_type>());
 
   c.set_mouse_down(std::declval<bool>());
   c.set_mouse_over(std::declval<bool>());

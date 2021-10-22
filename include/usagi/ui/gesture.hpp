@@ -91,16 +91,20 @@ struct gestures {
             std::tuple<typename mouse_traits::on_over_type, ViewType &>>(t, [](auto, auto &) {})},
         on_out_holder{usagi::ui::detail::pick_invocable<
             std::tuple<typename mouse_traits::on_out_type, ViewType &>>(t, [](auto, auto &) {})},
-        on_double_click_type{usagi::ui::detail::pick_invocable<
+        on_double_click{usagi::ui::detail::pick_invocable<
             std::tuple<typename mouse_traits::on_double_click_type, ViewType &>>(
-            t, [](auto, auto &) {})} {}
+            t, [](auto, auto &) {})},
+        on_wheel{usagi::ui::detail::pick_invocable<
+            std::tuple<typename mouse_traits::on_wheel_type, ViewType &>>(
+            t, [](auto, auto &) {})}{}
 
   std::function<void(typename mouse_traits::on_down_type, ViewType &)> on_down_holder;
   std::function<void(typename mouse_traits::on_drag_type, ViewType &)> on_drag_holder;
   std::function<void(typename mouse_traits::on_up_type, ViewType &)> on_up_holder;
   std::function<void(typename mouse_traits::on_over_type, ViewType &)> on_over_holder;
   std::function<void(typename mouse_traits::on_out_type, ViewType &)> on_out_holder;
-  std::function<void(typename mouse_traits::on_double_click_type, ViewType &)> on_double_click_type;
+  std::function<void(typename mouse_traits::on_double_click_type, ViewType &)> on_double_click;
+  std::function<void(typename mouse_traits::on_wheel_type, ViewType &)> on_wheel;
 };
 
 template <usagi::concepts::ui::viewable ViewType>
@@ -152,7 +156,12 @@ struct gesture {
   }
 
   void event(typename mouse_traits::on_double_click_type mouse) {
-    g.on_double_click_type(mouse, holder);
+    g.on_double_click(mouse, holder);
+    holder.event(mouse);
+  }
+
+  void event(typename mouse_traits::on_wheel_type mouse) {
+    g.on_wheel(mouse, holder);
     holder.event(mouse);
   }
 

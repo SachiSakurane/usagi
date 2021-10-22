@@ -47,6 +47,7 @@ class view {
     void event(typename mouse_traits::on_over_type mouse) override { holder.event(mouse); }
     void event(typename mouse_traits::on_out_type mouse) override { holder.event(mouse); }
     void event(typename mouse_traits::on_double_click_type mouse) override { holder.event(mouse); }
+    void event(typename mouse_traits::on_wheel_type mouse) override { holder.event(mouse); }
 
     void set_mouse_down(bool flag) override { holder.set_mouse_down(flag); }
     void set_mouse_over(bool flag) override { holder.set_mouse_over(flag); }
@@ -106,6 +107,7 @@ public:
   void event(typename mouse_traits::on_over_type mouse) { holder->event(mouse); }
   void event(typename mouse_traits::on_out_type mouse) { holder->event(mouse); }
   void event(typename mouse_traits::on_double_click_type mouse) { holder->event(mouse); }
+  void event(typename mouse_traits::on_wheel_type mouse) { holder->event(mouse); }
 
   void set_mouse_down(bool flag) { holder->set_mouse_down(flag); }
   void set_mouse_over(bool flag) { holder->set_mouse_over(flag); }

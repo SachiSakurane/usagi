@@ -10,15 +10,11 @@
 namespace usagi::wrapper::iplug2 {
 
 struct igraphic_control {
-  struct listener {
-    virtual void on_text_entry_completion(const char *str, igraphic_control) = 0;
-  };
-
   const std::function<void(iplug::igraphics::ECursor)> set_mouse_cursor;
   const std::function<void(bool)> set_mouse_cursor_hidden;
-  const std::function<void(const iplug::igraphics::IText &, const iplug::igraphics::IRECT &,
-                           const char *str, listener *)>
-      create_text_entry;
+  const std::function<bool(const iplug::igraphics::IText &, const iplug::igraphics::IRECT &,
+                           std::string str, const std::weak_ptr<std::string> &dst)>
+      try_create_text_entry;
 };
 
 template <usagi::utility::arithmetic ValueType>
@@ -88,26 +84,30 @@ public:
   }
 
   void OnTextEntryCompletion(const char *str, int) override {
-    if (text_control_listener) {
-      text_control_listener->on_text_entry_completion(str, make_igraphic_control());
-      text_control_listener = nullptr;
+    if (auto l = text_entry_ptr.lock()) {
+      l->clear();
+      l->append(str);
     }
+    text_entry_ptr.reset();
   }
 
 protected:
   iplug_traits::view_type local_view;
-  igraphic_control::listener *text_control_listener{nullptr};
+  std::weak_ptr<std::string> text_entry_ptr;
 
   igraphic_control make_igraphic_control() {
     return igraphic_control{
         .set_mouse_cursor = [this](iplug::igraphics::ECursor c) { GetUI()->SetMouseCursor(c); },
         .set_mouse_cursor_hidden = [this](bool flag) { GetUI()->HideMouseCursor(flag, false); },
-        .create_text_entry =
+        .try_create_text_entry =
             [this](const iplug::igraphics::IText &t, const iplug::igraphics::IRECT &r,
-                   const char *str, igraphic_control::listener *listener) {
-              assert(text_control_listener == nullptr);
-              text_control_listener = listener;
-              GetUI()->CreateTextEntry(*this, t, r, str);
+                   std::string src, const std::weak_ptr<std::string> &dst) {
+              if (text_entry_ptr.expired()) {
+                GetUI()->CreateTextEntry(*this, t, r, src.c_str());
+                text_entry_ptr = dst;
+                return true;
+              }
+              return false;
             }};
   }
 };

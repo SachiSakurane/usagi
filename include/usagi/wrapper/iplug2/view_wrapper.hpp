@@ -10,10 +10,15 @@
 namespace usagi::wrapper::iplug2 {
 
 struct igraphic_control {
+  struct text_entry {
+    bool ping;
+    std::string value;
+  };
+
   const std::function<void(iplug::igraphics::ECursor)> set_mouse_cursor;
   const std::function<void(bool)> set_mouse_cursor_hidden;
   const std::function<bool(const iplug::igraphics::IText &, const iplug::igraphics::IRECT &,
-                           std::string str, const std::weak_ptr<std::string> &dst)>
+                           std::string str, const std::weak_ptr<text_entry> &dst)>
       try_create_text_entry;
 };
 
@@ -84,16 +89,16 @@ public:
   }
 
   void OnTextEntryCompletion(const char *str, int) override {
-    if (auto l = text_entry_ptr.lock()) {
-      l->clear();
-      l->append(str);
+    if (auto l = text_entry_ptr.lock(); l) {
+      l->ping = true;
+      l->value = str;
     }
     text_entry_ptr.reset();
   }
 
 protected:
   iplug_traits::view_type local_view;
-  std::weak_ptr<std::string> text_entry_ptr;
+  std::weak_ptr<igraphic_control::text_entry> text_entry_ptr;
 
   igraphic_control make_igraphic_control() {
     return igraphic_control{
@@ -101,10 +106,14 @@ protected:
         .set_mouse_cursor_hidden = [this](bool flag) { GetUI()->HideMouseCursor(flag, false); },
         .try_create_text_entry =
             [this](const iplug::igraphics::IText &t, const iplug::igraphics::IRECT &r,
-                   std::string src, const std::weak_ptr<std::string> &dst) {
-              if (text_entry_ptr.expired()) {
+                   std::string src, const std::weak_ptr<igraphic_control::text_entry> &dst) {
+              if (text_entry_ptr.expired() && !dst.expired()) {
                 GetUI()->CreateTextEntry(*this, t, r, src.c_str());
                 text_entry_ptr = dst;
+                if (auto l = text_entry_ptr.lock(); l) {
+                  l->ping = false;
+                  l->value = "";
+                }
                 return true;
               }
               return false;

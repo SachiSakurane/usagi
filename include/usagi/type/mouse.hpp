@@ -64,6 +64,7 @@ struct mouse {
 
 template <class ParameterType>
 struct mouse_traits {
+  using parameter_type = ParameterType;
   using on_down_type = mouse::on_down<ParameterType>;
   using on_drag_type = mouse::on_drag<ParameterType>;
   using on_up_type = mouse::on_up<ParameterType>;

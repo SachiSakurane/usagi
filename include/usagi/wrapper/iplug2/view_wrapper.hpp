@@ -10,21 +10,16 @@
 namespace usagi::wrapper::iplug2 {
 
 struct igraphic_control {
-  struct text_entry {
-    bool ping;
-    std::string value;
-  };
-
   const std::function<void(iplug::igraphics::ECursor)> set_mouse_cursor;
   const std::function<void(bool)> set_mouse_cursor_hidden;
   const std::function<bool(const iplug::igraphics::IText &, const iplug::igraphics::IRECT &,
-                           std::string str, const std::weak_ptr<text_entry> &dst)>
+                           std::string str, std::function<void(std::string)> completed)>
       try_create_text_entry;
 };
 
 template <usagi::utility::arithmetic ValueType>
 struct iplug_mouse_parameter {
-  ValueType x, y;
+  ValueType x, y, d;
   igraphic_control control;
 };
 
@@ -58,47 +53,53 @@ public:
   }
 
   void OnMouseDown(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_down_type{x, y, make_igraphic_control()});
+    local_view.event(iplug_traits::mouse_traits::on_down_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseDown(x, y, mod);
   }
 
   void OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_drag_type{x, y, make_igraphic_control()});
+    local_view.event(iplug_traits::mouse_traits::on_drag_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseDrag(x, y, dX, dY, mod);
   }
 
   void OnMouseUp(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_up_type{x, y, make_igraphic_control()});
+    local_view.event(iplug_traits::mouse_traits::on_up_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseUp(x, y, mod);
   }
 
   void OnMouseOver(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_over_type{x, y, make_igraphic_control()});
+    local_view.event(iplug_traits::mouse_traits::on_over_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseOver(x, y, mod);
   }
 
   void OnMouseOut() override {
-    local_view.event(iplug_traits::mouse_traits::on_out_type{0.f, 0.f, make_igraphic_control()});
+    local_view.event(
+        iplug_traits::mouse_traits::on_out_type{0.f, 0.f, 0.f, make_igraphic_control()});
     IControl::OnMouseOut();
   }
 
   void OnMouseDblClick(float x, float y, const IMouseMod &mod) override {
     local_view.event(
-        iplug_traits::mouse_traits::on_double_click_type{x, y, make_igraphic_control()});
+        iplug_traits::mouse_traits::on_double_click_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseDblClick(x, y, mod);
   }
 
+  void OnMouseWheel(float x, float y, const IMouseMod &mod, float d) override {
+    local_view.event(iplug_traits::mouse_traits::on_wheel_type{x, y, d, make_igraphic_control()});
+    IControl::OnMouseWheel(x, y, mod, d);
+  }
+
   void OnTextEntryCompletion(const char *str, int) override {
-    if (auto l = text_entry_ptr.lock(); l) {
-      l->ping = true;
-      l->value = str;
+    if (text_entry_completed && text_entry_completed.value()) {
+      text_entry_completed.value()(str);
     }
-    text_entry_ptr.reset();
+    text_entry_completed.reset();
   }
 
 protected:
   iplug_traits::view_type local_view;
-  std::weak_ptr<igraphic_control::text_entry> text_entry_ptr;
+
+  std::optional<std::function<void(std::string)>> text_entry_completed{std::nullopt};
 
   igraphic_control make_igraphic_control() {
     return igraphic_control{
@@ -106,14 +107,10 @@ protected:
         .set_mouse_cursor_hidden = [this](bool flag) { GetUI()->HideMouseCursor(flag, false); },
         .try_create_text_entry =
             [this](const iplug::igraphics::IText &t, const iplug::igraphics::IRECT &r,
-                   std::string src, const std::weak_ptr<igraphic_control::text_entry> &dst) {
-              if (text_entry_ptr.expired() && !dst.expired()) {
+                   std::string src, std::function<void(std::string)> completed) {
+              if (!text_entry_completed) {
                 GetUI()->CreateTextEntry(*this, t, r, src.c_str());
-                text_entry_ptr = dst;
-                if (auto l = text_entry_ptr.lock(); l) {
-                  l->ping = false;
-                  l->value = "";
-                }
+                text_entry_completed.emplace(completed);
                 return true;
               }
               return false;

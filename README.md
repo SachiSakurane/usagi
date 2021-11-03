@@ -1,14 +1,10 @@
-お嬢様専用でしてよ。
-
-ケツの穴から手ェ突っ込んで、奥歯型々させたりますわ〜!
+ﾝｻｷﾞ
 
 # usagi
-usagi は ui を concepts で表現したりする header-only なライブラリですわ〜！
+usagi は ui を concepts で表現したりする header-only なライブラリ
 
 # usagi no usage
-iPlug2 での連携は [Pararaised](https://github.com/SachiSakurane/Pararaised) をご覧くださいまし。
-
-base_view に描画とクリックイベントを追加する例ですわ。
+base_view に描画とクリックイベントを追加する例
 ```C++
 auto &view = local_view.add_sub_view(
   usagi::wrapper::icontrol::iplug_traits::base_view_type{usagi::geometry::padding(local_view.frame(), 16.f)} |

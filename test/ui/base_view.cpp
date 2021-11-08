@@ -1,5 +1,6 @@
 #include <usagi/concepts/ui/hierarchy.hpp>
 #include <usagi/ui/detail/base_view_hierarchy.hpp>
+#include <usagi/ui/view.hpp>
 
 namespace {
 struct DrawContext {};

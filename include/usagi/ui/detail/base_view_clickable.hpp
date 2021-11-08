@@ -6,20 +6,19 @@
 
 namespace usagi::ui::detail {
 template <usagi::utility::arithmetic ValueType, class MouseParameterType>
-class base_view_click {
+class base_view_clickable {
 public:
   using value_type = ValueType;
   using point_type = typename usagi::geometry::geometry_traits<value_type>::point_type;
   using mouse_parameter_type = MouseParameterType;
   using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
 
-  virtual void set_mouse_down(bool flag) { mouse_downed = flag; }
-  virtual void set_mouse_over(bool flag) { mouse_overed = flag; }
+  void set_mouse_down(bool flag) { mouse_downed = flag; }
+  void set_mouse_over(bool flag) { mouse_overed = flag; }
 
-  [[nodiscard]] virtual bool is_mouse_downed() const { return mouse_downed; }
-  [[nodiscard]] virtual bool is_mouse_overed() const { return mouse_overed; }
+  [[nodiscard]] bool is_mouse_downed() const { return mouse_downed; }
+  [[nodiscard]] bool is_mouse_overed() const { return mouse_overed; }
 
-protected:
   template <class ChildrenType>
   void on_event(typename mouse_traits::on_down_type mouse, ChildrenType& children) {
     set_mouse_down(true);

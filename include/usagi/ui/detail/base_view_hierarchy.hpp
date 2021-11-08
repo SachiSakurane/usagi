@@ -3,6 +3,7 @@
 #include <iterator>
 #include <map>
 
+#include <usagi/concepts/ui/hierarchy.hpp>
 #include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::ui::detail {
@@ -42,4 +43,5 @@ private:
   size_t children_next_index{0};
   children_type children;
 };
+
 } // namespace usagi::ui::detail

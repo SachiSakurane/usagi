@@ -9,7 +9,6 @@
 #include <usagi/concepts/geometry.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
-#include <usagi/type/mouse.hpp>
 #include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::ui {

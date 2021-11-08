@@ -3,9 +3,6 @@
 #include <usagi/ui/detail/base_view_clickable.hpp>
 #include <usagi/ui/detail/base_view_hierarchy.hpp>
 
-#include <iterator>
-#include <map>
-
 #include <usagi/concepts/geometry.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>

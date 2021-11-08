@@ -1,18 +1,21 @@
 #pragma once
 
+#include <usagi/ui/detail/base_view_click.hpp>
+
 #include <iterator>
 #include <map>
 
 #include <usagi/concepts/geometry.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
-#include <usagi/geometry/rect/function.hpp>
 #include <usagi/type/mouse.hpp>
 #include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::ui {
 template <usagi::utility::arithmetic ValueType, class DrawContextType, class MouseParameterType>
-class base_view {
+class base_view : public usagi::ui::detail::base_view_click<ValueType, MouseParameterType> {
+  using base_view_click_type = usagi::ui::detail::base_view_click<ValueType, MouseParameterType>;
+
 public:
   using value_type = ValueType;
   using point_type = typename usagi::geometry::geometry_traits<value_type>::point_type;
@@ -49,85 +52,26 @@ public:
   virtual rect_type frame() const { return content; }
 
   virtual void event(typename mouse_traits::on_down_type mouse) {
-    set_mouse_down(true);
-    auto point = point_type{mouse.x, mouse.y};
-    for (auto &value : children) {
-      auto &child = value.second;
-      if (child.is_enabled() && usagi::geometry::contain(child.frame(), point)) {
-        child.set_mouse_down(true);
-        child.event(mouse);
-      }
-    }
+    base_view_click_type::on_event(mouse, children);
   }
-
   virtual void event(typename mouse_traits::on_drag_type mouse) {
-    for (auto &value : children) {
-      auto &child = value.second;
-      if (child.is_mouse_downed()) {
-        child.event(mouse);
-      }
-    }
+    base_view_click_type::on_event(mouse, children);
   }
-
   virtual void event(typename mouse_traits::on_up_type mouse) {
-    set_mouse_down(false);
-    auto point = point_type{mouse.x, mouse.y};
-    for (auto &value : children) {
-      auto &child = value.second;
-      if (child.is_mouse_downed()) {
-        child.set_mouse_down(false);
-        child.event(mouse);
-      }
-    }
+    base_view_click_type::on_event(mouse, children);
   }
-
-  // ここに来るイベントは contain を想定する
   virtual void event(typename mouse_traits::on_over_type mouse) {
-    set_mouse_over(true);
-    auto point = point_type{mouse.x, mouse.y};
-    for (auto &value : children) {
-      auto &child = value.second;
-      if (child.is_enabled() && usagi::geometry::contain(child.frame(), point)) {
-        child.set_mouse_over(true);
-        child.event(mouse);
-      } else if (child.is_mouse_overed() == true) {
-        child.set_mouse_over(false);
-        child.event(typename mouse_traits::on_out_type{mouse});
-      }
-    }
+    base_view_click_type::on_event(mouse, children);
   }
-
   virtual void event(typename mouse_traits::on_out_type mouse) {
-    set_mouse_over(false);
-    for (auto &value : children) {
-      auto &child = value.second;
-      child.event(mouse);
-    }
+    base_view_click_type::on_event(mouse, children);
   }
-
   virtual void event(typename mouse_traits::on_double_click_type mouse) {
-    auto point = point_type{mouse.x, mouse.y};
-    for (auto &value : children) {
-      auto &child = value.second;
-      if (child.is_enabled() && usagi::geometry::contain(child.frame(), point))
-        child.event(mouse);
-    }
+    base_view_click_type::on_event(mouse, children);
   }
-
   virtual void event(typename mouse_traits::on_wheel_type mouse) {
-    auto point = point_type{mouse.x, mouse.y};
-    for (auto &value : children) {
-      auto &child = value.second;
-      if (child.is_enabled() && usagi::geometry::contain(child.frame(), point))
-        child.event(mouse);
-    }
+    base_view_click_type::on_event(mouse, children);
   }
-
-  virtual void set_mouse_down(bool flag) { mouse_downed = flag; }
-  virtual void set_mouse_over(bool flag) { mouse_overed = flag; }
-
-  [[nodiscard]] virtual bool is_mouse_downed() const { return mouse_downed; }
-  [[nodiscard]] virtual bool is_mouse_overed() const { return mouse_overed; }
 
   virtual children_value_type &add_sub_view(children_mapped_type &&sub_view) {
     const auto current_index = children_next_index;
@@ -142,8 +86,7 @@ public:
   }
 
   virtual bool remove_sub_view(children_key_type index) {
-    if (auto it = children.find(index); it != std::end(children))
-    {
+    if (auto it = children.find(index); it != std::end(children)) {
       children.erase(it);
       return true;
     }
@@ -159,8 +102,6 @@ private:
   rect_type content{};
   size_t children_next_index{0};
   children_type children;
-  bool mouse_downed{false};
-  bool mouse_overed{false};
   bool enabled{true};
 };
 } // namespace usagi::ui

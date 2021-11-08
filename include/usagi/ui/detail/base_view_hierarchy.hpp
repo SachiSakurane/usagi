@@ -37,7 +37,7 @@ public:
 
   [[nodiscard]] size_t sub_view_size() const { return children.size(); }
 
-  children_type &get_children() { return children; }
+  children_type &get_children() & { return children; }
 
 private:
   size_t children_next_index{0};

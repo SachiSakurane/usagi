@@ -6,7 +6,7 @@
 
 namespace usagi::ui::detail {
 template <usagi::utility::arithmetic ValueType, class MouseParameterType>
-class base_view_clickable {
+class base_view_gesture {
 public:
   using value_type = ValueType;
   using point_type = typename usagi::geometry::geometry_traits<value_type>::point_type;

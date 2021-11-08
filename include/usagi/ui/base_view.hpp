@@ -1,6 +1,6 @@
 #pragma once
 
-#include <usagi/ui/detail/base_view_clickable.hpp>
+#include <usagi/ui/detail/base_view_gesture.hpp>
 #include <usagi/ui/detail/base_view_hierarchy.hpp>
 
 #include <usagi/concepts/geometry.hpp>
@@ -11,7 +11,7 @@
 namespace usagi::ui {
 template <usagi::utility::arithmetic ValueType, class DrawContextType, class MouseParameterType>
 class base_view {
-  using base_view_click_type = usagi::ui::detail::base_view_clickable<ValueType, MouseParameterType>;
+  using base_view_click_type = usagi::ui::detail::base_view_gesture<ValueType, MouseParameterType>;
 
 public:
   using value_type = ValueType;
@@ -19,9 +19,9 @@ public:
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = DrawContextType;
-  using mouse_parameter_type = typename base_view_click_type::mouse_parameter_type;
-  using mouse_traits = typename base_view_click_type::mouse_traits;
-  using view_type = usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
+  using mouse_parameter_type = MouseParameterType;
+  using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
+  using view_type = usagi::ui::view<value_type, draw_context_type, MouseParameterType>;
 
   using base_view_hierarch_type = usagi::ui::detail::base_view_hierarchy<view_type>;
   using children_mapped_type = typename base_view_hierarch_type::children_mapped_type;
@@ -50,32 +50,32 @@ public:
   virtual rect_type frame() const { return content; }
 
   virtual void event(typename mouse_traits::on_down_type mouse) {
-    clickable.on_event(mouse, hierarchy.get_children());
+    gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual void event(typename mouse_traits::on_drag_type mouse) {
-    clickable.on_event(mouse, hierarchy.get_children());
+    gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual void event(typename mouse_traits::on_up_type mouse) {
-    clickable.on_event(mouse, hierarchy.get_children());
+    gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual void event(typename mouse_traits::on_over_type mouse) {
-    clickable.on_event(mouse, hierarchy.get_children());
+    gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual void event(typename mouse_traits::on_out_type mouse) {
-    clickable.on_event(mouse, hierarchy.get_children());
+    gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual void event(typename mouse_traits::on_double_click_type mouse) {
-    clickable.on_event(mouse, hierarchy.get_children());
+    gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual void event(typename mouse_traits::on_wheel_type mouse) {
-    clickable.on_event(mouse, hierarchy.get_children());
+    gesture.on_event(mouse, hierarchy.get_children());
   }
 
-  virtual void set_mouse_down(bool flag) { clickable.set_mouse_down(flag); }
-  virtual void set_mouse_over(bool flag) { clickable.set_mouse_over(flag); }
+  virtual void set_mouse_down(bool flag) { gesture.set_mouse_down(flag); }
+  virtual void set_mouse_over(bool flag) { gesture.set_mouse_over(flag); }
 
-  [[nodiscard]] virtual bool is_mouse_downed() const { return clickable.is_mouse_downed(); }
-  [[nodiscard]] virtual bool is_mouse_overed() const { return clickable.is_mouse_overed(); }
+  [[nodiscard]] virtual bool is_mouse_downed() const { return gesture.is_mouse_downed(); }
+  [[nodiscard]] virtual bool is_mouse_overed() const { return gesture.is_mouse_overed(); }
 
   virtual children_value_type &add_sub_view(children_mapped_type &&sub_view) {
     return hierarchy.add_sub_view(std::forward<children_mapped_type>(sub_view));
@@ -91,7 +91,7 @@ public:
   [[nodiscard]] virtual bool is_enabled() const { return enabled; }
 
 private:
-  base_view_click_type clickable;
+  base_view_click_type gesture;
   base_view_hierarch_type hierarchy;
   rect_type content{};
   bool enabled{true};

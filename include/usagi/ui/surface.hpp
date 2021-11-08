@@ -42,13 +42,13 @@ struct surface {
   size_type bounds() const { return holder.bounds(); }
   rect_type frame() const { return holder.frame(); }
 
-  void event(typename mouse_traits::on_down_type mouse) { holder.event(mouse); }
-  void event(typename mouse_traits::on_drag_type mouse) { holder.event(mouse); }
+  bool event(typename mouse_traits::on_down_type mouse) { return holder.event(mouse); }
+  bool event(typename mouse_traits::on_drag_type mouse) { return holder.event(mouse); }
   void event(typename mouse_traits::on_up_type mouse) { holder.event(mouse); }
-  void event(typename mouse_traits::on_over_type mouse) { holder.event(mouse); }
+  bool event(typename mouse_traits::on_over_type mouse) { return holder.event(mouse); }
   void event(typename mouse_traits::on_out_type mouse) { holder.event(mouse); }
-  void event(typename mouse_traits::on_double_click_type mouse) { holder.event(mouse); }
-  void event(typename mouse_traits::on_wheel_type mouse) { holder.event(mouse); }
+  bool event(typename mouse_traits::on_double_click_type mouse) { return holder.event(mouse); }
+  bool event(typename mouse_traits::on_wheel_type mouse) { return holder.event(mouse); }
 
   void set_mouse_down(bool flag) { holder.set_mouse_down(flag); }
   void set_mouse_over(bool flag) { holder.set_mouse_over(flag); }

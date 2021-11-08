@@ -18,14 +18,16 @@ struct SpecificView final : usagi::ui::base_view<ValueType, int, MouseParameter>
 
   explicit SpecificView(std::vector<int> &s) : stamp{s} {}
 
-  void event(typename mouse_traits::on_down_type) override {
+  bool event(typename mouse_traits::on_down_type) override {
     // 1
     stamp.emplace_back(1);
+    return false;
   }
 
-  void event(typename mouse_traits::on_drag_type) override {
+  bool event(typename mouse_traits::on_drag_type) override {
     // 2
     stamp.emplace_back(2);
+    return false;
   }
 
   using usagi::ui::base_view<ValueType, int, MouseParameter>::event;
@@ -35,21 +37,23 @@ private:
 };
 
 namespace detail {
-  using target_tuple = std::tuple<a_tag, b_tag>;
+  using target_tuple = std::tuple<void, a_tag, b_tag>;
 
   // is_apply_invocable
   static_assert(
-      !usagi::ui::detail::is_apply_invocable<std::function<void(a_tag, a_tag)>, target_tuple>(
-          std::make_index_sequence<std::tuple_size_v<target_tuple>>()));
-  static_assert(
       usagi::ui::detail::is_apply_invocable<std::function<void(a_tag, b_tag)>, target_tuple>(
           std::make_index_sequence<std::tuple_size_v<target_tuple>>()));
+
+  static_assert(
+      !usagi::ui::detail::is_apply_invocable<std::function<void(a_tag, a_tag)>, target_tuple>(
+          std::make_index_sequence<std::tuple_size_v<target_tuple>>()));
+
 } // namespace detail
 
 } // namespace
 
 TEST(GestureTest, IsApplyInvocable) {
-  using target = std::tuple<a_tag, b_tag>;
+  using target = std::tuple<void, a_tag, b_tag>;
   {
     auto l = [](a_tag, b_tag) {};
     ASSERT_TRUE((usagi::ui::detail::is_apply_invocable<decltype(l), target>(
@@ -61,6 +65,7 @@ TEST(GestureTest, IsApplyInvocable) {
         std::make_index_sequence<std::tuple_size_v<target>>())));
   }
   {
+    // auto が b_tag に推論される
     auto l = [](a_tag, auto) {};
     ASSERT_TRUE((usagi::ui::detail::is_apply_invocable<decltype(l), target>(
         std::make_index_sequence<std::tuple_size_v<target>>())));
@@ -79,7 +84,7 @@ TEST(GestureTest, PickFuncWrapper) {
 
   // specialized
   {
-    auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<a_tag, b_tag>>(
+    auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<bool, a_tag, b_tag>>(
         // candidates
         [](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
         [](b_tag, b_tag) { return false; }, [](a_tag, b_tag) { return true; });
@@ -88,7 +93,7 @@ TEST(GestureTest, PickFuncWrapper) {
 
   // auto
   {
-    auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<a_tag, b_tag>>(
+    auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<bool, a_tag, b_tag>>(
         // candidates
         [](a_tag, a_tag) { return false; }, [](a_tag, auto) { return true; });
     ASSERT_TRUE(x(a_tag{}, b_tag{}));
@@ -107,7 +112,7 @@ TEST(GestureTest, PickInvocable) {
 
   // specialized
   {
-    auto x = usagi::ui::detail::pick_invocable<std::tuple<a_tag, b_tag>>(
+    auto x = usagi::ui::detail::pick_invocable<std::tuple<bool, a_tag, b_tag>>(
         // candidates
         std::make_tuple([](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
                         [](b_tag, b_tag) { return false; }, [](a_tag, b_tag) { return true; }));
@@ -116,7 +121,7 @@ TEST(GestureTest, PickInvocable) {
 
   // auto
   {
-    auto x = usagi::ui::detail::pick_invocable<std::tuple<a_tag, b_tag>>(
+    auto x = usagi::ui::detail::pick_invocable<std::tuple<bool, a_tag, b_tag>>(
         // candidates
         std::make_tuple([](a_tag, a_tag) { return true; }, [](a_tag, auto) { return true; }));
     ASSERT_TRUE(x(a_tag{}, b_tag{}));
@@ -153,8 +158,10 @@ TEST(GestureTest, Gestures) {
 
   // specialized
   {
-    usagi::ui::gestures<view> g{std::make_tuple(
-        [&stamp](view::mouse_traits::on_drag_type, auto &) { stamp.emplace_back(0); })};
+    usagi::ui::gestures<view> g{std::make_tuple([&stamp](view::mouse_traits::on_drag_type, auto &) {
+      stamp.emplace_back(0);
+      return false;
+    })};
 
     ASSERT_FALSE(g.on_down_holder);
     ASSERT_TRUE(g.on_drag_holder);
@@ -176,10 +183,12 @@ TEST(GestureTest, SpecializedGestures) {
   using view = SpecificView<float>;
 
   std::vector<int> stamp;
-  auto v = view{stamp} |
-           usagi::ui::gestured(
-               [&stamp](view::mouse_traits::on_up_type, auto &) { stamp.emplace_back(100); },
-               [&stamp](view::mouse_traits::on_drag_type, auto &) { stamp.emplace_back(0); });
+  auto v = view{stamp} | usagi::ui::gestured([&stamp](view::mouse_traits::on_up_type,
+                                                      auto &) { stamp.emplace_back(100); },
+                                             [&stamp](view::mouse_traits::on_drag_type, auto &) {
+                                               stamp.emplace_back(0);
+                                               return false;
+                                             });
 
   {
     v.event(view::mouse_traits::on_up_type{});

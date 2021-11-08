@@ -5,9 +5,9 @@
 #include <usagi/ui/view.hpp>
 #include <usagi/utility/arithmetic.hpp>
 
-#include "clickable.hpp"
 #include "draw_context.hpp"
 #include "drawable.hpp"
+#include "gestural.hpp"
 
 template <usagi::utility::arithmetic ValueType>
 struct Viewable : Gestural<ValueType>, Drawable<ValueType, DrawContext> {

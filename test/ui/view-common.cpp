@@ -17,20 +17,20 @@ static_assert(usagi::concepts::ui::viewable<decltype(usagi::ui::view{(SpecificVi
               "view is constructable from SpecificView");
 } // namespace
 
-TEST(ViewTest, CommonCase) {
+TEST(ViewCommonTest, CommonCase) {
   auto v = usagi::ui::view{SpecificView{}};
   auto &vv = v.operator=(std::move(v));
   ASSERT_TRUE(static_cast<bool>(vv));
 }
 
-TEST(ViewTest, BoundsCase) {
+TEST(ViewCommonTest, BoundsCase) {
   auto v = usagi::ui::view{usagi::ui::base_view<float, DrawContext, MouseParameter>{
       usagi::geometry::rect<float>{10.f, 10.f, 40.f, 40.f}}};
   ASSERT_EQ(v.bounds(), (usagi::geometry::size<float>{30.f, 30.f}));
   ASSERT_EQ(v.frame(), (usagi::geometry::rect<float>{10.f, 10.f, 40.f, 40.f}));
 }
 
-TEST(ViewTest, PredicationCase) {
+TEST(ViewCommonTest, PredicationCase) {
   {
     // default constructor case
     auto v = usagi::ui::view<float, DrawContext, MouseParameter>{};
@@ -42,7 +42,7 @@ TEST(ViewTest, PredicationCase) {
   }
 }
 
-TEST(ViewTest, DrawCase) {
+TEST(ViewCommonTest, DrawCase) {
   auto v = usagi::ui::view{SpecificView{}};
   auto context = DrawContext{};
   v.draw(context);
@@ -52,7 +52,7 @@ TEST(ViewTest, DrawCase) {
   v.draw(context);
 }
 
-TEST(ViewTest, SubViewCase) {
+TEST(ViewCommonTest, CommonSubViewCase) {
   auto v = usagi::ui::view{SpecificView{}};
 
   ASSERT_FALSE(v.remove_sub_view(0));
@@ -81,7 +81,7 @@ TEST(ViewTest, SubViewCase) {
   ASSERT_FALSE(v.remove_sub_view(0));
 }
 
-TEST(ViewTest, ClickCase) {
+TEST(ViewCommonTest, ClickCase) {
   auto v = usagi::ui::view{SpecificView{}};
   v.event(SpecificView::mouse_traits::on_down_type{});
   v.event(SpecificView::mouse_traits::on_drag_type{});
@@ -100,7 +100,7 @@ TEST(ViewTest, ClickCase) {
   v.event(SpecificView::mouse_traits::on_double_click_type{});
 }
 
-TEST(ViewTest, MakeCase) {
+TEST(ViewCommonTest, MakeCase) {
   auto v = usagi::ui::make_view<SpecificView>();
   ASSERT_TRUE(static_cast<bool>(v));
 }

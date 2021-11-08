@@ -18,14 +18,16 @@ struct SpecificView final : usagi::ui::base_view<ValueType, int, MouseParameter>
 
   explicit SpecificView(std::vector<int> &s) : stamp{s} {}
 
-  void event(typename mouse_traits::on_down_type) override {
+  bool event(typename mouse_traits::on_down_type) override {
     // 1
     stamp.emplace_back(1);
+    return false;
   }
 
-  void event(typename mouse_traits::on_drag_type) override {
+  bool event(typename mouse_traits::on_drag_type) override {
     // 2
     stamp.emplace_back(2);
+    return false;
   }
 
   using usagi::ui::base_view<ValueType, int, MouseParameter>::event;
@@ -102,7 +104,7 @@ TEST(GestureTest, PickInvocable) {
         // candidates
         std::make_tuple([](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
                         [](b_tag, b_tag) { return false; }));
-    ASSERT_TRUE(x == nullptr);
+    ASSERT_FALSE(x);
   }
 
   // specialized
@@ -153,8 +155,10 @@ TEST(GestureTest, Gestures) {
 
   // specialized
   {
-    usagi::ui::gestures<view> g{std::make_tuple(
-        [&stamp](view::mouse_traits::on_drag_type, auto &) { stamp.emplace_back(0); })};
+    usagi::ui::gestures<view> g{std::make_tuple([&stamp](view::mouse_traits::on_drag_type, auto &) {
+      stamp.emplace_back(0);
+      return false;
+    })};
 
     ASSERT_FALSE(g.on_down_holder);
     ASSERT_TRUE(g.on_drag_holder);
@@ -176,10 +180,12 @@ TEST(GestureTest, SpecializedGestures) {
   using view = SpecificView<float>;
 
   std::vector<int> stamp;
-  auto v = view{stamp} |
-           usagi::ui::gestured(
-               [&stamp](view::mouse_traits::on_up_type, auto &) { stamp.emplace_back(100); },
-               [&stamp](view::mouse_traits::on_drag_type, auto &) { stamp.emplace_back(0); });
+  auto v = view{stamp} | usagi::ui::gestured([&stamp](view::mouse_traits::on_up_type,
+                                                      auto &) { stamp.emplace_back(100); },
+                                             [&stamp](view::mouse_traits::on_drag_type, auto &) {
+                                               stamp.emplace_back(0);
+                                               return false;
+                                             });
 
   {
     v.event(view::mouse_traits::on_up_type{});

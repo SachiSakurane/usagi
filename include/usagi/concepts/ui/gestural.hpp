@@ -15,23 +15,37 @@ concept mouse_parameter = requires(MouseParameterType &m) {
 
 /**
  * gesture できるやつ
+ *
+ * 終点は基本的に resolve(true を返して以降のレイヤーを無視すること) ができない
  */
 template <class GesturalType>
 concept gestural = requires(GesturalType &g) {
   typename GesturalType::mouse_parameter_type;
 
-  g.event(std::declval<typename usagi::type::mouse_traits<
-              typename GesturalType::mouse_parameter_type>::on_down_type>());
-  g.event(std::declval<typename usagi::type::mouse_traits<
-              typename GesturalType::mouse_parameter_type>::on_drag_type>());
-  g.event(std::declval<typename usagi::type::mouse_traits<
-              typename GesturalType::mouse_parameter_type>::on_over_type>());
+  {
+    g.event(std::declval<typename usagi::type::mouse_traits<
+                typename GesturalType::mouse_parameter_type>::on_down_type>())
+    } -> std::same_as<bool>;
+  {
+    g.event(std::declval<typename usagi::type::mouse_traits<
+                typename GesturalType::mouse_parameter_type>::on_drag_type>())
+    } -> std::same_as<bool>;
+
+  {
+    g.event(std::declval<typename usagi::type::mouse_traits<
+                typename GesturalType::mouse_parameter_type>::on_over_type>())
+    } -> std::same_as<bool>;
+
   g.event(std::declval<typename usagi::type::mouse_traits<
               typename GesturalType::mouse_parameter_type>::on_up_type>());
+
   g.event(std::declval<typename usagi::type::mouse_traits<
               typename GesturalType::mouse_parameter_type>::on_out_type>());
-  g.event(std::declval<typename usagi::type::mouse_traits<
-              typename GesturalType::mouse_parameter_type>::on_wheel_type>());
+
+  {
+    g.event(std::declval<typename usagi::type::mouse_traits<
+                typename GesturalType::mouse_parameter_type>::on_wheel_type>())
+    } -> std::same_as<bool>;
 
   g.set_mouse_down(std::declval<bool>());
   g.set_mouse_over(std::declval<bool>());

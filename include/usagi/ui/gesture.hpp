@@ -92,13 +92,13 @@ struct gestures {
         on_wheel{usagi::ui::detail::pick_invocable<
             std::tuple<typename mouse_traits::on_wheel_type, ViewType &>>(t)} {}
 
-  std::function<void(typename mouse_traits::on_down_type, ViewType &)> on_down_holder;
-  std::function<void(typename mouse_traits::on_drag_type, ViewType &)> on_drag_holder;
+  std::function<bool(typename mouse_traits::on_down_type, ViewType &)> on_down_holder;
+  std::function<bool(typename mouse_traits::on_drag_type, ViewType &)> on_drag_holder;
   std::function<void(typename mouse_traits::on_up_type, ViewType &)> on_up_holder;
-  std::function<void(typename mouse_traits::on_over_type, ViewType &)> on_over_holder;
+  std::function<bool(typename mouse_traits::on_over_type, ViewType &)> on_over_holder;
   std::function<void(typename mouse_traits::on_out_type, ViewType &)> on_out_holder;
-  std::function<void(typename mouse_traits::on_double_click_type, ViewType &)> on_double_click;
-  std::function<void(typename mouse_traits::on_wheel_type, ViewType &)> on_wheel;
+  std::function<bool(typename mouse_traits::on_double_click_type, ViewType &)> on_double_click;
+  std::function<bool(typename mouse_traits::on_wheel_type, ViewType &)> on_wheel;
 };
 
 template <usagi::concepts::ui::viewable ViewType>
@@ -124,18 +124,22 @@ struct gesture {
   size_type bounds() const { return holder.bounds(); }
   rect_type frame() const { return holder.frame(); }
 
-  void event(typename mouse_traits::on_down_type mouse) {
+  bool event(typename mouse_traits::on_down_type mouse) {
     if (g.on_down_holder) {
-      g.on_down_holder(mouse, holder);
+      if (g.on_down_holder(mouse, holder)) {
+        return true;
+      }
     }
-    holder.event(mouse);
+    return holder.event(mouse);
   }
 
-  void event(typename mouse_traits::on_drag_type mouse) {
+  bool event(typename mouse_traits::on_drag_type mouse) {
     if (g.on_drag_holder) {
-      g.on_drag_holder(mouse, holder);
+      if (g.on_drag_holder(mouse, holder)) {
+        return true;
+      }
     }
-    holder.event(mouse);
+    return holder.event(mouse);
   }
 
   void event(typename mouse_traits::on_up_type mouse) {
@@ -145,11 +149,13 @@ struct gesture {
     holder.event(mouse);
   }
 
-  void event(typename mouse_traits::on_over_type mouse) {
+  bool event(typename mouse_traits::on_over_type mouse) {
     if (g.on_over_holder) {
-      g.on_over_holder(mouse, holder);
+      if (g.on_over_holder(mouse, holder)) {
+        return true;
+      }
     }
-    holder.event(mouse);
+    return holder.event(mouse);
   }
 
   void event(typename mouse_traits::on_out_type mouse) {
@@ -159,18 +165,22 @@ struct gesture {
     holder.event(mouse);
   }
 
-  void event(typename mouse_traits::on_double_click_type mouse) {
+  bool event(typename mouse_traits::on_double_click_type mouse) {
     if (g.on_double_click) {
-      g.on_double_click(mouse, holder);
+      if (g.on_double_click(mouse, holder)) {
+        return true;
+      }
     }
-    holder.event(mouse);
+    return holder.event(mouse);
   }
 
-  void event(typename mouse_traits::on_wheel_type mouse) {
+  bool event(typename mouse_traits::on_wheel_type mouse) {
     if (g.on_wheel) {
-      g.on_wheel(mouse, holder);
+      if (g.on_wheel(mouse, holder)) {
+        return true;
+      }
     }
-    holder.event(mouse);
+    return holder.event(mouse);
   }
 
   void set_mouse_down(bool flag) { holder.set_mouse_down(flag); }

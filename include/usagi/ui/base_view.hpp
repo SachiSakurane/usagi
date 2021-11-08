@@ -49,26 +49,26 @@ public:
   virtual size_type bounds() const { return content.size(); }
   virtual rect_type frame() const { return content; }
 
-  virtual void event(typename mouse_traits::on_down_type mouse) {
-    gesture.on_event(mouse, hierarchy.get_children());
+  virtual bool event(typename mouse_traits::on_down_type mouse) {
+    return gesture.on_event(mouse, hierarchy.get_children());
   }
-  virtual void event(typename mouse_traits::on_drag_type mouse) {
-    gesture.on_event(mouse, hierarchy.get_children());
+  virtual bool event(typename mouse_traits::on_drag_type mouse) {
+    return gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual void event(typename mouse_traits::on_up_type mouse) {
     gesture.on_event(mouse, hierarchy.get_children());
   }
-  virtual void event(typename mouse_traits::on_over_type mouse) {
-    gesture.on_event(mouse, hierarchy.get_children());
+  virtual bool event(typename mouse_traits::on_over_type mouse) {
+    return gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual void event(typename mouse_traits::on_out_type mouse) {
     gesture.on_event(mouse, hierarchy.get_children());
   }
-  virtual void event(typename mouse_traits::on_double_click_type mouse) {
-    gesture.on_event(mouse, hierarchy.get_children());
+  virtual bool event(typename mouse_traits::on_double_click_type mouse) {
+    return gesture.on_event(mouse, hierarchy.get_children());
   }
-  virtual void event(typename mouse_traits::on_wheel_type mouse) {
-    gesture.on_event(mouse, hierarchy.get_children());
+  virtual bool event(typename mouse_traits::on_wheel_type mouse) {
+    return gesture.on_event(mouse, hierarchy.get_children());
   }
 
   virtual void set_mouse_down(bool flag) { gesture.set_mouse_down(flag); }

@@ -20,7 +20,7 @@ public:
   [[nodiscard]] bool is_mouse_overed() const { return mouse_overed; }
 
   template <class ChildrenType>
-  void on_event(typename mouse_traits::on_down_type mouse, ChildrenType& children) {
+  bool on_event(typename mouse_traits::on_down_type mouse, ChildrenType& children) {
     set_mouse_down(true);
     auto point = point_type{mouse.x, mouse.y};
     for (auto &value : children) {
@@ -30,6 +30,7 @@ public:
         child.event(mouse);
       }
     }
+    return false;
   }
 
   template <class ChildrenType>

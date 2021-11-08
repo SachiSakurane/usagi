@@ -10,12 +10,12 @@
 #include "drawable.hpp"
 
 template <usagi::utility::arithmetic ValueType>
-struct Viewable : Clickable<ValueType>, Drawable<ValueType, DrawContext> {
+struct Viewable : Gestural<ValueType>, Drawable<ValueType, DrawContext> {
   using value_type = ValueType;
   using size_type = typename usagi::geometry::size<value_type>;
   using rect_type = typename usagi::geometry::rect<value_type>;
   using draw_context_type = typename Drawable<ValueType, DrawContext>::draw_context_type;
-  using mouse_parameter_type = typename Clickable<ValueType>::mouse_parameter_type;
+  using mouse_parameter_type = typename Gestural<ValueType>::mouse_parameter_type;
   using view_type = usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
 
   using children_type = std::map<view_type, size_t>;
@@ -34,12 +34,12 @@ struct Viewable : Clickable<ValueType>, Drawable<ValueType, DrawContext> {
 };
 
 template <usagi::utility::arithmetic ValueType>
-struct UnViewable : Clickable<ValueType>, Drawable<ValueType, DrawContext> {
+struct UnViewable : Gestural<ValueType>, Drawable<ValueType, DrawContext> {
   using value_type = ValueType;
   using size_type = typename usagi::geometry::size<value_type>;
   using rect_type = typename usagi::geometry::rect<value_type>;
   using draw_context_type = typename Drawable<ValueType, DrawContext>::draw_context_type;
-  using mouse_parameter_type = typename Clickable<ValueType>::mouse_parameter_type;
+  using mouse_parameter_type = typename Gestural<ValueType>::mouse_parameter_type;
   using view_type = usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
   size_type bounds() const;
   rect_type frame() const;

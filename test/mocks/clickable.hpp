@@ -3,7 +3,7 @@
 #include <usagi/type/mouse.hpp>
 
 template <class ValueType>
-struct Clickable {
+struct Gestural {
   using mouse_parameter_type = usagi::type::mouse::default_parameter<ValueType>;
   using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
   void event(typename mouse_traits::on_down_type);
@@ -19,7 +19,7 @@ struct Clickable {
 };
 
 template <class ValueType>
-struct UnClickable {
+struct UnGestural {
   using mouse_parameter_type = usagi::type::mouse::default_parameter<ValueType>;
   using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
   void event(typename mouse_traits::on_down_type);

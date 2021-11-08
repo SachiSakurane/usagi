@@ -70,46 +70,38 @@ TEST(GestureTest, PickFuncWrapper) {
   // default
   {
     auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<a_tag, b_tag>>(
-        // default
-        [](auto, auto) { return true; },
         // candidates
         [](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
-        [](b_tag, b_tag) { return false; })(a_tag{}, b_tag{});
-    ASSERT_TRUE(x);
+        [](b_tag, b_tag) { return false; });
+    ASSERT_TRUE(x == nullptr);
   }
 
   // specialized
   {
     auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<a_tag, b_tag>>(
-        // default
-        [](auto, auto) { return false; },
         // candidates
         [](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
-        [](b_tag, b_tag) { return false; }, [](a_tag, b_tag) { return true; })(a_tag{}, b_tag{});
-    ASSERT_TRUE(x);
+        [](b_tag, b_tag) { return false; }, [](a_tag, b_tag) { return true; });
+    ASSERT_TRUE(x(a_tag{}, b_tag{}));
   }
 
   // auto
   {
     auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<a_tag, b_tag>>(
-        // default
-        [](auto, auto) { return false; },
         // candidates
-        [](a_tag, a_tag) { return false; }, [](a_tag, auto) { return true; })(a_tag{}, b_tag{});
-    ASSERT_TRUE(x);
+        [](a_tag, a_tag) { return false; }, [](a_tag, auto) { return true; });
+    ASSERT_TRUE(x(a_tag{}, b_tag{}));
   }
 }
 
 TEST(GestureTest, PickInvocable) {
-  // default
+  // none
   {
     auto x = usagi::ui::detail::pick_invocable<std::tuple<a_tag, b_tag>>(
         // candidates
         std::make_tuple([](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
-                        [](b_tag, b_tag) { return false; }),
-        // default
-        [](auto, auto) { return true; })(a_tag{}, b_tag{});
-    ASSERT_TRUE(x);
+                        [](b_tag, b_tag) { return false; }));
+    ASSERT_TRUE(x == nullptr);
   }
 
   // specialized
@@ -117,20 +109,38 @@ TEST(GestureTest, PickInvocable) {
     auto x = usagi::ui::detail::pick_invocable<std::tuple<a_tag, b_tag>>(
         // candidates
         std::make_tuple([](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
-                        [](b_tag, b_tag) { return false; }, [](a_tag, b_tag) { return true; }),
-        // default
-        [](auto, auto) { return false; })(a_tag{}, b_tag{});
-    ASSERT_TRUE(x);
+                        [](b_tag, b_tag) { return false; }, [](a_tag, b_tag) { return true; }));
+    ASSERT_TRUE(x(a_tag{}, b_tag{}));
   }
 
   // auto
   {
     auto x = usagi::ui::detail::pick_invocable<std::tuple<a_tag, b_tag>>(
         // candidates
-        std::make_tuple([](a_tag, a_tag) { return true; }, [](a_tag, auto) { return true; }),
-        // default
-        [](auto, auto) { return true; })(a_tag{}, b_tag{});
-    ASSERT_TRUE(x);
+        std::make_tuple([](a_tag, a_tag) { return true; }, [](a_tag, auto) { return true; }));
+    ASSERT_TRUE(x(a_tag{}, b_tag{}));
+  }
+}
+
+TEST(GestureTest, NullGestures) {
+  using view = SpecificView<float>;
+
+  std::vector<int> stamp;
+  view v{stamp};
+
+  // default
+  {
+    usagi::ui::gestures<view> g{std::make_tuple()};
+
+    ASSERT_FALSE(g.on_down_holder);
+    ASSERT_FALSE(g.on_drag_holder);
+    ASSERT_FALSE(g.on_up_holder);
+    ASSERT_FALSE(g.on_over_holder);
+    ASSERT_FALSE(g.on_out_holder);
+    ASSERT_FALSE(g.on_double_click);
+    ASSERT_FALSE(g.on_wheel);
+
+    ASSERT_EQ(stamp.size(), 0);
   }
 }
 
@@ -140,31 +150,18 @@ TEST(GestureTest, Gestures) {
   std::vector<int> stamp;
   view v{stamp};
 
-  // default
-  {
-    usagi::ui::gestures<view> g{std::make_tuple()};
-    g.on_down_holder(view::mouse_traits::on_down_type{}, v);
-    g.on_drag_holder(view::mouse_traits::on_drag_type{}, v);
-    g.on_up_holder(view::mouse_traits::on_up_type{}, v);
-    g.on_over_holder(view::mouse_traits::on_over_type{}, v);
-    g.on_out_holder(view::mouse_traits::on_out_type{}, v);
-    g.on_double_click(view::mouse_traits::on_double_click_type{}, v);
-    g.on_wheel(view::mouse_traits::on_wheel_type{}, v);
-
-    ASSERT_EQ(stamp.size(), 0);
-  }
-  stamp.clear();
-
   // specialized
   {
     usagi::ui::gestures<view> g{std::make_tuple(
         [&stamp](view::mouse_traits::on_drag_type, auto &) { stamp.emplace_back(0); })};
 
-    g.on_down_holder(view::mouse_traits::on_down_type{}, v);
-
-    ASSERT_EQ(stamp.size(), 0);
-
-    stamp.clear();
+    ASSERT_FALSE(g.on_down_holder);
+    ASSERT_TRUE(g.on_drag_holder);
+    ASSERT_FALSE(g.on_up_holder);
+    ASSERT_FALSE(g.on_over_holder);
+    ASSERT_FALSE(g.on_out_holder);
+    ASSERT_FALSE(g.on_double_click);
+    ASSERT_FALSE(g.on_wheel);
 
     g.on_drag_holder(view::mouse_traits::on_drag_type{}, v);
 
@@ -174,13 +171,24 @@ TEST(GestureTest, Gestures) {
   }
 }
 
-TEST(GestureTest, Gesture) {
+TEST(GestureTest, SpecializedGestures) {
   using view = SpecificView<float>;
 
   std::vector<int> stamp;
-  auto v = view{stamp} | usagi::ui::gestured([&stamp](view::mouse_traits::on_drag_type, auto &) {
-             stamp.emplace_back(0);
-           });
+  auto v = view{stamp} |
+           usagi::ui::gestured(
+               [&stamp](view::mouse_traits::on_up_type, auto &) { stamp.emplace_back(100); },
+               [&stamp](view::mouse_traits::on_drag_type, auto &) { stamp.emplace_back(0); });
+
+  {
+    v.event(view::mouse_traits::on_up_type{});
+
+    // gesturedのon_up_typeだけ実行されている
+    ASSERT_EQ(stamp.size(), 1);
+    ASSERT_EQ(stamp[0], 100);
+  }
+
+  stamp.clear();
 
   {
     v.event(view::mouse_traits::on_down_type{});

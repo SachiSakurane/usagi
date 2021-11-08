@@ -41,11 +41,13 @@ namespace detail {
 
   // is_apply_invocable
   static_assert(
-      !usagi::ui::detail::is_apply_invocable<std::function<void(a_tag, a_tag)>, target_tuple>(
-          std::make_index_sequence<std::tuple_size_v<target_tuple>>()));
-  static_assert(
       usagi::ui::detail::is_apply_invocable<std::function<void(a_tag, b_tag)>, target_tuple>(
           std::make_index_sequence<std::tuple_size_v<target_tuple>>()));
+
+  static_assert(
+      !usagi::ui::detail::is_apply_invocable<std::function<void(a_tag, a_tag)>, target_tuple>(
+          std::make_index_sequence<std::tuple_size_v<target_tuple>>()));
+
 } // namespace detail
 
 } // namespace
@@ -63,6 +65,7 @@ TEST(GestureTest, IsApplyInvocable) {
         std::make_index_sequence<std::tuple_size_v<target>>())));
   }
   {
+    // auto が b_tag に推論される
     auto l = [](a_tag, auto) {};
     ASSERT_TRUE((usagi::ui::detail::is_apply_invocable<decltype(l), target>(
         std::make_index_sequence<std::tuple_size_v<target>>())));

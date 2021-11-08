@@ -107,7 +107,7 @@ TEST(GestureTest, PickInvocable) {
         // candidates
         std::make_tuple([](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
                         [](b_tag, b_tag) { return false; }));
-    ASSERT_FALSE(x);
+    ASSERT_TRUE(x == nullptr);
   }
 
   // specialized

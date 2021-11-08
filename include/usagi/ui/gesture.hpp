@@ -9,9 +9,12 @@
 
 namespace usagi::ui {
 namespace detail {
+  template <class F, class R, class... ArgsTypes>
+  inline constexpr bool invocable_f_r = std::is_invocable_r_v<R, F, ArgsTypes...>;
+
   template <class Func, class ArgsTuple, std::size_t... Sequence>
   inline constexpr bool is_apply_invocable(std::index_sequence<Sequence...>) {
-    return std::is_invocable_v<Func, std::tuple_element_t<Sequence, ArgsTuple>...>;
+    return invocable_f_r<Func, std::tuple_element_t<Sequence, ArgsTuple>...>;
   }
 
   template <class Func, class SearchArgsTuple>
@@ -39,8 +42,8 @@ namespace detail {
   // no result(return default)
   template <class SearchArgsTuple>
   struct pick_func<SearchArgsTuple> {
-    explicit pick_func<SearchArgsTuple>() : elem{nullptr} {}
-    std::nullptr_t elem;
+    explicit pick_func<SearchArgsTuple>() {}
+    std::nullptr_t elem{nullptr};
   };
 
   template <class SearchArgsTuple, class... Args>
@@ -78,19 +81,19 @@ struct gestures {
   template <class TupleType>
   explicit gestures(TupleType t)
       : on_down_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_down_type, ViewType &>>(t)},
+            std::tuple<bool, typename mouse_traits::on_down_type, ViewType &>>(t)},
         on_drag_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_drag_type, ViewType &>>(t)},
+            std::tuple<bool, typename mouse_traits::on_drag_type, ViewType &>>(t)},
         on_up_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_up_type, ViewType &>>(t)},
+            std::tuple<void, typename mouse_traits::on_up_type, ViewType &>>(t)},
         on_over_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_over_type, ViewType &>>(t)},
+            std::tuple<bool, typename mouse_traits::on_over_type, ViewType &>>(t)},
         on_out_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_out_type, ViewType &>>(t)},
+            std::tuple<void, typename mouse_traits::on_out_type, ViewType &>>(t)},
         on_double_click{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_double_click_type, ViewType &>>(t)},
+            std::tuple<bool, typename mouse_traits::on_double_click_type, ViewType &>>(t)},
         on_wheel{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_wheel_type, ViewType &>>(t)} {}
+            std::tuple<bool, typename mouse_traits::on_wheel_type, ViewType &>>(t)} {}
 
   std::function<bool(typename mouse_traits::on_down_type, ViewType &)> on_down_holder;
   std::function<bool(typename mouse_traits::on_drag_type, ViewType &)> on_drag_holder;

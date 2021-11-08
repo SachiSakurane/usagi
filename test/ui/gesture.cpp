@@ -37,7 +37,7 @@ private:
 };
 
 namespace detail {
-  using target_tuple = std::tuple<a_tag, b_tag>;
+  using target_tuple = std::tuple<void, a_tag, b_tag>;
 
   // is_apply_invocable
   static_assert(
@@ -51,7 +51,7 @@ namespace detail {
 } // namespace
 
 TEST(GestureTest, IsApplyInvocable) {
-  using target = std::tuple<a_tag, b_tag>;
+  using target = std::tuple<void, a_tag, b_tag>;
   {
     auto l = [](a_tag, b_tag) {};
     ASSERT_TRUE((usagi::ui::detail::is_apply_invocable<decltype(l), target>(
@@ -81,7 +81,7 @@ TEST(GestureTest, PickFuncWrapper) {
 
   // specialized
   {
-    auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<a_tag, b_tag>>(
+    auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<bool, a_tag, b_tag>>(
         // candidates
         [](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
         [](b_tag, b_tag) { return false; }, [](a_tag, b_tag) { return true; });
@@ -90,7 +90,7 @@ TEST(GestureTest, PickFuncWrapper) {
 
   // auto
   {
-    auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<a_tag, b_tag>>(
+    auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<bool, a_tag, b_tag>>(
         // candidates
         [](a_tag, a_tag) { return false; }, [](a_tag, auto) { return true; });
     ASSERT_TRUE(x(a_tag{}, b_tag{}));
@@ -109,7 +109,7 @@ TEST(GestureTest, PickInvocable) {
 
   // specialized
   {
-    auto x = usagi::ui::detail::pick_invocable<std::tuple<a_tag, b_tag>>(
+    auto x = usagi::ui::detail::pick_invocable<std::tuple<bool, a_tag, b_tag>>(
         // candidates
         std::make_tuple([](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
                         [](b_tag, b_tag) { return false; }, [](a_tag, b_tag) { return true; }));
@@ -118,7 +118,7 @@ TEST(GestureTest, PickInvocable) {
 
   // auto
   {
-    auto x = usagi::ui::detail::pick_invocable<std::tuple<a_tag, b_tag>>(
+    auto x = usagi::ui::detail::pick_invocable<std::tuple<bool, a_tag, b_tag>>(
         // candidates
         std::make_tuple([](a_tag, a_tag) { return true; }, [](a_tag, auto) { return true; }));
     ASSERT_TRUE(x(a_tag{}, b_tag{}));

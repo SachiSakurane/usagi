@@ -18,33 +18,29 @@ namespace detail {
   concept apply_invocable = is_apply_invocable<Func, SearchArgsTuple>(
       std::make_index_sequence<std::tuple_size_v<SearchArgsTuple>>());
 
-  template <class SearchArgsTuple, apply_invocable<SearchArgsTuple> Default, class... Args>
+  template <class SearchArgsTuple, class... Args>
   struct pick_func;
 
   // iterate
-  template <class SearchArgsTuple, apply_invocable<SearchArgsTuple> Default, class Front,
-            class... Args>
-  struct pick_func<SearchArgsTuple, Default, Front, Args...>
-      : pick_func<SearchArgsTuple, Default, Args...> {
-    pick_func<SearchArgsTuple, Default, Front, Args...>(Default &&d, Front &&, Args &&...args)
-        : pick_func<SearchArgsTuple, Default, Args...>{std::forward<Default>(d),
-                                                       std::forward<Args>(args)...} {}
+  template <class SearchArgsTuple, class Front, class... Args>
+  struct pick_func<SearchArgsTuple, Front, Args...> : pick_func<SearchArgsTuple, Args...> {
+    pick_func<SearchArgsTuple, Front, Args...>(Front &&, Args &&...args)
+        : pick_func<SearchArgsTuple, Args...>{std::forward<Args>(args)...} {}
   };
 
   // found apply_invocable
-  template <class SearchArgsTuple, apply_invocable<SearchArgsTuple> Default,
-            apply_invocable<SearchArgsTuple> Front, class... Args>
-  struct pick_func<SearchArgsTuple, Default, Front, Args...> {
-    pick_func<SearchArgsTuple, Default, Front, Args...>(Default &&, Front &&f, Args &&...)
+  template <class SearchArgsTuple, apply_invocable<SearchArgsTuple> Front, class... Args>
+  struct pick_func<SearchArgsTuple, Front, Args...> {
+    pick_func<SearchArgsTuple, Front, Args...>(Front &&f, Args &&...)
         : elem{std::forward<Front>(f)} {}
     Front elem;
   };
 
   // no result(return default)
-  template <class SearchArgsTuple, apply_invocable<SearchArgsTuple> Default>
-  struct pick_func<SearchArgsTuple, Default> {
-    explicit pick_func<SearchArgsTuple, Default>(Default &&d) : elem{std::forward<Default>(d)} {}
-    Default elem;
+  template <class SearchArgsTuple>
+  struct pick_func<SearchArgsTuple> {
+    explicit pick_func<SearchArgsTuple>() : elem{nullptr} {}
+    std::nullptr_t elem;
   };
 
   template <class SearchArgsTuple, class... Args>
@@ -58,11 +54,11 @@ namespace detail {
         std::forward<std::tuple_element_t<Sequence, Tuple>>(std::get<Sequence>(t))...);
   }
 
-  template <class SearchArgsTuple, class CandidatesTuple, class DefaultFunc>
-  inline constexpr decltype(auto) pick_invocable(CandidatesTuple t, DefaultFunc &&default_func) {
+  template <class SearchArgsTuple, class CandidatesTuple>
+  inline constexpr decltype(auto) pick_invocable(CandidatesTuple t) {
     return pick_invocable_impl<SearchArgsTuple>(
-        std::tuple_cat(std::forward_as_tuple(default_func), std::forward<CandidatesTuple>(t)),
-        std::make_index_sequence<1 + std::tuple_size_v<CandidatesTuple>>());
+        std::forward<CandidatesTuple>(t),
+        std::make_index_sequence<std::tuple_size_v<CandidatesTuple>>());
   }
 } // namespace detail
 
@@ -82,21 +78,19 @@ struct gestures {
   template <class TupleType>
   explicit gestures(TupleType t)
       : on_down_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_down_type, ViewType &>>(t, [](auto, auto &) {})},
+            std::tuple<typename mouse_traits::on_down_type, ViewType &>>(t)},
         on_drag_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_drag_type, ViewType &>>(t, [](auto, auto &) {})},
+            std::tuple<typename mouse_traits::on_drag_type, ViewType &>>(t)},
         on_up_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_up_type, ViewType &>>(t, [](auto, auto &) {})},
+            std::tuple<typename mouse_traits::on_up_type, ViewType &>>(t)},
         on_over_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_over_type, ViewType &>>(t, [](auto, auto &) {})},
+            std::tuple<typename mouse_traits::on_over_type, ViewType &>>(t)},
         on_out_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_out_type, ViewType &>>(t, [](auto, auto &) {})},
+            std::tuple<typename mouse_traits::on_out_type, ViewType &>>(t)},
         on_double_click{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_double_click_type, ViewType &>>(
-            t, [](auto, auto &) {})},
+            std::tuple<typename mouse_traits::on_double_click_type, ViewType &>>(t)},
         on_wheel{usagi::ui::detail::pick_invocable<
-            std::tuple<typename mouse_traits::on_wheel_type, ViewType &>>(
-            t, [](auto, auto &) {})}{}
+            std::tuple<typename mouse_traits::on_wheel_type, ViewType &>>(t)} {}
 
   std::function<void(typename mouse_traits::on_down_type, ViewType &)> on_down_holder;
   std::function<void(typename mouse_traits::on_drag_type, ViewType &)> on_drag_holder;
@@ -131,37 +125,51 @@ struct gesture {
   rect_type frame() const { return holder.frame(); }
 
   void event(typename mouse_traits::on_down_type mouse) {
-    g.on_down_holder(mouse, holder);
+    if (g.on_down_holder) {
+      g.on_down_holder(mouse, holder);
+    }
     holder.event(mouse);
   }
 
   void event(typename mouse_traits::on_drag_type mouse) {
-    g.on_drag_holder(mouse, holder);
+    if (g.on_drag_holder) {
+      g.on_drag_holder(mouse, holder);
+    }
     holder.event(mouse);
   }
 
   void event(typename mouse_traits::on_up_type mouse) {
-    g.on_up_holder(mouse, holder);
+    if (g.on_up_holder) {
+      g.on_up_holder(mouse, holder);
+    }
     holder.event(mouse);
   }
 
   void event(typename mouse_traits::on_over_type mouse) {
-    g.on_over_holder(mouse, holder);
+    if (g.on_over_holder) {
+      g.on_over_holder(mouse, holder);
+    }
     holder.event(mouse);
   }
 
   void event(typename mouse_traits::on_out_type mouse) {
-    g.on_out_holder(mouse, holder);
+    if (g.on_out_holder) {
+      g.on_out_holder(mouse, holder);
+    }
     holder.event(mouse);
   }
 
   void event(typename mouse_traits::on_double_click_type mouse) {
-    g.on_double_click(mouse, holder);
+    if (g.on_double_click) {
+      g.on_double_click(mouse, holder);
+    }
     holder.event(mouse);
   }
 
   void event(typename mouse_traits::on_wheel_type mouse) {
-    g.on_wheel(mouse, holder);
+    if (g.on_wheel) {
+      g.on_wheel(mouse, holder);
+    }
     holder.event(mouse);
   }
 

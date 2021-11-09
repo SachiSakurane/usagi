@@ -80,7 +80,7 @@ public:
 
   void OnMouseDblClick(float x, float y, const IMouseMod &mod) override {
     local_view.event(
-        iplug_traits::mouse_traits::on_double_click_type{x, y, 0.f, make_igraphic_control()});
+        iplug_traits::mouse_traits::on_double_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseDblClick(x, y, mod);
   }
 

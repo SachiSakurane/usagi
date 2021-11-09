@@ -24,10 +24,9 @@ struct SpecificView final : usagi::ui::base_view<ValueType, int, MouseParameter>
     return false;
   }
 
-  bool event(typename mouse_traits::on_drag_type) override {
+  void event(typename mouse_traits::on_drag_type) override {
     // 2
     stamp.emplace_back(2);
-    return false;
   }
 
   using usagi::ui::base_view<ValueType, int, MouseParameter>::event;
@@ -158,10 +157,8 @@ TEST(GestureTest, Gestures) {
 
   // specialized
   {
-    usagi::ui::gestures<view> g{std::make_tuple([&stamp](view::mouse_traits::on_drag_type, auto &) {
-      stamp.emplace_back(0);
-      return false;
-    })};
+    usagi::ui::gestures<view> g{std::make_tuple(
+        [&stamp](view::mouse_traits::on_drag_type, auto &) { stamp.emplace_back(0); })};
 
     ASSERT_FALSE(g.on_down_holder);
     ASSERT_TRUE(g.on_drag_holder);
@@ -183,12 +180,10 @@ TEST(GestureTest, SpecializedGestures) {
   using view = SpecificView<float>;
 
   std::vector<int> stamp;
-  auto v = view{stamp} | usagi::ui::gestured([&stamp](view::mouse_traits::on_up_type,
-                                                      auto &) { stamp.emplace_back(100); },
-                                             [&stamp](view::mouse_traits::on_drag_type, auto &) {
-                                               stamp.emplace_back(0);
-                                               return false;
-                                             });
+  auto v = view{stamp} |
+           usagi::ui::gestured(
+               [&stamp](view::mouse_traits::on_up_type, auto &) { stamp.emplace_back(100); },
+               [&stamp](view::mouse_traits::on_drag_type, auto &) { stamp.emplace_back(0); });
 
   {
     v.event(view::mouse_traits::on_up_type{});

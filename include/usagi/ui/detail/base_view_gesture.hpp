@@ -36,16 +36,13 @@ public:
   }
 
   template <class ChildrenType>
-  bool on_event(typename mouse_traits::on_drag_type mouse, ChildrenType &children) {
+  void on_event(typename mouse_traits::on_drag_type mouse, ChildrenType &children) {
     for (auto it = std::rbegin(children); it != std::rend(children); ++it) {
       auto &child = it->second;
       if (child.is_mouse_downed()) {
-        if (child.event(mouse)) {
-          return true;
-        }
+        child.event(mouse);
       }
     }
-    return false;
   }
 
   template <class ChildrenType>
@@ -90,7 +87,7 @@ public:
   }
 
   template <class ChildrenType>
-  bool on_event(typename mouse_traits::on_double_click_type mouse, ChildrenType &children) {
+  bool on_event(typename mouse_traits::on_double_type mouse, ChildrenType &children) {
     auto point = point_type{mouse.x, mouse.y};
     for (auto it = std::rbegin(children); it != std::rend(children); ++it) {
       auto &child = it->second;

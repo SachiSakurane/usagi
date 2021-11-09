@@ -42,11 +42,11 @@ class view {
     rect_type frame() const override { return holder.frame(); }
 
     bool event(typename mouse_traits::on_down_type mouse) override { return holder.event(mouse); }
-    bool event(typename mouse_traits::on_drag_type mouse) override { return holder.event(mouse); }
+    void event(typename mouse_traits::on_drag_type mouse) override { holder.event(mouse); }
     void event(typename mouse_traits::on_up_type mouse) override { holder.event(mouse); }
     bool event(typename mouse_traits::on_over_type mouse) override { return holder.event(mouse); }
     void event(typename mouse_traits::on_out_type mouse) override { holder.event(mouse); }
-    bool event(typename mouse_traits::on_double_click_type mouse) override { return holder.event(mouse); }
+    bool event(typename mouse_traits::on_double_type mouse) override { return holder.event(mouse); }
     bool event(typename mouse_traits::on_wheel_type mouse) override { return holder.event(mouse); }
 
     void set_mouse_down(bool flag) override { holder.set_mouse_down(flag); }
@@ -102,11 +102,11 @@ public:
   rect_type frame() const { return holder->frame(); }
 
   bool event(typename mouse_traits::on_down_type mouse) { return holder->event(mouse); }
-  bool event(typename mouse_traits::on_drag_type mouse) { return holder->event(mouse); }
+  void event(typename mouse_traits::on_drag_type mouse) { holder->event(mouse); }
   void event(typename mouse_traits::on_up_type mouse) { holder->event(mouse); }
   bool event(typename mouse_traits::on_over_type mouse) { return holder->event(mouse); }
   void event(typename mouse_traits::on_out_type mouse) { holder->event(mouse); }
-  bool event(typename mouse_traits::on_double_click_type mouse) { return holder->event(mouse); }
+  bool event(typename mouse_traits::on_double_type mouse) { return holder->event(mouse); }
   bool event(typename mouse_traits::on_wheel_type mouse) { return holder->event(mouse); }
 
   void set_mouse_down(bool flag) { holder->set_mouse_down(flag); }

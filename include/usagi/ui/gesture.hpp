@@ -83,7 +83,7 @@ struct gestures {
       : on_down_holder{usagi::ui::detail::pick_invocable<
             std::tuple<bool, typename mouse_traits::on_down_type, ViewType &>>(t)},
         on_drag_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename mouse_traits::on_drag_type, ViewType &>>(t)},
+            std::tuple<void, typename mouse_traits::on_drag_type, ViewType &>>(t)},
         on_up_holder{usagi::ui::detail::pick_invocable<
             std::tuple<void, typename mouse_traits::on_up_type, ViewType &>>(t)},
         on_over_holder{usagi::ui::detail::pick_invocable<
@@ -91,16 +91,16 @@ struct gestures {
         on_out_holder{usagi::ui::detail::pick_invocable<
             std::tuple<void, typename mouse_traits::on_out_type, ViewType &>>(t)},
         on_double_click{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename mouse_traits::on_double_click_type, ViewType &>>(t)},
+            std::tuple<bool, typename mouse_traits::on_double_type, ViewType &>>(t)},
         on_wheel{usagi::ui::detail::pick_invocable<
             std::tuple<bool, typename mouse_traits::on_wheel_type, ViewType &>>(t)} {}
 
   std::function<bool(typename mouse_traits::on_down_type, ViewType &)> on_down_holder;
-  std::function<bool(typename mouse_traits::on_drag_type, ViewType &)> on_drag_holder;
+  std::function<void(typename mouse_traits::on_drag_type, ViewType &)> on_drag_holder;
   std::function<void(typename mouse_traits::on_up_type, ViewType &)> on_up_holder;
   std::function<bool(typename mouse_traits::on_over_type, ViewType &)> on_over_holder;
   std::function<void(typename mouse_traits::on_out_type, ViewType &)> on_out_holder;
-  std::function<bool(typename mouse_traits::on_double_click_type, ViewType &)> on_double_click;
+  std::function<bool(typename mouse_traits::on_double_type, ViewType &)> on_double_click;
   std::function<bool(typename mouse_traits::on_wheel_type, ViewType &)> on_wheel;
 };
 
@@ -136,13 +136,11 @@ struct gesture {
     return holder.event(mouse);
   }
 
-  bool event(typename mouse_traits::on_drag_type mouse) {
+  void event(typename mouse_traits::on_drag_type mouse) {
     if (g.on_drag_holder) {
-      if (g.on_drag_holder(mouse, holder)) {
-        return true;
-      }
+      g.on_drag_holder(mouse, holder);
     }
-    return holder.event(mouse);
+    holder.event(mouse);
   }
 
   void event(typename mouse_traits::on_up_type mouse) {
@@ -168,7 +166,7 @@ struct gesture {
     holder.event(mouse);
   }
 
-  bool event(typename mouse_traits::on_double_click_type mouse) {
+  bool event(typename mouse_traits::on_double_type mouse) {
     if (g.on_double_click) {
       if (g.on_double_click(mouse, holder)) {
         return true;

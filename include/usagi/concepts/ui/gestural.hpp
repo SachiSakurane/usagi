@@ -26,10 +26,9 @@ concept gestural = requires(GesturalType &g) {
     g.event(std::declval<typename usagi::type::mouse_traits<
                 typename GesturalType::mouse_parameter_type>::on_down_type>())
     } -> std::same_as<bool>;
-  {
-    g.event(std::declval<typename usagi::type::mouse_traits<
-                typename GesturalType::mouse_parameter_type>::on_drag_type>())
-    } -> std::same_as<bool>;
+
+  g.event(std::declval<typename usagi::type::mouse_traits<
+              typename GesturalType::mouse_parameter_type>::on_drag_type>());
 
   {
     g.event(std::declval<typename usagi::type::mouse_traits<
@@ -41,6 +40,10 @@ concept gestural = requires(GesturalType &g) {
 
   g.event(std::declval<typename usagi::type::mouse_traits<
               typename GesturalType::mouse_parameter_type>::on_out_type>());
+  {
+    g.event(std::declval<typename usagi::type::mouse_traits<
+                typename GesturalType::mouse_parameter_type>::on_double_type>())
+    } -> std::same_as<bool>;
 
   {
     g.event(std::declval<typename usagi::type::mouse_traits<

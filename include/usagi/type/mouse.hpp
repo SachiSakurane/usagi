@@ -48,10 +48,10 @@ struct mouse {
   };
 
   template <class ParameterType>
-  struct on_double_click : ParameterType {
-    on_double_click() = default;
+  struct on_double : ParameterType {
+    on_double() = default;
     template <class... Args>
-    explicit on_double_click(Args &&...args) : ParameterType{std::forward<Args>(args)...} {}
+    explicit on_double(Args &&...args) : ParameterType{std::forward<Args>(args)...} {}
   };
 
   template <class ParameterType>
@@ -70,7 +70,7 @@ struct mouse_traits {
   using on_up_type = mouse::on_up<ParameterType>;
   using on_over_type = mouse::on_over<ParameterType>;
   using on_out_type = mouse::on_out<ParameterType>;
-  using on_double_click_type = mouse::on_double_click<ParameterType>;
+  using on_double_type = mouse::on_double<ParameterType>;
   using on_wheel_type = mouse::on_wheel<ParameterType>;
 };
 } // namespace usagi::type

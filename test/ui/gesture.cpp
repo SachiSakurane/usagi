@@ -29,11 +29,16 @@ namespace static_tests {
             std::make_index_sequence<std::tuple_size_v<void_tuple>>()));
   } // namespace is_apply_invocable_
 
+  template <class ReturnType, class ...Args>
+  struct decl_func{
+    ReturnType operator()(Args&&...);
+  };
+
   namespace pick_func_wrapper_ {
     // SearchArgsTuple と一致する candidates 中から存在し、対象の function を返す
     static_assert(usagi::utility::is_invocable_f_r_args_v<
                   decltype(usagi::ui::detail::pick_func_wrapper<void_tuple>(
-                      std::declval<std::function<void(a_tag, b_tag)>>())),
+                      std::declval<decl_func<void, a_tag, b_tag>>())),
                   void, a_tag, b_tag>);
 
     // SearchArgsTuple と一致する複数の candidates 中から存在し、対象の function を返す

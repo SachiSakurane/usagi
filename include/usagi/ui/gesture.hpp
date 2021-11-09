@@ -88,9 +88,9 @@ struct gestures {
             std::tuple<bool, typename mouse_traits::on_over_type, ViewType &>>(t)},
         on_out_holder{usagi::ui::detail::pick_invocable<
             std::tuple<void, typename mouse_traits::on_out_type, ViewType &>>(t)},
-        on_double_click{usagi::ui::detail::pick_invocable<
+        on_double_holder{usagi::ui::detail::pick_invocable<
             std::tuple<bool, typename mouse_traits::on_double_type, ViewType &>>(t)},
-        on_wheel{usagi::ui::detail::pick_invocable<
+        on_wheel_holder{usagi::ui::detail::pick_invocable<
             std::tuple<bool, typename mouse_traits::on_wheel_type, ViewType &>>(t)} {}
 
   std::function<bool(typename mouse_traits::on_down_type, ViewType &)> on_down_holder;
@@ -98,8 +98,8 @@ struct gestures {
   std::function<void(typename mouse_traits::on_up_type, ViewType &)> on_up_holder;
   std::function<bool(typename mouse_traits::on_over_type, ViewType &)> on_over_holder;
   std::function<void(typename mouse_traits::on_out_type, ViewType &)> on_out_holder;
-  std::function<bool(typename mouse_traits::on_double_type, ViewType &)> on_double_click;
-  std::function<bool(typename mouse_traits::on_wheel_type, ViewType &)> on_wheel;
+  std::function<bool(typename mouse_traits::on_double_type, ViewType &)> on_double_holder;
+  std::function<bool(typename mouse_traits::on_wheel_type, ViewType &)> on_wheel_holder;
 };
 
 template <usagi::concepts::ui::viewable ViewType>
@@ -165,8 +165,8 @@ struct gesture {
   }
 
   bool event(typename mouse_traits::on_double_type mouse) {
-    if (g.on_double_click) {
-      if (g.on_double_click(mouse, holder)) {
+    if (g.on_double_holder) {
+      if (g.on_double_holder(mouse, holder)) {
         return true;
       }
     }
@@ -174,8 +174,8 @@ struct gesture {
   }
 
   bool event(typename mouse_traits::on_wheel_type mouse) {
-    if (g.on_wheel) {
-      if (g.on_wheel(mouse, holder)) {
+    if (g.on_wheel_holder) {
+      if (g.on_wheel_holder(mouse, holder)) {
         return true;
       }
     }

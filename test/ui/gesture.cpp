@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <gtest/gtest.h>
 #include <usagi/type/mouse.hpp>
 #include <usagi/ui/gesture.hpp>
@@ -73,7 +75,6 @@ TEST(GestureTest, AutoDeductionTest) {
 }
 
 namespace {
-
 using MouseParameter = usagi::type::mouse::default_parameter<float>;
 
 template <usagi::utility::arithmetic ValueType>
@@ -117,8 +118,8 @@ TEST(GestureTest, NullGestures) {
     ASSERT_FALSE(g.on_up_holder);
     ASSERT_FALSE(g.on_over_holder);
     ASSERT_FALSE(g.on_out_holder);
-    ASSERT_FALSE(g.on_double_click);
-    ASSERT_FALSE(g.on_wheel);
+    ASSERT_FALSE(g.on_double_holder);
+    ASSERT_FALSE(g.on_wheel_holder);
 
     ASSERT_EQ(stamp.size(), 0);
   }
@@ -140,8 +141,8 @@ TEST(GestureTest, Gestures) {
     ASSERT_FALSE(g.on_up_holder);
     ASSERT_FALSE(g.on_over_holder);
     ASSERT_FALSE(g.on_out_holder);
-    ASSERT_FALSE(g.on_double_click);
-    ASSERT_FALSE(g.on_wheel);
+    ASSERT_FALSE(g.on_double_holder);
+    ASSERT_FALSE(g.on_wheel_holder);
 
     g.on_drag_holder(view::mouse_traits::on_drag_type{}, v);
 
@@ -151,7 +152,63 @@ TEST(GestureTest, Gestures) {
   }
 }
 
-TEST(GestureTest, SpecializedGestures) {
+TEST(GestureTest, NullGestured) {
+  using view = usagi::ui::base_view<float, int, MouseParameter>;
+  auto v = view{} | usagi::ui::gestured();
+
+  {
+    v.event(view::mouse_traits::on_down_type{});
+    v.event(view::mouse_traits::on_drag_type{});
+    v.event(view::mouse_traits::on_up_type{});
+    v.event(view::mouse_traits::on_over_type{});
+    v.event(view::mouse_traits::on_out_type{});
+    v.event(view::mouse_traits::on_double_type{});
+    v.event(view::mouse_traits::on_wheel_type{});
+  }
+}
+
+TEST(GestureTest, Gestured) {
+  using view = usagi::ui::base_view<float, int, MouseParameter>;
+  std::vector<int> stamp;
+  auto v =
+      view{} | usagi::ui::gestured(
+                   [&stamp](view::mouse_traits::on_down_type, auto &) {
+                     stamp.emplace_back(0);
+                     return true;
+                   },
+                   [&stamp](view::mouse_traits::on_drag_type, auto &) { stamp.emplace_back(1); },
+                   [&stamp](view::mouse_traits::on_up_type, auto &) { stamp.emplace_back(2); },
+                   [&stamp](view::mouse_traits::on_over_type, auto &) {
+                     stamp.emplace_back(3);
+                     return true;
+                   },
+                   [&stamp](view::mouse_traits::on_out_type, auto &) { stamp.emplace_back(4); },
+                   [&stamp](view::mouse_traits::on_double_type, auto &) {
+                     stamp.emplace_back(5);
+                     return true;
+                   },
+                   [&stamp](view::mouse_traits::on_wheel_type, auto &) {
+                     stamp.emplace_back(6);
+                     return true;
+                   });
+
+  {
+    v.event(view::mouse_traits::on_down_type{});
+    v.event(view::mouse_traits::on_drag_type{});
+    v.event(view::mouse_traits::on_up_type{});
+    v.event(view::mouse_traits::on_over_type{});
+    v.event(view::mouse_traits::on_out_type{});
+    v.event(view::mouse_traits::on_double_type{});
+    v.event(view::mouse_traits::on_wheel_type{});
+
+    ASSERT_EQ(stamp.size(), 7);
+
+    const auto pred = std::vector{{0, 1, 2, 3, 4, 5, 6}};
+    ASSERT_TRUE(std::equal(std::cbegin(stamp), std::cend(stamp), std::cbegin(pred)));
+  }
+}
+
+TEST(GestureTest, SpecializedGestured) {
   using view = SpecificView<float>;
 
   std::vector<int> stamp;

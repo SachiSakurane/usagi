@@ -5,16 +5,14 @@
 
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
-#include <usagi/utility/invocable.hpp>
+#include <usagi/utility/is_invocable_f_r_args.hpp>
 
 namespace usagi::ui {
 namespace detail {
-  template <class F, class R, class... ArgsTypes>
-  inline constexpr bool invocable_f_r = std::is_invocable_r_v<R, F, ArgsTypes...>;
-
   template <class Func, class ArgsTuple, std::size_t... Sequence>
   inline constexpr bool is_apply_invocable(std::index_sequence<Sequence...>) {
-    return invocable_f_r<Func, std::tuple_element_t<Sequence, ArgsTuple>...>;
+    return usagi::utility::is_invocable_f_r_args_v<Func,
+                                                   std::tuple_element_t<Sequence, ArgsTuple>...>;
   }
 
   template <class Func, class SearchArgsTuple>

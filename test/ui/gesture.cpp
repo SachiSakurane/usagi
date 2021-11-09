@@ -2,8 +2,8 @@
 #include <usagi/type/mouse.hpp>
 #include <usagi/ui/gesture.hpp>
 #include <usagi/ui/view.hpp>
+#include <usagi/utility/is_invocable_f_r_args.hpp>
 
-// static test
 namespace {
 struct a_tag {};
 struct b_tag {};
@@ -35,96 +35,64 @@ private:
   std::vector<int> &stamp;
 };
 
-namespace detail {
-  using target_tuple = std::tuple<void, a_tag, b_tag>;
+namespace static_tests {
+  using void_tuple = std::tuple<void, a_tag, b_tag>;
+  using bool_tuple = std::tuple<bool, a_tag, b_tag>;
 
-  // is_apply_invocable
-  static_assert(
-      usagi::ui::detail::is_apply_invocable<std::function<void(a_tag, b_tag)>, target_tuple>(
-          std::make_index_sequence<std::tuple_size_v<target_tuple>>()));
+  namespace is_apply_invocable_ {
+    // SearchArgsTuple と target_tuple が一致
+    static_assert(
+        usagi::ui::detail::is_apply_invocable<std::function<bool(a_tag, b_tag)>, bool_tuple>(
+            std::make_index_sequence<std::tuple_size_v<bool_tuple>>()));
 
-  static_assert(
-      !usagi::ui::detail::is_apply_invocable<std::function<void(a_tag, a_tag)>, target_tuple>(
-          std::make_index_sequence<std::tuple_size_v<target_tuple>>()));
+    // SearchArgsTuple と target_tuple が一致
+    static_assert(
+        usagi::ui::detail::is_apply_invocable<std::function<void(a_tag, b_tag)>, void_tuple>(
+            std::make_index_sequence<std::tuple_size_v<void_tuple>>()));
 
-} // namespace detail
+    // SearchArgsTuple と target_tuple が不一致
+    static_assert(
+        !usagi::ui::detail::is_apply_invocable<std::function<void(a_tag, a_tag)>, void_tuple>(
+            std::make_index_sequence<std::tuple_size_v<void_tuple>>()));
+  } // namespace is_apply_invocable_
+
+  namespace pick_func_wrapper_ {
+    // SearchArgsTuple と一致する candidates 中から存在し、対象の function を返す
+    static_assert(usagi::utility::is_invocable_f_r_args_v<
+                  decltype(usagi::ui::detail::pick_func_wrapper<void_tuple>(
+                      std::declval<void(a_tag, b_tag)>())),
+                  void, a_tag, b_tag>);
+
+    // SearchArgsTuple と一致する複数の candidates 中から存在し、対象の function を返す
+    static_assert(usagi::utility::is_invocable_f_r_args_v<
+                  decltype(usagi::ui::detail::pick_func_wrapper<void_tuple>(
+                      std::declval<void(a_tag, a_tag)>(), std::declval<void(b_tag, a_tag)>(),
+                      std::declval<void(b_tag, b_tag)>(), std::declval<void(a_tag, b_tag)>())),
+                  void, a_tag, b_tag>);
+
+    // SearchArgsTuple と一致する candidates がないので nullptr
+    static_assert(usagi::ui::detail::pick_func_wrapper<void_tuple>(
+                      std::declval<void(a_tag, a_tag)>(), std::declval<void(b_tag, a_tag)>(),
+                      std::declval<void(b_tag, b_tag)>()) == nullptr);
+  } // namespace pick_func_wrapper_
+
+} // namespace static_tests
 
 } // namespace
 
-TEST(GestureTest, IsApplyInvocable) {
+TEST(GestureTest, AutoDeductionTest) {
   using target = std::tuple<void, a_tag, b_tag>;
-  {
-    auto l = [](a_tag, b_tag) {};
-    ASSERT_TRUE((usagi::ui::detail::is_apply_invocable<decltype(l), target>(
-        std::make_index_sequence<std::tuple_size_v<target>>())));
-  }
-  {
-    auto l = [](a_tag, a_tag) {};
-    ASSERT_FALSE((usagi::ui::detail::is_apply_invocable<decltype(l), target>(
-        std::make_index_sequence<std::tuple_size_v<target>>())));
-  }
-  {
-    // auto が b_tag に推論される
-    auto l = [](a_tag, auto) {};
-    ASSERT_TRUE((usagi::ui::detail::is_apply_invocable<decltype(l), target>(
-        std::make_index_sequence<std::tuple_size_v<target>>())));
-  }
-}
 
-TEST(GestureTest, PickFuncWrapper) {
-  // default
-  {
-    auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<a_tag, b_tag>>(
-        // candidates
-        [](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
-        [](b_tag, b_tag) { return false; });
-    ASSERT_TRUE(x == nullptr);
-  }
+  // auto が b_tag に推論される
+  auto l = [](a_tag, auto) {};
+  ASSERT_TRUE((usagi::ui::detail::is_apply_invocable<decltype(l), target>(
+      std::make_index_sequence<std::tuple_size_v<target>>())));
 
-  // specialized
-  {
-    auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<bool, a_tag, b_tag>>(
-        // candidates
-        [](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
-        [](b_tag, b_tag) { return false; }, [](a_tag, b_tag) { return true; });
-    ASSERT_TRUE(x(a_tag{}, b_tag{}));
-  }
-
-  // auto
-  {
-    auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<bool, a_tag, b_tag>>(
-        // candidates
-        [](a_tag, a_tag) { return false; }, [](a_tag, auto) { return true; });
-    ASSERT_TRUE(x(a_tag{}, b_tag{}));
-  }
-}
-
-TEST(GestureTest, PickInvocable) {
-  // none
-  {
-    auto x = usagi::ui::detail::pick_invocable<std::tuple<a_tag, b_tag>>(
-        // candidates
-        std::make_tuple([](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
-                        [](b_tag, b_tag) { return false; }));
-    ASSERT_TRUE(x == nullptr);
-  }
-
-  // specialized
-  {
-    auto x = usagi::ui::detail::pick_invocable<std::tuple<bool, a_tag, b_tag>>(
-        // candidates
-        std::make_tuple([](a_tag, a_tag) { return false; }, [](b_tag, a_tag) { return false; },
-                        [](b_tag, b_tag) { return false; }, [](a_tag, b_tag) { return true; }));
-    ASSERT_TRUE(x(a_tag{}, b_tag{}));
-  }
-
-  // auto
-  {
-    auto x = usagi::ui::detail::pick_invocable<std::tuple<bool, a_tag, b_tag>>(
-        // candidates
-        std::make_tuple([](a_tag, a_tag) { return true; }, [](a_tag, auto) { return true; }));
-    ASSERT_TRUE(x(a_tag{}, b_tag{}));
-  }
+  // auto が b_tag に推論される
+  auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<bool, a_tag, b_tag>>(
+      // candidates
+      [](a_tag, a_tag) { return false; }, [](a_tag, auto) { return true; });
+  ASSERT_TRUE(x(a_tag{}, b_tag{}));
 }
 
 TEST(GestureTest, NullGestures) {

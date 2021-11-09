@@ -33,7 +33,7 @@ namespace static_tests {
     // SearchArgsTuple と一致する candidates 中から存在し、対象の function を返す
     static_assert(usagi::utility::is_invocable_f_r_args_v<
                   decltype(usagi::ui::detail::pick_func_wrapper<void_tuple>(
-                      std::declval<void(a_tag, b_tag)>())),
+                      std::declval<std::function<void(a_tag, b_tag)>>())),
                   void, a_tag, b_tag>);
 
     // SearchArgsTuple と一致する複数の candidates 中から存在し、対象の function を返す

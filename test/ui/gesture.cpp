@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #include <gtest/gtest.h>
 #include <usagi/type/mouse.hpp>
 #include <usagi/ui/gesture.hpp>
@@ -204,7 +202,7 @@ TEST(GestureTest, Gestured) {
     ASSERT_EQ(stamp.size(), 7);
 
     const auto pred = std::vector{{0, 1, 2, 3, 4, 5, 6}};
-    ASSERT_TRUE(std::equal(std::cbegin(stamp), std::cend(stamp), std::cbegin(pred)));
+    ASSERT_TRUE(stamp == pred);
   }
 }
 

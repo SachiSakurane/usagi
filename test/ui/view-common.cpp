@@ -52,54 +52,6 @@ TEST(ViewCommonTest, DrawCase) {
   v.draw(context);
 }
 
-TEST(ViewCommonTest, CommonSubViewCase) {
-  auto v = usagi::ui::view{SpecificView{}};
-
-  ASSERT_FALSE(v.remove_sub_view(0));
-
-  {
-    decltype(auto) sub = v.add_sub_view(SpecificView{});
-    ASSERT_TRUE(static_cast<bool>(sub.second));
-    decltype(auto) get_sub = v.get_sub_view(sub.first);
-    ASSERT_EQ(&sub.second, &get_sub);
-    ASSERT_TRUE(v.remove_sub_view(sub.first));
-  }
-  ASSERT_EQ(v.sub_view_size(), 0);
-
-  decltype(auto) sub1 = v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
-  ASSERT_EQ(v.sub_view_size(), 1);
-
-  decltype(auto) sub2 = v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
-  ASSERT_EQ(v.sub_view_size(), 2);
-
-  ASSERT_TRUE(v.remove_sub_view(sub1.first));
-  ASSERT_EQ(v.sub_view_size(), 1);
-
-  ASSERT_TRUE(v.remove_sub_view(sub2.first));
-  ASSERT_EQ(v.sub_view_size(), 0);
-
-  ASSERT_FALSE(v.remove_sub_view(0));
-}
-
-TEST(ViewCommonTest, ClickCase) {
-  auto v = usagi::ui::view{SpecificView{}};
-  v.event(SpecificView::mouse_traits::on_down_type{});
-  v.event(SpecificView::mouse_traits::on_drag_type{});
-  v.event(SpecificView::mouse_traits::on_over_type{});
-  v.event(SpecificView::mouse_traits::on_up_type{});
-  v.event(SpecificView::mouse_traits::on_out_type{});
-  v.event(SpecificView::mouse_traits::on_double_type{});
-
-  // sub case
-  v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
-  v.event(SpecificView::mouse_traits::on_down_type{});
-  v.event(SpecificView::mouse_traits::on_drag_type{});
-  v.event(SpecificView::mouse_traits::on_over_type{});
-  v.event(SpecificView::mouse_traits::on_up_type{});
-  v.event(SpecificView::mouse_traits::on_out_type{});
-  v.event(SpecificView::mouse_traits::on_double_type{});
-}
-
 TEST(ViewCommonTest, MakeCase) {
   auto v = usagi::ui::make_view<SpecificView>();
   ASSERT_TRUE(static_cast<bool>(v));

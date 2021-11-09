@@ -8,33 +8,6 @@ namespace {
 struct a_tag {};
 struct b_tag {};
 
-using MouseParameter = usagi::type::mouse::default_parameter<float>;
-
-template <usagi::utility::arithmetic ValueType>
-struct SpecificView final : usagi::ui::base_view<ValueType, int, MouseParameter> {
-  using value_type = ValueType;
-  using draw_context_type = int;
-  using mouse_traits = typename usagi::ui::base_view<ValueType, int, MouseParameter>::mouse_traits;
-
-  explicit SpecificView(std::vector<int> &s) : stamp{s} {}
-
-  bool event(typename mouse_traits::on_down_type) override {
-    // 1
-    stamp.emplace_back(1);
-    return false;
-  }
-
-  void event(typename mouse_traits::on_drag_type) override {
-    // 2
-    stamp.emplace_back(2);
-  }
-
-  using usagi::ui::base_view<ValueType, int, MouseParameter>::event;
-
-private:
-  std::vector<int> &stamp;
-};
-
 namespace static_tests {
   using void_tuple = std::tuple<void, a_tag, b_tag>;
   using bool_tuple = std::tuple<bool, a_tag, b_tag>;
@@ -94,6 +67,36 @@ TEST(GestureTest, AutoDeductionTest) {
       [](a_tag, a_tag) { return false; }, [](a_tag, auto) { return true; });
   ASSERT_TRUE(x(a_tag{}, b_tag{}));
 }
+
+namespace {
+
+using MouseParameter = usagi::type::mouse::default_parameter<float>;
+
+template <usagi::utility::arithmetic ValueType>
+struct SpecificView final : usagi::ui::base_view<ValueType, int, MouseParameter> {
+  using value_type = ValueType;
+  using draw_context_type = int;
+  using mouse_traits = typename usagi::ui::base_view<ValueType, int, MouseParameter>::mouse_traits;
+
+  explicit SpecificView(std::vector<int> &s) : stamp{s} {}
+
+  bool event(typename mouse_traits::on_down_type) override {
+    // 1
+    stamp.emplace_back(1);
+    return false;
+  }
+
+  void event(typename mouse_traits::on_drag_type) override {
+    // 2
+    stamp.emplace_back(2);
+  }
+
+  using usagi::ui::base_view<ValueType, int, MouseParameter>::event;
+
+private:
+  std::vector<int> &stamp;
+};
+} // namespace
 
 TEST(GestureTest, NullGestures) {
   using view = SpecificView<float>;

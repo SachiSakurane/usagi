@@ -44,9 +44,11 @@ namespace static_tests {
                   void, a_tag, b_tag>);
 
     // SearchArgsTuple と一致する candidates がないので nullptr
-    static_assert(usagi::ui::detail::pick_func_wrapper<void_tuple>(
-                      std::declval<void(a_tag, a_tag)>(), std::declval<void(b_tag, a_tag)>(),
-                      std::declval<void(b_tag, b_tag)>()) == nullptr);
+    static_assert(
+        std::is_same_v<decltype(usagi::ui::detail::pick_func_wrapper<void_tuple>(
+                           std::declval<void(a_tag, a_tag)>(), std::declval<void(b_tag, a_tag)>(),
+                           std::declval<void(b_tag, b_tag)>())),
+                       std::nullptr_t>);
   } // namespace pick_func_wrapper_
 
 } // namespace static_tests

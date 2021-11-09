@@ -8,8 +8,9 @@ namespace usagi::concepts::graphics {
  * colorが表現可能
  */
 template <class ColorType>
-concept basic_color_concept = usagi::utility::arithmetic<typename ColorType::value_type> &&
-    requires(ColorType &c) {
+concept basic_color_concept = requires(ColorType &c) {
+  requires usagi::utility::arithmetic<typename ColorType::value_type>;
+
   { c.alpha() } -> usagi::utility::arithmetic;
   { c.red() } -> usagi::utility::arithmetic;
   { c.green() } -> usagi::utility::arithmetic;

@@ -1,11 +1,6 @@
 #include <gtest/gtest.h>
 #include <usagi/geometry/rect/rect.hpp>
 
-namespace {
-static_assert(usagi::concepts::geometry::rect_concept<usagi::geometry::rect<int>>);
-static_assert(usagi::concepts::geometry::rect_concept<usagi::geometry::variable_rect<int>>);
-}
-
 TEST(RectTest, ConstructorCase) {
   {
     usagi::geometry::rect<float> r{};

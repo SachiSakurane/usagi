@@ -22,11 +22,13 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           cmake -B ${BUILD_DIRECTORY}_${{matrix.build_type}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMAKE_CXX_COMPILER=g++-10
+          cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_StaticTest -j 4
           cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_Test -j 4
       - name: Build macOS
         if: runner.os == 'macOS'
         run: |
           cmake -B ${BUILD_DIRECTORY}_${{matrix.build_type}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
+          cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_StaticTest -j 4
           cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_Test -j 4
       - name: Build
         if: runner.os == 'Windows'
@@ -34,6 +36,7 @@ jobs:
         shell: bash
         run: |
           cmake -B ${BUILD_DIRECTORY}_${{matrix.build_type}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
+          cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_StaticTest -j 4 --config ${{matrix.build_type}}
           cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_Test -j 4 --config ${{matrix.build_type}}
       - name: Test
         if: runner.os == 'Linux' || runner.os == 'macOS'

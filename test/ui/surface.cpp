@@ -4,6 +4,7 @@
 #include <usagi/ui/surface.hpp>
 #include <usagi/ui/view.hpp>
 
+namespace {
 struct DrawContext final {
   explicit DrawContext(std::vector<int> &s) : stamp{s} {}
 
@@ -31,15 +32,7 @@ private:
   std::vector<int> &stamp;
 };
 
-// static test
-namespace {
 using local_view_type = SpecificView<int, DrawContext>;
-static_assert(
-    usagi::concepts::ui::viewable<usagi::ui::surface<
-        local_view_type, std::function<void(typename local_view_type::draw_context_type &,
-                                            const local_view_type &)>>>,
-    "usagi::ui::surface<local_view_type, std::function<void(typename "
-    "local_view_type::draw_context_type &, const local_view_type &)>> has viewable concept");
 } // namespace
 
 TEST(SurfaceTest, SequentialCase) {

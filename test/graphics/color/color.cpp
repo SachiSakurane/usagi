@@ -1,11 +1,5 @@
 #include <gtest/gtest.h>
-#include <usagi/concepts/graphics/color_concept.hpp>
 #include <usagi/graphics/color/color.hpp>
-
-namespace {
-static_assert(usagi::concepts::graphics::basic_color_concept<usagi::graphics::basic_color<int>>);
-static_assert(usagi::concepts::graphics::basic_color_concept<usagi::graphics::variable_color<int>>);
-} // namespace
 
 TEST(ColorTest, CommonCase) {
   usagi::graphics::basic_color<float> c{0.042f, 42.f, 4.2f, 0.42f};

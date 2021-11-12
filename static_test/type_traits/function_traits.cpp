@@ -80,7 +80,8 @@ namespace class_member_const_ {
                 usagi::type_traits::function_traits<class_member_type>::argument_type<1>, float>);
 } // namespace class_member_const_
 
-namespace functor_ {
+namespace functor_::lambda {
+
   auto test_lambda = [](bool, float) { return 1; };
   using lambda_functor_type = decltype(test_lambda);
 
@@ -94,5 +95,22 @@ namespace functor_ {
                 usagi::type_traits::function_traits<lambda_functor_type>::argument_type<0>, bool>);
   static_assert(std::is_same_v<
                 usagi::type_traits::function_traits<lambda_functor_type>::argument_type<1>, float>);
-} // namespace functor_
+
+} // namespace functor_::lambda
+
+namespace functor_::object {
+  struct test_class {
+    auto operator()(bool, float) -> int;
+  };
+
+  static_assert(std::is_same_v<usagi::type_traits::function_traits<test_class>::result_type, int>);
+  static_assert(usagi::type_traits::function_traits<test_class>::arity == 2);
+  static_assert(std::is_same_v<usagi::type_traits::function_traits<test_class>::arguments_tuple,
+                               std::tuple<bool, float>>);
+  static_assert(
+      std::is_same_v<usagi::type_traits::function_traits<test_class>::argument_type<0>, bool>);
+  static_assert(
+      std::is_same_v<usagi::type_traits::function_traits<test_class>::argument_type<1>, float>);
+} // namespace functor_::object
+
 } // namespace

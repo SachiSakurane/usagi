@@ -4,26 +4,6 @@
 #include <usagi/ui/view.hpp>
 
 namespace {
-struct a_tag {};
-struct b_tag {};
-} // namespace
-
-TEST(GestureTest, AutoDeductionTest) {
-  using target = std::tuple<void, a_tag, b_tag>;
-
-  // auto が b_tag に推論される
-  auto l = [](a_tag, auto) {};
-  ASSERT_TRUE((usagi::ui::detail::is_apply_invocable<decltype(l), target>(
-      std::make_index_sequence<std::tuple_size_v<target>>())));
-
-  // auto が b_tag に推論される
-  auto x = usagi::ui::detail::pick_func_wrapper<std::tuple<bool, a_tag, b_tag>>(
-      // candidates
-      [](a_tag, a_tag) { return false; }, [](a_tag, auto) { return true; });
-  ASSERT_TRUE(x(a_tag{}, b_tag{}));
-}
-
-namespace {
 using MouseParameter = usagi::type::mouse::default_parameter<float>;
 
 template <usagi::concepts::arithmetic ValueType>

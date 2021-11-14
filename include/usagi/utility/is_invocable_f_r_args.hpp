@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-namespace usagi::concepts {
+namespace usagi::utility {
 template <class F, class R, class... ArgsTypes>
 using is_invocable_f_r_args = std::is_invocable_r<R, F, ArgsTypes...>;
 

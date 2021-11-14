@@ -3,17 +3,17 @@
 #include <tuple>
 #include <utility>
 
-#include <usagi/concepts/is_invocable_f_r_args.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
 #include <usagi/ui/detail/gesture_requirements.hpp>
+#include <usagi/utility/is_invocable_f_r_args.hpp>
 
 namespace usagi::ui {
 namespace detail {
   template <class Func, class ArgsTuple, std::size_t... Sequence>
   consteval bool is_apply_invocable(std::index_sequence<Sequence...>) {
-    return usagi::concepts::is_invocable_f_r_args_v<Func,
-                                                    std::tuple_element_t<Sequence, ArgsTuple>...>;
+    return usagi::utility::is_invocable_f_r_args_v<Func,
+                                                   std::tuple_element_t<Sequence, ArgsTuple>...>;
   }
 
   template <class Func, class SearchArgsTuple>
@@ -206,7 +206,8 @@ private:
   gestures<ViewType> g;
 };
 
-template <usagi::concepts::ui::viewable ViewType, detail::gesture_tuple_requirement<ViewType> TupleType>
+template <usagi::concepts::ui::viewable ViewType,
+          detail::gesture_tuple_requirement<ViewType> TupleType>
 inline constexpr decltype(auto) operator|(ViewType &&v, gesture_holder<TupleType> &&wrapped) {
   return gesture<ViewType>{std::forward<ViewType>(v),
                            std::forward<gesture_holder<TupleType>>(wrapped).elem};

@@ -14,7 +14,7 @@ inline constexpr bool operator!=(const usagi::concepts::geometry::rect_concept a
   return !(lhs == rhs);
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto)
 operator+(const usagi::geometry::rect<ValueType> &lhs,
           const usagi::concepts::geometry::point_concept auto &rhs) {
@@ -22,7 +22,7 @@ operator+(const usagi::geometry::rect<ValueType> &lhs,
                                           lhs.b() + rhs.y()};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto)
 operator-(const usagi::geometry::rect<ValueType> &lhs,
           const usagi::concepts::geometry::point_concept auto &rhs) {

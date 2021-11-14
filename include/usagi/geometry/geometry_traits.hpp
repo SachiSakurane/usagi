@@ -6,7 +6,7 @@
 #include <usagi/geometry/size/size.hpp>
 
 namespace usagi::geometry {
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 struct geometry_traits {
   using value_type = ValueType;
   using point_type = typename usagi::geometry::point<value_type>;

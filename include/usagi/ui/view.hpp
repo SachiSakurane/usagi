@@ -9,7 +9,7 @@ namespace usagi::ui {
 /**
  * viewable を格納する型
  */
-template <usagi::utility::arithmetic ValueType, class DrawContextType, class MouseParameterType>
+template <usagi::concepts::arithmetic ValueType, class DrawContextType, class MouseParameterType>
 class view {
   template <usagi::concepts::ui::viewable ViewType>
   class view_holder final

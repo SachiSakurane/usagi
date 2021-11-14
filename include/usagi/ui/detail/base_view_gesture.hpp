@@ -5,7 +5,7 @@
 #include <usagi/type/mouse.hpp>
 
 namespace usagi::ui::detail {
-template <usagi::utility::arithmetic ValueType, class MouseParameterType>
+template <usagi::concepts::arithmetic ValueType, class MouseParameterType>
 class base_view_gesture {
 public:
   using value_type = ValueType;

@@ -14,40 +14,40 @@ inline constexpr bool operator!=(const usagi::concepts::geometry::size_concept a
   return !(lhs == rhs);
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) operator+(const usagi::geometry::size<ValueType> &lhs,
                                           const usagi::geometry::size<ValueType> &rhs) {
   return usagi::geometry::size<ValueType>{lhs.width() + rhs.width(), lhs.height() + rhs.height()};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) operator-(const usagi::geometry::size<ValueType> &lhs,
                                           const usagi::geometry::size<ValueType> &rhs) {
   return usagi::geometry::size<ValueType>{lhs.width() - rhs.width(), lhs.height() - rhs.height()};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) operator*(ValueType lhs,
                                           const usagi::geometry::size<ValueType> &rhs) {
   assert(lhs >= 0);
   return usagi::geometry::size<ValueType>{lhs * rhs.width(), lhs * rhs.height()};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) operator*(const usagi::geometry::size<ValueType> &lhs,
                                           ValueType rhs) {
   assert(rhs >= 0);
   return usagi::geometry::size<ValueType>{lhs.width() * rhs, lhs.height() * rhs};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) operator/(ValueType lhs,
                                           const usagi::geometry::size<ValueType> &rhs) {
   assert(lhs >= 0);
   return usagi::geometry::size<ValueType>{lhs / rhs.width(), lhs / rhs.height()};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) operator/(const usagi::geometry::size<ValueType> &lhs,
                                           ValueType rhs) {
   assert(rhs > 0);

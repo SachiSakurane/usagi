@@ -10,12 +10,12 @@ namespace usagi::concepts::geometry {
  */
 template <class RectType>
 concept rect_concept = requires(RectType &r) {
-  requires usagi::utility::arithmetic<typename RectType::value_type>;
+  requires usagi::concepts::arithmetic<typename RectType::value_type>;
 
-  { r.l() } -> usagi::utility::arithmetic;
-  { r.t() } -> usagi::utility::arithmetic;
-  { r.r() } -> usagi::utility::arithmetic;
-  { r.b() } -> usagi::utility::arithmetic;
+  { r.l() } -> usagi::concepts::arithmetic;
+  { r.t() } -> usagi::concepts::arithmetic;
+  { r.r() } -> usagi::concepts::arithmetic;
+  { r.b() } -> usagi::concepts::arithmetic;
   { r.size() } -> usagi::concepts::geometry::size_concept;
   { r.center() } -> usagi::concepts::geometry::point_concept;
 };

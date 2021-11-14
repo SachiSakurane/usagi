@@ -9,13 +9,13 @@ namespace usagi::concepts::geometry {
  */
 template <class SizeType>
 concept size_concept = requires(SizeType &s) {
-  requires usagi::utility::arithmetic<typename SizeType::value_type>;
+  requires usagi::concepts::arithmetic<typename SizeType::value_type>;
 
-  { s.width() } -> usagi::utility::arithmetic;
-  { s.height() } -> usagi::utility::arithmetic;
+  { s.width() } -> usagi::concepts::arithmetic;
+  { s.height() } -> usagi::concepts::arithmetic;
 };
 
 template <class FloatSizeType>
-concept float_size_concept = usagi::utility::floating_point<typename FloatSizeType::value_type> &&
+concept float_size_concept = usagi::concepts::floating_point<typename FloatSizeType::value_type> &&
     size_concept<FloatSizeType>;
 } // namespace usagi::concepts::geometry

@@ -6,7 +6,7 @@
 #include <usagi/variable/variable_traits.hpp>
 
 namespace usagi::graphics {
-template <usagi::utility::arithmetic Type>
+template <usagi::concepts::arithmetic Type>
 struct basic_color {
   using value_type = Type;
 
@@ -35,10 +35,10 @@ private:
   value_type a_, r_, g_, b_;
 };
 
-template <usagi::utility::floating_point FloatType>
+template <usagi::concepts::floating_point FloatType>
 using float_color = basic_color<FloatType>;
 
-template <usagi::utility::arithmetic Type>
+template <usagi::concepts::arithmetic Type>
 struct variable_color {
   using value_type = typename usagi::variable_traits<Type>::value_type;
   using variable_type = typename usagi::variable_traits<Type>::variable_type;

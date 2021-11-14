@@ -9,7 +9,7 @@
 #include <usagi/geometry/geometry_traits.hpp>
 
 namespace usagi::ui {
-template <usagi::utility::arithmetic ValueType, class DrawContextType, class MouseParameterType>
+template <usagi::concepts::arithmetic ValueType, class DrawContextType, class MouseParameterType>
 class base_view {
   using base_view_click_type = usagi::ui::detail::base_view_gesture<ValueType, MouseParameterType>;
 

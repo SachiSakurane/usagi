@@ -9,8 +9,8 @@
 namespace usagi::concepts::ui {
 template <class MouseParameterType>
 concept mouse_parameter = requires(MouseParameterType &m) {
-  { m.x } -> usagi::utility::arithmetic;
-  { m.y } -> usagi::utility::arithmetic;
+  { m.x } -> usagi::concepts::arithmetic;
+  { m.y } -> usagi::concepts::arithmetic;
 };
 
 /**

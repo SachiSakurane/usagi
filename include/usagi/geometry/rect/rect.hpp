@@ -8,7 +8,7 @@
 #include <usagi/geometry/size.hpp>
 
 namespace usagi::geometry {
-template <usagi::utility::arithmetic Type>
+template <usagi::concepts::arithmetic Type>
 struct rect {
 public:
   using value_type = Type;
@@ -67,7 +67,7 @@ rect(const PointType &, const SizeType &) -> rect<typename SizeType::value_type>
 /**
  * tupled特殊化
  */
-template <usagi::utility::arithmetic Type>
+template <usagi::concepts::arithmetic Type>
 struct variable_rect {
 public:
   using value_type = typename usagi::variable_traits<Type>::value_type;

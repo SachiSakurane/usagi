@@ -18,12 +18,12 @@ concept hierarchy = requires(HierarchyType &h) {
 
   {
     h.add_sub_view(std::declval<typename HierarchyType::children_mapped_type>())
-    } -> usagi::utility::convertible_to<
+    } -> usagi::concepts::convertible_to<
         std::add_lvalue_reference_t<typename HierarchyType::children_value_type>>;
 
   {
     h.get_sub_view(std::declval<typename HierarchyType::children_key_type>())
-    } -> usagi::utility::convertible_to<
+    } -> usagi::concepts::convertible_to<
         std::add_lvalue_reference_t<typename HierarchyType::children_mapped_type>>;
 
   {

@@ -26,7 +26,7 @@ TEST(GestureTest, AutoDeductionTest) {
 namespace {
 using MouseParameter = usagi::type::mouse::default_parameter<float>;
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 struct SpecificView final : usagi::ui::base_view<ValueType, int, MouseParameter> {
   using value_type = ValueType;
   using draw_context_type = int;

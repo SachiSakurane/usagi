@@ -6,7 +6,7 @@
 
 namespace usagi::type {
 struct mouse {
-  template <usagi::utility::arithmetic ValueType>
+  template <usagi::concepts::arithmetic ValueType>
   struct default_parameter {
     ValueType x, y, d;
   };
@@ -44,7 +44,7 @@ struct mouse {
     on_out() = default;
     template <class... Args>
     explicit on_out(Args &&...args) : ParameterType{std::forward<Args>(args)...} {}
-    on_out(const ParameterType& p) : ParameterType{p} {}
+    on_out(const ParameterType &p) : ParameterType{p} {}
   };
 
   template <class ParameterType>

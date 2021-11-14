@@ -14,7 +14,7 @@
 #include <usagi/type/mouse.hpp>
 
 namespace usagi::ui {
-template <usagi::utility::arithmetic ValueType, class DrawContextType, class MouseParameterType>
+template <usagi::concepts::arithmetic ValueType, class DrawContextType, class MouseParameterType>
 class view;
 }
 

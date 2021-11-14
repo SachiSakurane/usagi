@@ -10,7 +10,7 @@ namespace usagi::geometry {
 /**
  * size はマイナスを許容しない
  */
-template <usagi::utility::arithmetic Type>
+template <usagi::concepts::arithmetic Type>
 struct size {
   using value_type = Type;
 
@@ -20,17 +20,11 @@ struct size {
     assert(height_ >= 0);
   }
 
-  value_type width() const {
-    return width_;
-  }
+  value_type width() const { return width_; }
 
-  value_type height() const {
-    return height_;
-  }
+  value_type height() const { return height_; }
 
-  usagi::utility::mono_tuple<value_type, 2> operator()() const {
-    return {width_, height_};
-  }
+  usagi::utility::mono_tuple<value_type, 2> operator()() const { return {width_, height_}; }
 
 private:
   value_type width_, height_;
@@ -39,7 +33,7 @@ private:
 /**
  * variable特殊化
  */
-template <usagi::utility::arithmetic Type>
+template <usagi::concepts::arithmetic Type>
 struct variable_size {
   using value_type = Type;
   using pair_type = usagi::utility::mono_tuple<value_type, 2>;

@@ -11,8 +11,8 @@ namespace usagi::ui {
 namespace detail {
   template <class Func, class ArgsTuple, std::size_t... Sequence>
   inline constexpr bool is_apply_invocable(std::index_sequence<Sequence...>) {
-    return usagi::utility::is_invocable_f_r_args_v<Func,
-                                                   std::tuple_element_t<Sequence, ArgsTuple>...>;
+    return usagi::concepts::is_invocable_f_r_args_v<Func,
+                                                    std::tuple_element_t<Sequence, ArgsTuple>...>;
   }
 
   template <class Func, class SearchArgsTuple>

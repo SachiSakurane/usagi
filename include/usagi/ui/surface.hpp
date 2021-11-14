@@ -16,8 +16,8 @@ template <class FunctionType>
 surface_holder(FunctionType) -> surface_holder<FunctionType>;
 
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
-requires usagi::utility::invocable<FunctionType, typename ViewType::draw_context_type &,
-                                   const ViewType &>
+requires usagi::concepts::invocable<FunctionType, typename ViewType::draw_context_type &,
+                                    const ViewType &>
 struct surface {
   using value_type = typename ViewType::value_type;
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;

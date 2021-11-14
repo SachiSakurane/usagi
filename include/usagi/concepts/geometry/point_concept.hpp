@@ -8,9 +8,9 @@ namespace usagi::concepts::geometry {
  */
 template <class PointType>
 concept point_concept = requires(PointType &p) {
-  requires usagi::utility::arithmetic<typename PointType::value_type>;
+  requires usagi::concepts::arithmetic<typename PointType::value_type>;
 
-  { p.x() } -> usagi::utility::arithmetic;
-  { p.y() } -> usagi::utility::arithmetic;
+  { p.x() } -> usagi::concepts::arithmetic;
+  { p.y() } -> usagi::concepts::arithmetic;
 };
 } // namespace usagi::concepts::geometry

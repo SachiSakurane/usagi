@@ -6,7 +6,7 @@
 #include <usagi/geometry/point/point.hpp>
 
 namespace usagi::geometry {
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) distance(const usagi::geometry::point<ValueType> &a,
                                          const usagi::geometry::point<ValueType> &b) {
   auto x_sub = a.x() - b.x();

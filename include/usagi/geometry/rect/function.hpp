@@ -8,46 +8,46 @@
 #include <usagi/geometry/size/size.hpp>
 
 namespace usagi::geometry {
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) make_from_center(const usagi::geometry::point<ValueType> &center,
                                                  const usagi::geometry::size<ValueType> &size) {
-  constexpr usagi::utility::arithmetic auto two = static_cast<ValueType>(2);
+  constexpr usagi::concepts::arithmetic auto two = static_cast<ValueType>(2);
   return usagi::geometry::rect<ValueType>{
       center.x() - size.width() / two, center.y() - size.height() / two,
       center.x() + size.width() / two, center.y() + size.height() / two};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) transform(const usagi::geometry::rect<ValueType> &rect, ValueType x,
                                           ValueType y) {
   return usagi::geometry::rect<ValueType>{rect.l() + x, rect.t() + y, rect.r() + x, rect.b() + y};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) from_left(const usagi::geometry::rect<ValueType> &rect,
                                           ValueType l) {
   return usagi::geometry::rect<ValueType>{rect.l(), rect.t(), rect.l() + l, rect.b()};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) from_top(const usagi::geometry::rect<ValueType> &rect,
                                          ValueType t) {
   return usagi::geometry::rect<ValueType>{rect.l(), rect.t(), rect.r(), rect.t() + t};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) from_right(const usagi::geometry::rect<ValueType> &rect,
                                            ValueType r) {
   return usagi::geometry::rect<ValueType>{rect.r() - r, rect.t(), rect.r(), rect.b()};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) from_bottom(const usagi::geometry::rect<ValueType> &rect,
                                             ValueType b) {
   return usagi::geometry::rect<ValueType>{rect.l(), rect.b() - b, rect.r(), rect.b()};
 }
 
-template <usagi::utility::floating_point ValueType>
+template <usagi::concepts::floating_point ValueType>
 inline constexpr decltype(auto) from_width(const usagi::geometry::rect<ValueType> &rect,
                                            ValueType w) {
   auto cx = rect.center().x();
@@ -55,7 +55,7 @@ inline constexpr decltype(auto) from_width(const usagi::geometry::rect<ValueType
                                           cx + w * static_cast<ValueType>(0.5), rect.b()};
 }
 
-template <usagi::utility::floating_point ValueType>
+template <usagi::concepts::floating_point ValueType>
 inline constexpr decltype(auto) from_height(const usagi::geometry::rect<ValueType> &rect,
                                             ValueType h) {
   auto cy = rect.center().y();
@@ -63,7 +63,7 @@ inline constexpr decltype(auto) from_height(const usagi::geometry::rect<ValueTyp
                                           cy + h * static_cast<ValueType>(0.5)};
 }
 
-template <usagi::utility::floating_point ValueType>
+template <usagi::concepts::floating_point ValueType>
 inline constexpr decltype(auto) from_size(const usagi::geometry::rect<ValueType> &rect, ValueType w,
                                           ValueType h) {
   auto cx = rect.center().x();
@@ -73,7 +73,7 @@ inline constexpr decltype(auto) from_size(const usagi::geometry::rect<ValueType>
       cx + w * static_cast<ValueType>(0.5), cy + h * static_cast<ValueType>(0.5)};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) reduce_from_left(const usagi::geometry::rect<ValueType> &rect,
                                                  ValueType l) {
   ValueType sep = rect.l() + l;
@@ -81,7 +81,7 @@ inline constexpr decltype(auto) reduce_from_left(const usagi::geometry::rect<Val
                          usagi::geometry::rect<ValueType>{sep, rect.t(), rect.r(), rect.b()});
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) reduce_from_top(const usagi::geometry::rect<ValueType> &rect,
                                                 ValueType t) {
   ValueType sep = rect.t() + t;
@@ -89,7 +89,7 @@ inline constexpr decltype(auto) reduce_from_top(const usagi::geometry::rect<Valu
                          usagi::geometry::rect<ValueType>{rect.l(), sep, rect.r(), rect.b()});
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) reduce_from_right(const usagi::geometry::rect<ValueType> &rect,
                                                   ValueType r) {
   ValueType sep = rect.r() - r;
@@ -97,7 +97,7 @@ inline constexpr decltype(auto) reduce_from_right(const usagi::geometry::rect<Va
                          usagi::geometry::rect<ValueType>{rect.l(), rect.t(), sep, rect.b()});
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) reduce_from_bottom(const usagi::geometry::rect<ValueType> &rect,
                                                    ValueType b) {
   ValueType sep = rect.b() - b;
@@ -110,9 +110,9 @@ inline constexpr bool contain(const concepts::geometry::rect_concept auto &r,
   return (r.l() <= p.x() && p.x() <= r.r()) && (r.t() <= p.y() && p.y() <= r.b());
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) padding(const usagi::geometry::rect<ValueType> &rect, ValueType v) {
-  constexpr usagi::utility::arithmetic auto two = static_cast<ValueType>(2);
+  constexpr usagi::concepts::arithmetic auto two = static_cast<ValueType>(2);
   auto l = rect.l() + v;
   auto t = rect.t() + v;
   auto r = rect.r() - v;
@@ -123,10 +123,10 @@ inline constexpr decltype(auto) padding(const usagi::geometry::rect<ValueType> &
                                           w ? r : (l + r) / two, h ? b : (t + b) / two};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) padding(const usagi::geometry::rect<ValueType> &rect, ValueType tb,
                                         ValueType lr) {
-  constexpr usagi::utility::arithmetic auto two = static_cast<ValueType>(2);
+  constexpr usagi::concepts::arithmetic auto two = static_cast<ValueType>(2);
   auto l = rect.l() + lr;
   auto t = rect.t() + tb;
   auto r = rect.r() - lr;
@@ -137,10 +137,10 @@ inline constexpr decltype(auto) padding(const usagi::geometry::rect<ValueType> &
                                           wb ? r : (l + r) / two, hb ? b : (t + b) / two};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) padding(const usagi::geometry::rect<ValueType> &rect, ValueType t,
                                         ValueType lr, ValueType b) {
-  constexpr usagi::utility::arithmetic auto two = static_cast<ValueType>(2);
+  constexpr usagi::concepts::arithmetic auto two = static_cast<ValueType>(2);
   auto l_ = rect.l() + lr;
   auto t_ = rect.t() + t;
   auto r_ = rect.r() - lr;
@@ -151,10 +151,10 @@ inline constexpr decltype(auto) padding(const usagi::geometry::rect<ValueType> &
                                           wb ? r_ : (l_ + r_) / two, hb ? b_ : (t_ + b_) / two};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) padding_width(const usagi::geometry::rect<ValueType> &rect,
                                               ValueType v) {
-  constexpr usagi::utility::arithmetic auto two = static_cast<ValueType>(2);
+  constexpr usagi::concepts::arithmetic auto two = static_cast<ValueType>(2);
   auto l = rect.l() + v;
   auto r = rect.r() - v;
   bool w = l < r;
@@ -162,10 +162,10 @@ inline constexpr decltype(auto) padding_width(const usagi::geometry::rect<ValueT
                                           rect.b()};
 }
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 inline constexpr decltype(auto) padding_height(const usagi::geometry::rect<ValueType> &rect,
                                                ValueType v) {
-  constexpr usagi::utility::arithmetic auto two = static_cast<ValueType>(2);
+  constexpr usagi::concepts::arithmetic auto two = static_cast<ValueType>(2);
   auto t = rect.t() + v;
   auto b = rect.b() - v;
   bool h = t < b;

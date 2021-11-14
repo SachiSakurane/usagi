@@ -15,17 +15,17 @@ inline constexpr bool operator!=(const usagi::concepts::geometry::point_concept 
 }
 
 #define USAGI_POINT_OPERATORS(OP)                                                                  \
-  template <usagi::utility::arithmetic ValueType>                                                  \
+  template <usagi::concepts::arithmetic ValueType>                                                 \
   inline constexpr decltype(auto) operator OP(ValueType lhs,                                       \
                                               const usagi::geometry::point<ValueType> &rhs) {      \
     return usagi::geometry::point<ValueType>{lhs OP rhs.x(), lhs OP rhs.y()};                      \
   }                                                                                                \
-  template <usagi::utility::arithmetic ValueType>                                                  \
+  template <usagi::concepts::arithmetic ValueType>                                                 \
   inline constexpr decltype(auto) operator OP(const usagi::geometry::point<ValueType> &lhs,        \
                                               ValueType rhs) {                                     \
     return usagi::geometry::point<ValueType>{lhs.x() OP rhs, lhs.y() OP rhs};                      \
   }                                                                                                \
-  template <usagi::utility::arithmetic ValueType>                                                  \
+  template <usagi::concepts::arithmetic ValueType>                                                 \
   inline constexpr decltype(auto) operator OP(const usagi::geometry::point<ValueType> &lhs,        \
                                               const usagi::geometry::point<ValueType> &rhs) {      \
     return usagi::geometry::point<ValueType>{lhs.x() OP rhs.x(), lhs.y() OP rhs.y()};              \

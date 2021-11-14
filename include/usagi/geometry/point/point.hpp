@@ -6,7 +6,7 @@
 #include <usagi/variable/variable_traits.hpp>
 
 namespace usagi::geometry {
-template <usagi::utility::arithmetic Type>
+template <usagi::concepts::arithmetic Type>
 struct point {
   using value_type = Type;
 
@@ -30,7 +30,7 @@ point(const SizeType &) -> point<typename SizeType::value_type>;
 /**
  * tuple特殊化
  */
-template <usagi::utility::arithmetic Type>
+template <usagi::concepts::arithmetic Type>
 struct variable_point {
   using value_type = Type;
   using pair_type = usagi::utility::mono_tuple<value_type, 2>;

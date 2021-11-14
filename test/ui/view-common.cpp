@@ -17,10 +17,17 @@ static_assert(usagi::concepts::ui::viewable<decltype(usagi::ui::view{(SpecificVi
               "view is constructable from SpecificView");
 } // namespace
 
-TEST(ViewCommonTest, CommonCase) {
+TEST(ViewCommonTest, ConstructMoveCase) {
   auto v = usagi::ui::view{SpecificView{}};
   auto &vv = v.operator=(std::move(v));
   ASSERT_TRUE(static_cast<bool>(vv));
+}
+
+TEST(ViewCommonTest, CommonCase) {
+  auto v = usagi::ui::view{SpecificView{}};
+  ASSERT_TRUE(v.is_enabled());
+  v.set_enabled(false);
+  ASSERT_FALSE(v.is_enabled());
 }
 
 TEST(ViewCommonTest, BoundsCase) {

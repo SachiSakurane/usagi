@@ -9,7 +9,7 @@ using MouseParameter = usagi::type::mouse::default_parameter<float>;
 class SpecificView final : public usagi::ui::base_view<float, DrawContext, MouseParameter> {};
 } // namespace
 
-TEST(ViewGestureTest, ClickCase) {
+TEST(ViewGestureTest, MouseCase) {
   auto v = usagi::ui::view{SpecificView{}};
   v.event(SpecificView::mouse_traits::on_down_type{});
   v.event(SpecificView::mouse_traits::on_drag_type{});

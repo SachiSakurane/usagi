@@ -17,7 +17,7 @@ struct igraphic_control {
       try_create_text_entry;
 };
 
-template <usagi::utility::arithmetic ValueType>
+template <usagi::concepts::arithmetic ValueType>
 struct iplug_mouse_parameter {
   ValueType x, y, d;
   igraphic_control control;

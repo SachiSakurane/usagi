@@ -2,10 +2,10 @@
 
 #include <cassert>
 
+#include <usagi/concepts/arithmetic.hpp>
 #include <usagi/concepts/geometry/rect_concept.hpp>
 #include <usagi/geometry/point.hpp>
 #include <usagi/geometry/size.hpp>
-#include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::geometry {
 template <usagi::utility::arithmetic Type>

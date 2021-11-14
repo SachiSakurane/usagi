@@ -1,6 +1,6 @@
 #pragma once
 
-#include <usagi/utility/arithmetic.hpp>
+#include <usagi/concepts/arithmetic.hpp>
 
 namespace usagi::concepts::geometry {
 /**

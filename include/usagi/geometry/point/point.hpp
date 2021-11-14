@@ -1,7 +1,7 @@
 #pragma once
 
+#include <usagi/concepts/arithmetic.hpp>
 #include <usagi/concepts/geometry/size_concept.hpp>
-#include <usagi/utility/arithmetic.hpp>
 #include <usagi/utility/mono_tuple.hpp>
 #include <usagi/variable/variable_traits.hpp>
 

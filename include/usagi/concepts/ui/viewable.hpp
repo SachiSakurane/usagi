@@ -4,14 +4,14 @@
 #include <type_traits>
 #include <utility>
 
+#include <usagi/concepts/arithmetic.hpp>
+#include <usagi/concepts/convertible_to.hpp>
 #include <usagi/concepts/geometry/rect_concept.hpp>
 #include <usagi/concepts/geometry/size_concept.hpp>
 #include <usagi/concepts/ui/drawable.hpp>
 #include <usagi/concepts/ui/gestural.hpp>
 #include <usagi/concepts/ui/hierarchy.hpp>
 #include <usagi/type/mouse.hpp>
-#include <usagi/utility/arithmetic.hpp>
-#include <usagi/utility/convertible_to.hpp>
 
 namespace usagi::ui {
 template <usagi::utility::arithmetic ValueType, class DrawContextType, class MouseParameterType>

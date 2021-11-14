@@ -3,8 +3,8 @@
 #include <iterator>
 #include <map>
 
+#include <usagi/concepts/arithmetic.hpp>
 #include <usagi/concepts/ui/hierarchy.hpp>
-#include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::ui::detail {
 template <class ViewType, class KeyType = size_t>

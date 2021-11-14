@@ -3,9 +3,9 @@
 #include <tuple>
 #include <utility>
 
+#include <usagi/concepts/is_invocable_f_r_args.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
-#include <usagi/utility/is_invocable_f_r_args.hpp>
 
 namespace usagi::ui {
 namespace detail {

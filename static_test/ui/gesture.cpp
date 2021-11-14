@@ -1,5 +1,5 @@
+#include <usagi/concepts/is_invocable_f_r_args.hpp>
 #include <usagi/ui/gesture.hpp>
-#include <usagi/utility/is_invocable_f_r_args.hpp>
 
 namespace {
 struct a_tag {};

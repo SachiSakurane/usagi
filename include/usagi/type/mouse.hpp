@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include <usagi/utility/arithmetic.hpp>
+#include <usagi/concepts/arithmetic.hpp>
 
 namespace usagi::type {
 struct mouse {

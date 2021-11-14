@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#include <usagi/utility/arithmetic.hpp>
+#include <usagi/concepts/arithmetic.hpp>
 #include <usagi/utility/mono_tuple.hpp>
 #include <usagi/variable/variable_traits.hpp>
 

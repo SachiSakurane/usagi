@@ -2,8 +2,8 @@
 
 #include <utility>
 
+#include <usagi/concepts/arithmetic.hpp>
 #include <usagi/ui/view.hpp>
-#include <usagi/utility/arithmetic.hpp>
 
 #include "draw_context.hpp"
 #include "drawable.hpp"

@@ -1,8 +1,8 @@
 #pragma once
 
+#include <usagi/concepts/arithmetic.hpp>
 #include <usagi/concepts/geometry/point_concept.hpp>
 #include <usagi/concepts/geometry/size_concept.hpp>
-#include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::concepts::geometry {
 /**

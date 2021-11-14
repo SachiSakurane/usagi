@@ -2,9 +2,9 @@
 
 #include <utility>
 
+#include <usagi/concepts/invocable.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
-#include <usagi/utility/invocable.hpp>
 
 namespace usagi::ui {
 template <class FunctionType>

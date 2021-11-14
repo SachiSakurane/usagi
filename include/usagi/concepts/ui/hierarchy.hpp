@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <type_traits>
 
-#include <usagi/utility/convertible_to.hpp>
+#include <usagi/concepts/convertible_to.hpp>
 
 namespace usagi::concepts::ui {
 /**

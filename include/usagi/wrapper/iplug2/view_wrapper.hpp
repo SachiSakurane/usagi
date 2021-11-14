@@ -3,9 +3,9 @@
 #include <functional>
 #include <unordered_map>
 
+#include <usagi/concepts/arithmetic.hpp>
 #include <usagi/type/mouse.hpp>
 #include <usagi/ui/view.hpp>
-#include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::wrapper::iplug2 {
 

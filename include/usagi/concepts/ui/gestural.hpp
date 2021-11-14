@@ -3,8 +3,8 @@
 #include <concepts>
 #include <utility>
 
+#include <usagi/concepts/arithmetic.hpp>
 #include <usagi/type/mouse.hpp>
-#include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::concepts::ui {
 template <class MouseParameterType>

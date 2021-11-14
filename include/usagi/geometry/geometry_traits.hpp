@@ -1,9 +1,9 @@
 #pragma once
 
+#include <usagi/concepts/arithmetic.hpp>
 #include <usagi/geometry/point/point.hpp>
 #include <usagi/geometry/rect/rect.hpp>
 #include <usagi/geometry/size/size.hpp>
-#include <usagi/utility/arithmetic.hpp>
 
 namespace usagi::geometry {
 template <usagi::utility::arithmetic ValueType>

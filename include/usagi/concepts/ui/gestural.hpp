@@ -7,10 +7,11 @@
 #include <usagi/type/gesture.hpp>
 
 namespace usagi::concepts::ui {
-template <class MouseParameterType>
-concept mouse_parameter = requires(MouseParameterType &m) {
+template <class GesturalParameterType>
+concept gestural_parameter = requires(GesturalParameterType &m) {
   { m.x } -> usagi::concepts::arithmetic;
   { m.y } -> usagi::concepts::arithmetic;
+  { m.d } -> usagi::concepts::arithmetic;
 };
 
 /**
@@ -20,7 +21,7 @@ concept mouse_parameter = requires(MouseParameterType &m) {
  */
 template <class GesturalType>
 concept gestural = requires(GesturalType &g) {
-  typename GesturalType::mouse_parameter_type;
+  requires gestural_parameter<typename GesturalType::mouse_parameter_type>;
 
   {
     g.event(std::declval<typename usagi::type::mouse_traits<

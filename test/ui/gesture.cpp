@@ -4,7 +4,7 @@
 #include <usagi/ui/view.hpp>
 
 namespace {
-using MouseParameter = usagi::type::mouse::default_parameter<float>;
+using MouseParameter = usagi::type::gesture_default_parameter<float>;
 
 template <usagi::concepts::arithmetic ValueType>
 struct SpecificView final : usagi::ui::base_view<ValueType, int, MouseParameter> {

@@ -127,61 +127,61 @@ struct gesture {
   size_type bounds() const { return holder.bounds(); }
   rect_type frame() const { return holder.frame(); }
 
-  bool event(typename gesture_traits::on_down_type mouse) {
+  bool event(typename gesture_traits::on_down_type parameter) {
     if (g.on_down_holder) {
-      if (g.on_down_holder(mouse, holder)) {
+      if (g.on_down_holder(parameter, holder)) {
         return true;
       }
     }
-    return holder.event(mouse);
+    return holder.event(parameter);
   }
 
-  void event(typename gesture_traits::on_drag_type mouse) {
+  void event(typename gesture_traits::on_drag_type parameter) {
     if (g.on_drag_holder) {
-      g.on_drag_holder(mouse, holder);
+      g.on_drag_holder(parameter, holder);
     }
-    holder.event(mouse);
+    holder.event(parameter);
   }
 
-  void event(typename gesture_traits::on_up_type mouse) {
+  void event(typename gesture_traits::on_up_type parameter) {
     if (g.on_up_holder) {
-      g.on_up_holder(mouse, holder);
+      g.on_up_holder(parameter, holder);
     }
-    holder.event(mouse);
+    holder.event(parameter);
   }
 
-  bool event(typename gesture_traits::on_over_type mouse) {
+  bool event(typename gesture_traits::on_over_type parameter) {
     if (g.on_over_holder) {
-      if (g.on_over_holder(mouse, holder)) {
+      if (g.on_over_holder(parameter, holder)) {
         return true;
       }
     }
-    return holder.event(mouse);
+    return holder.event(parameter);
   }
 
-  void event(typename gesture_traits::on_out_type mouse) {
+  void event(typename gesture_traits::on_out_type parameter) {
     if (g.on_out_holder) {
-      g.on_out_holder(mouse, holder);
+      g.on_out_holder(parameter, holder);
     }
-    holder.event(mouse);
+    holder.event(parameter);
   }
 
-  bool event(typename gesture_traits::on_double_type mouse) {
+  bool event(typename gesture_traits::on_double_type parameter) {
     if (g.on_double_holder) {
-      if (g.on_double_holder(mouse, holder)) {
+      if (g.on_double_holder(parameter, holder)) {
         return true;
       }
     }
-    return holder.event(mouse);
+    return holder.event(parameter);
   }
 
-  bool event(typename gesture_traits::on_wheel_type mouse) {
+  bool event(typename gesture_traits::on_wheel_type parameter) {
     if (g.on_wheel_holder) {
-      if (g.on_wheel_holder(mouse, holder)) {
+      if (g.on_wheel_holder(parameter, holder)) {
         return true;
       }
     }
-    return holder.event(mouse);
+    return holder.event(parameter);
   }
 
   void set_down(bool flag) { holder.set_down(flag); }

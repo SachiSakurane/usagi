@@ -49,26 +49,26 @@ public:
   virtual size_type bounds() const { return content.size(); }
   virtual rect_type frame() const { return content; }
 
-  virtual bool event(typename gesture_traits::on_down_type mouse) {
-    return base_gesture.on_event(mouse, hierarchy.get_children());
+  virtual bool event(typename gesture_traits::on_down_type parameter) {
+    return base_gesture.on_event(parameter, hierarchy.get_children());
   }
-  virtual void event(typename gesture_traits::on_drag_type mouse) {
-    base_gesture.on_event(mouse, hierarchy.get_children());
+  virtual void event(typename gesture_traits::on_drag_type parameter) {
+    base_gesture.on_event(parameter, hierarchy.get_children());
   }
-  virtual void event(typename gesture_traits::on_up_type mouse) {
-    base_gesture.on_event(mouse, hierarchy.get_children());
+  virtual void event(typename gesture_traits::on_up_type parameter) {
+    base_gesture.on_event(parameter, hierarchy.get_children());
   }
-  virtual bool event(typename gesture_traits::on_over_type mouse) {
-    return base_gesture.on_event(mouse, hierarchy.get_children());
+  virtual bool event(typename gesture_traits::on_over_type parameter) {
+    return base_gesture.on_event(parameter, hierarchy.get_children());
   }
-  virtual void event(typename gesture_traits::on_out_type mouse) {
-    base_gesture.on_event(mouse, hierarchy.get_children());
+  virtual void event(typename gesture_traits::on_out_type parameter) {
+    base_gesture.on_event(parameter, hierarchy.get_children());
   }
-  virtual bool event(typename gesture_traits::on_double_type mouse) {
-    return base_gesture.on_event(mouse, hierarchy.get_children());
+  virtual bool event(typename gesture_traits::on_double_type parameter) {
+    return base_gesture.on_event(parameter, hierarchy.get_children());
   }
-  virtual bool event(typename gesture_traits::on_wheel_type mouse) {
-    return base_gesture.on_event(mouse, hierarchy.get_children());
+  virtual bool event(typename gesture_traits::on_wheel_type parameter) {
+    return base_gesture.on_event(parameter, hierarchy.get_children());
   }
 
   virtual void set_down(bool flag) { base_gesture.set_down(flag); }

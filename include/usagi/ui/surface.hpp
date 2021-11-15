@@ -42,13 +42,13 @@ struct surface {
   size_type bounds() const { return holder.bounds(); }
   rect_type frame() const { return holder.frame(); }
 
-  bool event(typename gesture_traits::on_down_type mouse) { return holder.event(mouse); }
-  void event(typename gesture_traits::on_drag_type mouse) { holder.event(mouse); }
-  void event(typename gesture_traits::on_up_type mouse) { holder.event(mouse); }
-  bool event(typename gesture_traits::on_over_type mouse) { return holder.event(mouse); }
-  void event(typename gesture_traits::on_out_type mouse) { holder.event(mouse); }
-  bool event(typename gesture_traits::on_double_type mouse) { return holder.event(mouse); }
-  bool event(typename gesture_traits::on_wheel_type mouse) { return holder.event(mouse); }
+  bool event(typename gesture_traits::on_down_type parameter) { return holder.event(parameter); }
+  void event(typename gesture_traits::on_drag_type parameter) { holder.event(parameter); }
+  void event(typename gesture_traits::on_up_type parameter) { holder.event(parameter); }
+  bool event(typename gesture_traits::on_over_type parameter) { return holder.event(parameter); }
+  void event(typename gesture_traits::on_out_type parameter) { holder.event(parameter); }
+  bool event(typename gesture_traits::on_double_type parameter) { return holder.event(parameter); }
+  bool event(typename gesture_traits::on_wheel_type parameter) { return holder.event(parameter); }
 
   void set_down(bool flag) { holder.set_down(flag); }
   void set_over(bool flag) { holder.set_over(flag); }

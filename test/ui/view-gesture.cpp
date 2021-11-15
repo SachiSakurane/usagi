@@ -9,7 +9,7 @@ using GestureParameterType = usagi::type::gesture_default_parameter<float>;
 class SpecificView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {};
 } // namespace
 
-TEST(ViewGestureTest, MouseCase) {
+TEST(ViewGestureTest, Case) {
   auto v = usagi::ui::view{SpecificView{}};
   v.event(SpecificView::gesture_traits::on_down_type{});
   v.event(SpecificView::gesture_traits::on_drag_type{});

@@ -11,8 +11,7 @@
 namespace usagi::ui {
 template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
 class base_view {
-  using base_view_click_type =
-      usagi::ui::detail::base_view_gesture<ValueType, GestureParameterType>;
+  using base_view_gesture = usagi::ui::detail::base_view_gesture<ValueType, GestureParameterType>;
 
 public:
   using value_type = ValueType;
@@ -51,32 +50,32 @@ public:
   virtual rect_type frame() const { return content; }
 
   virtual bool event(typename gesture_traits::on_down_type mouse) {
-    return gesture.on_event(mouse, hierarchy.get_children());
+    return base_gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual void event(typename gesture_traits::on_drag_type mouse) {
-    gesture.on_event(mouse, hierarchy.get_children());
+    base_gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual void event(typename gesture_traits::on_up_type mouse) {
-    gesture.on_event(mouse, hierarchy.get_children());
+    base_gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual bool event(typename gesture_traits::on_over_type mouse) {
-    return gesture.on_event(mouse, hierarchy.get_children());
+    return base_gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual void event(typename gesture_traits::on_out_type mouse) {
-    gesture.on_event(mouse, hierarchy.get_children());
+    base_gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual bool event(typename gesture_traits::on_double_type mouse) {
-    return gesture.on_event(mouse, hierarchy.get_children());
+    return base_gesture.on_event(mouse, hierarchy.get_children());
   }
   virtual bool event(typename gesture_traits::on_wheel_type mouse) {
-    return gesture.on_event(mouse, hierarchy.get_children());
+    return base_gesture.on_event(mouse, hierarchy.get_children());
   }
 
-  virtual void set_down(bool flag) { gesture.set_down(flag); }
-  virtual void set_over(bool flag) { gesture.set_over(flag); }
+  virtual void set_down(bool flag) { base_gesture.set_down(flag); }
+  virtual void set_over(bool flag) { base_gesture.set_over(flag); }
 
-  [[nodiscard]] virtual bool on_downed() const { return gesture.on_downed(); }
-  [[nodiscard]] virtual bool on_overed() const { return gesture.on_overed(); }
+  [[nodiscard]] virtual bool on_downed() const { return base_gesture.on_downed(); }
+  [[nodiscard]] virtual bool on_overed() const { return base_gesture.on_overed(); }
 
   virtual children_value_type &add_sub_view(children_mapped_type &&sub_view) {
     return hierarchy.add_sub_view(std::forward<children_mapped_type>(sub_view));
@@ -92,7 +91,7 @@ public:
   [[nodiscard]] virtual bool is_enabled() const { return enabled; }
 
 private:
-  base_view_click_type gesture;
+  base_view_gesture base_gesture;
   base_view_hierarch_type hierarchy;
   rect_type content{};
   bool enabled{true};

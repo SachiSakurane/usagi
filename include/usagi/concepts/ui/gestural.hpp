@@ -8,7 +8,7 @@
 
 namespace usagi::concepts::ui {
 template <class GesturalParameterType>
-concept gestural_parameter = requires(GesturalParameterType &g) {
+concept gestural_parameter = requires(GesturalParameterType g) {
   { g.x } -> usagi::concepts::arithmetic;
   { g.y } -> usagi::concepts::arithmetic;
   { g.d } -> usagi::concepts::arithmetic;
@@ -20,7 +20,7 @@ concept gestural_parameter = requires(GesturalParameterType &g) {
  * 終点は基本的に resolve(true を返して以降のレイヤーを無視すること) ができない
  */
 template <class GesturalType>
-concept gestural = requires(GesturalType &g) {
+concept gestural = requires(GesturalType g) {
   requires gestural_parameter<typename GesturalType::gesture_parameter_type>;
 
   {

@@ -23,10 +23,10 @@ auto &view = local_view.add_sub_view(
         context.drawRect(usagi::wrapper::skia::to_rect(v.frame()), paint);
       }) |
   usagi::ui::gestured(
-      [](usagi::wrapper::icontrol::iplug_traits::gesture_traits::on_down_type mouse, auto &v)
+      [](usagi::wrapper::icontrol::iplug_traits::gesture_traits::on_down_type gesture, auto &v)
       {
         // click
-        if (usagi::geometry::contain(v.frame(), traits_type::point_type{mouse.x, mouse.y}))
+        if (usagi::geometry::contain(v.frame(), traits_type::point_type{gesture.x, gesture.y}))
           std::cout << "tapped" << std::endl;
       }));
 ```

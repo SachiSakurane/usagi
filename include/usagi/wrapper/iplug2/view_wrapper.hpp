@@ -18,7 +18,7 @@ struct igraphic_control {
 };
 
 template <usagi::concepts::arithmetic ValueType>
-struct iplug_mouse_parameter : type::gesture_default_parameter<ValueType> {
+struct iplug_gesture_parameter : type::gesture_default_parameter<ValueType> {
   igraphic_control control;
 };
 
@@ -28,11 +28,11 @@ struct iplug_traits {
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using draw_context_type = SkCanvas;
-  using mouse_parameter_type = iplug_mouse_parameter<value_type>;
-  using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
-  using view_type = typename usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
+  using gesture_parameter_type = iplug_gesture_parameter<value_type>;
+  using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
+  using view_type = typename usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;
   using base_view_type =
-      typename usagi::ui::base_view<value_type, draw_context_type, mouse_parameter_type>;
+      typename usagi::ui::base_view<value_type, draw_context_type, gesture_parameter_type>;
 };
 
 class view_wrapper : public IControl {
@@ -52,39 +52,39 @@ public:
   }
 
   void OnMouseDown(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_down_type{x, y, 0.f, make_igraphic_control()});
+    local_view.event(iplug_traits::gesture_traits::on_down_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseDown(x, y, mod);
   }
 
   void OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_drag_type{x, y, 0.f, make_igraphic_control()});
+    local_view.event(iplug_traits::gesture_traits::on_drag_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseDrag(x, y, dX, dY, mod);
   }
 
   void OnMouseUp(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_up_type{x, y, 0.f, make_igraphic_control()});
+    local_view.event(iplug_traits::gesture_traits::on_up_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseUp(x, y, mod);
   }
 
   void OnMouseOver(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::mouse_traits::on_over_type{x, y, 0.f, make_igraphic_control()});
+    local_view.event(iplug_traits::gesture_traits::on_over_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseOver(x, y, mod);
   }
 
   void OnMouseOut() override {
     local_view.event(
-        iplug_traits::mouse_traits::on_out_type{0.f, 0.f, 0.f, make_igraphic_control()});
+        iplug_traits::gesture_traits::on_out_type{0.f, 0.f, 0.f, make_igraphic_control()});
     IControl::OnMouseOut();
   }
 
   void OnMouseDblClick(float x, float y, const IMouseMod &mod) override {
     local_view.event(
-        iplug_traits::mouse_traits::on_double_type{x, y, 0.f, make_igraphic_control()});
+        iplug_traits::gesture_traits::on_double_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseDblClick(x, y, mod);
   }
 
   void OnMouseWheel(float x, float y, const IMouseMod &mod, float d) override {
-    local_view.event(iplug_traits::mouse_traits::on_wheel_type{x, y, d, make_igraphic_control()});
+    local_view.event(iplug_traits::gesture_traits::on_wheel_type{x, y, d, make_igraphic_control()});
     IControl::OnMouseWheel(x, y, mod, d);
   }
 

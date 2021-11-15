@@ -5,27 +5,27 @@
 
 namespace {
 struct DrawContext {};
-using MouseParameter = usagi::type::gesture_default_parameter<float>;
-class SpecificView final : public usagi::ui::base_view<float, DrawContext, MouseParameter> {};
+using GestureParameterType = usagi::type::gesture_default_parameter<float>;
+class SpecificView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {};
 } // namespace
 
-TEST(ViewGestureTest, MouseCase) {
+TEST(ViewGestureTest, Case) {
   auto v = usagi::ui::view{SpecificView{}};
-  v.event(SpecificView::mouse_traits::on_down_type{});
-  v.event(SpecificView::mouse_traits::on_drag_type{});
-  v.event(SpecificView::mouse_traits::on_over_type{});
-  v.event(SpecificView::mouse_traits::on_up_type{});
-  v.event(SpecificView::mouse_traits::on_out_type{});
-  v.event(SpecificView::mouse_traits::on_double_type{});
-  v.event(SpecificView::mouse_traits::on_wheel_type{});
+  v.event(SpecificView::gesture_traits::on_down_type{});
+  v.event(SpecificView::gesture_traits::on_drag_type{});
+  v.event(SpecificView::gesture_traits::on_over_type{});
+  v.event(SpecificView::gesture_traits::on_up_type{});
+  v.event(SpecificView::gesture_traits::on_out_type{});
+  v.event(SpecificView::gesture_traits::on_double_type{});
+  v.event(SpecificView::gesture_traits::on_wheel_type{});
 
   // sub case
-  v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
-  v.event(SpecificView::mouse_traits::on_down_type{});
-  v.event(SpecificView::mouse_traits::on_drag_type{});
-  v.event(SpecificView::mouse_traits::on_over_type{});
-  v.event(SpecificView::mouse_traits::on_up_type{});
-  v.event(SpecificView::mouse_traits::on_out_type{});
-  v.event(SpecificView::mouse_traits::on_double_type{});
-  v.event(SpecificView::mouse_traits::on_wheel_type{});
+  v.add_sub_view(usagi::ui::base_view<float, DrawContext, GestureParameterType>{});
+  v.event(SpecificView::gesture_traits::on_down_type{});
+  v.event(SpecificView::gesture_traits::on_drag_type{});
+  v.event(SpecificView::gesture_traits::on_over_type{});
+  v.event(SpecificView::gesture_traits::on_up_type{});
+  v.event(SpecificView::gesture_traits::on_out_type{});
+  v.event(SpecificView::gesture_traits::on_double_type{});
+  v.event(SpecificView::gesture_traits::on_wheel_type{});
 }

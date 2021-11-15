@@ -75,32 +75,33 @@ gesture_holder(TupleType &&) -> gesture_holder<TupleType>;
 template <usagi::concepts::ui::viewable ViewType>
 struct gestures {
   using value_type = typename ViewType::value_type;
-  using mouse_traits = typename usagi::type::mouse_traits<typename ViewType::mouse_parameter_type>;
+  using gesture_traits =
+      typename usagi::type::gesture_traits<typename ViewType::gesture_parameter_type>;
 
   template <class TupleType>
   explicit gestures(TupleType t)
       : on_down_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename mouse_traits::on_down_type, ViewType &>>(t)},
+            std::tuple<bool, typename gesture_traits::on_down_type, ViewType &>>(t)},
         on_drag_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<void, typename mouse_traits::on_drag_type, ViewType &>>(t)},
+            std::tuple<void, typename gesture_traits::on_drag_type, ViewType &>>(t)},
         on_up_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<void, typename mouse_traits::on_up_type, ViewType &>>(t)},
+            std::tuple<void, typename gesture_traits::on_up_type, ViewType &>>(t)},
         on_over_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename mouse_traits::on_over_type, ViewType &>>(t)},
+            std::tuple<bool, typename gesture_traits::on_over_type, ViewType &>>(t)},
         on_out_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<void, typename mouse_traits::on_out_type, ViewType &>>(t)},
+            std::tuple<void, typename gesture_traits::on_out_type, ViewType &>>(t)},
         on_double_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename mouse_traits::on_double_type, ViewType &>>(t)},
+            std::tuple<bool, typename gesture_traits::on_double_type, ViewType &>>(t)},
         on_wheel_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename mouse_traits::on_wheel_type, ViewType &>>(t)} {}
+            std::tuple<bool, typename gesture_traits::on_wheel_type, ViewType &>>(t)} {}
 
-  std::function<bool(typename mouse_traits::on_down_type, ViewType &)> on_down_holder;
-  std::function<void(typename mouse_traits::on_drag_type, ViewType &)> on_drag_holder;
-  std::function<void(typename mouse_traits::on_up_type, ViewType &)> on_up_holder;
-  std::function<bool(typename mouse_traits::on_over_type, ViewType &)> on_over_holder;
-  std::function<void(typename mouse_traits::on_out_type, ViewType &)> on_out_holder;
-  std::function<bool(typename mouse_traits::on_double_type, ViewType &)> on_double_holder;
-  std::function<bool(typename mouse_traits::on_wheel_type, ViewType &)> on_wheel_holder;
+  std::function<bool(typename gesture_traits::on_down_type, ViewType &)> on_down_holder;
+  std::function<void(typename gesture_traits::on_drag_type, ViewType &)> on_drag_holder;
+  std::function<void(typename gesture_traits::on_up_type, ViewType &)> on_up_holder;
+  std::function<bool(typename gesture_traits::on_over_type, ViewType &)> on_over_holder;
+  std::function<void(typename gesture_traits::on_out_type, ViewType &)> on_out_holder;
+  std::function<bool(typename gesture_traits::on_double_type, ViewType &)> on_double_holder;
+  std::function<bool(typename gesture_traits::on_wheel_type, ViewType &)> on_wheel_holder;
 };
 
 template <usagi::concepts::ui::viewable ViewType>
@@ -109,8 +110,8 @@ struct gesture {
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = typename ViewType::draw_context_type;
-  using mouse_parameter_type = typename ViewType::mouse_parameter_type;
-  using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
+  using gesture_parameter_type = typename ViewType::gesture_parameter_type;
+  using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
   using view_type = typename ViewType::view_type;
 
   using children_type = typename ViewType::children_type;
@@ -126,67 +127,67 @@ struct gesture {
   size_type bounds() const { return holder.bounds(); }
   rect_type frame() const { return holder.frame(); }
 
-  bool event(typename mouse_traits::on_down_type mouse) {
+  bool event(typename gesture_traits::on_down_type parameter) {
     if (g.on_down_holder) {
-      if (g.on_down_holder(mouse, holder)) {
+      if (g.on_down_holder(parameter, holder)) {
         return true;
       }
     }
-    return holder.event(mouse);
+    return holder.event(parameter);
   }
 
-  void event(typename mouse_traits::on_drag_type mouse) {
+  void event(typename gesture_traits::on_drag_type parameter) {
     if (g.on_drag_holder) {
-      g.on_drag_holder(mouse, holder);
+      g.on_drag_holder(parameter, holder);
     }
-    holder.event(mouse);
+    holder.event(parameter);
   }
 
-  void event(typename mouse_traits::on_up_type mouse) {
+  void event(typename gesture_traits::on_up_type parameter) {
     if (g.on_up_holder) {
-      g.on_up_holder(mouse, holder);
+      g.on_up_holder(parameter, holder);
     }
-    holder.event(mouse);
+    holder.event(parameter);
   }
 
-  bool event(typename mouse_traits::on_over_type mouse) {
+  bool event(typename gesture_traits::on_over_type parameter) {
     if (g.on_over_holder) {
-      if (g.on_over_holder(mouse, holder)) {
+      if (g.on_over_holder(parameter, holder)) {
         return true;
       }
     }
-    return holder.event(mouse);
+    return holder.event(parameter);
   }
 
-  void event(typename mouse_traits::on_out_type mouse) {
+  void event(typename gesture_traits::on_out_type parameter) {
     if (g.on_out_holder) {
-      g.on_out_holder(mouse, holder);
+      g.on_out_holder(parameter, holder);
     }
-    holder.event(mouse);
+    holder.event(parameter);
   }
 
-  bool event(typename mouse_traits::on_double_type mouse) {
+  bool event(typename gesture_traits::on_double_type parameter) {
     if (g.on_double_holder) {
-      if (g.on_double_holder(mouse, holder)) {
+      if (g.on_double_holder(parameter, holder)) {
         return true;
       }
     }
-    return holder.event(mouse);
+    return holder.event(parameter);
   }
 
-  bool event(typename mouse_traits::on_wheel_type mouse) {
+  bool event(typename gesture_traits::on_wheel_type parameter) {
     if (g.on_wheel_holder) {
-      if (g.on_wheel_holder(mouse, holder)) {
+      if (g.on_wheel_holder(parameter, holder)) {
         return true;
       }
     }
-    return holder.event(mouse);
+    return holder.event(parameter);
   }
 
-  void set_mouse_down(bool flag) { holder.set_mouse_down(flag); }
-  void set_mouse_over(bool flag) { holder.set_mouse_over(flag); }
-  [[nodiscard]] bool is_mouse_downed() const { return holder.is_mouse_downed(); }
-  [[nodiscard]] bool is_mouse_overed() const { return holder.is_mouse_overed(); }
+  void set_down(bool flag) { holder.set_down(flag); }
+  void set_over(bool flag) { holder.set_over(flag); }
+  [[nodiscard]] bool on_downed() const { return holder.on_downed(); }
+  [[nodiscard]] bool on_overed() const { return holder.on_overed(); }
 
   children_value_type &add_sub_view(children_mapped_type &&sub_view) {
     return holder.add_sub_view(std::forward<children_mapped_type>(sub_view));

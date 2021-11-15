@@ -9,20 +9,20 @@ namespace usagi::ui {
 /**
  * viewable を格納する型
  */
-template <usagi::concepts::arithmetic ValueType, class DrawContextType, class MouseParameterType>
+template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
 class view {
   template <usagi::concepts::ui::viewable ViewType>
   class view_holder final
-      : public usagi::ui::base_view<ValueType, DrawContextType, MouseParameterType> {
+      : public usagi::ui::base_view<ValueType, DrawContextType, GestureParameterType> {
     using base_view_type =
-        typename usagi::ui::base_view<ValueType, DrawContextType, MouseParameterType>;
+        typename usagi::ui::base_view<ValueType, DrawContextType, GestureParameterType>;
 
   public:
     using rect_type = typename base_view_type::rect_type;
     using size_type = typename base_view_type::size_type;
     using draw_context_type = typename base_view_type::draw_context_type;
-    using mouse_parameter_type = typename base_view_type::mouse_parameter_type;
-    using mouse_traits = typename base_view_type::mouse_traits;
+    using gesture_parameter_type = typename base_view_type::gesture_parameter_type;
+    using gesture_traits = typename base_view_type::gesture_traits;
     using view_type = typename base_view_type::view_type;
 
     using children_type = typename base_view_type::children_type;
@@ -41,18 +41,28 @@ class view {
     size_type bounds() const override { return holder.bounds(); }
     rect_type frame() const override { return holder.frame(); }
 
-    bool event(typename mouse_traits::on_down_type mouse) override { return holder.event(mouse); }
-    void event(typename mouse_traits::on_drag_type mouse) override { holder.event(mouse); }
-    void event(typename mouse_traits::on_up_type mouse) override { holder.event(mouse); }
-    bool event(typename mouse_traits::on_over_type mouse) override { return holder.event(mouse); }
-    void event(typename mouse_traits::on_out_type mouse) override { holder.event(mouse); }
-    bool event(typename mouse_traits::on_double_type mouse) override { return holder.event(mouse); }
-    bool event(typename mouse_traits::on_wheel_type mouse) override { return holder.event(mouse); }
+    bool event(typename gesture_traits::on_down_type parameter) override {
+      return holder.event(parameter);
+    }
+    void event(typename gesture_traits::on_drag_type parameter) override {
+      holder.event(parameter);
+    }
+    void event(typename gesture_traits::on_up_type parameter) override { holder.event(parameter); }
+    bool event(typename gesture_traits::on_over_type parameter) override {
+      return holder.event(parameter);
+    }
+    void event(typename gesture_traits::on_out_type parameter) override { holder.event(parameter); }
+    bool event(typename gesture_traits::on_double_type parameter) override {
+      return holder.event(parameter);
+    }
+    bool event(typename gesture_traits::on_wheel_type parameter) override {
+      return holder.event(parameter);
+    }
 
-    void set_mouse_down(bool flag) override { holder.set_mouse_down(flag); }
-    void set_mouse_over(bool flag) override { holder.set_mouse_over(flag); }
-    [[nodiscard]] bool is_mouse_downed() const override { return holder.is_mouse_downed(); }
-    [[nodiscard]] bool is_mouse_overed() const override { return holder.is_mouse_overed(); }
+    void set_down(bool flag) override { holder.set_down(flag); }
+    void set_over(bool flag) override { holder.set_over(flag); }
+    [[nodiscard]] bool on_downed() const override { return holder.on_downed(); }
+    [[nodiscard]] bool on_overed() const override { return holder.on_overed(); }
 
     children_value_type &add_sub_view(children_mapped_type &&sub_view) override {
       return holder.add_sub_view(std::forward<children_mapped_type>(sub_view));
@@ -79,9 +89,9 @@ public:
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = DrawContextType;
-  using mouse_parameter_type = MouseParameterType;
-  using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
-  using view_type = usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
+  using gesture_parameter_type = GestureParameterType;
+  using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
+  using view_type = usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;
 
   using children_mapped_type = view_type;
   using children_key_type = size_t;
@@ -101,18 +111,18 @@ public:
   size_type bounds() const { return holder->bounds(); }
   rect_type frame() const { return holder->frame(); }
 
-  bool event(typename mouse_traits::on_down_type mouse) { return holder->event(mouse); }
-  void event(typename mouse_traits::on_drag_type mouse) { holder->event(mouse); }
-  void event(typename mouse_traits::on_up_type mouse) { holder->event(mouse); }
-  bool event(typename mouse_traits::on_over_type mouse) { return holder->event(mouse); }
-  void event(typename mouse_traits::on_out_type mouse) { holder->event(mouse); }
-  bool event(typename mouse_traits::on_double_type mouse) { return holder->event(mouse); }
-  bool event(typename mouse_traits::on_wheel_type mouse) { return holder->event(mouse); }
+  bool event(typename gesture_traits::on_down_type parameter) { return holder->event(parameter); }
+  void event(typename gesture_traits::on_drag_type parameter) { holder->event(parameter); }
+  void event(typename gesture_traits::on_up_type parameter) { holder->event(parameter); }
+  bool event(typename gesture_traits::on_over_type parameter) { return holder->event(parameter); }
+  void event(typename gesture_traits::on_out_type parameter) { holder->event(parameter); }
+  bool event(typename gesture_traits::on_double_type parameter) { return holder->event(parameter); }
+  bool event(typename gesture_traits::on_wheel_type parameter) { return holder->event(parameter); }
 
-  void set_mouse_down(bool flag) { holder->set_mouse_down(flag); }
-  void set_mouse_over(bool flag) { holder->set_mouse_over(flag); }
-  [[nodiscard]] bool is_mouse_downed() const { return holder->is_mouse_downed(); }
-  [[nodiscard]] bool is_mouse_overed() const { return holder->is_mouse_overed(); }
+  void set_down(bool flag) { holder->set_down(flag); }
+  void set_over(bool flag) { holder->set_over(flag); }
+  [[nodiscard]] bool on_downed() const { return holder->on_downed(); }
+  [[nodiscard]] bool on_overed() const { return holder->on_overed(); }
 
   children_value_type &add_sub_view(children_mapped_type &&sub_view) {
     return holder->add_sub_view(std::forward<children_mapped_type>(sub_view));
@@ -132,16 +142,17 @@ public:
   explicit operator bool() const { return holder.operator bool(); }
 
 private:
-  std::unique_ptr<usagi::ui::base_view<value_type, draw_context_type, mouse_parameter_type>> holder;
+  std::unique_ptr<usagi::ui::base_view<value_type, draw_context_type, gesture_parameter_type>>
+      holder;
 };
 
 template <usagi::concepts::ui::viewable ViewType>
 view(const ViewType &) -> view<typename ViewType::value_type, typename ViewType::draw_context_type,
-                               typename ViewType::mouse_parameter_type>;
+                               typename ViewType::gesture_parameter_type>;
 
 template <usagi::concepts::ui::viewable ViewType>
 view(ViewType &&) -> view<typename ViewType::value_type, typename ViewType::draw_context_type,
-                          typename ViewType::mouse_parameter_type>;
+                          typename ViewType::gesture_parameter_type>;
 
 template <usagi::concepts::ui::viewable ViewType, class... Args>
 inline constexpr decltype(auto) make_view(Args &&...args) {

@@ -20,7 +20,9 @@ concept gestural_parameter = requires(GesturalParameterType g) {
  * 終点は基本的に resolve(true を返して以降のレイヤーを無視すること) ができない
  */
 template <class GesturalType>
-concept gestural = gestural_parameter<typename GesturalType::gesture_parameter_type> && requires(GesturalType g) {
+concept gestural = requires(GesturalType &g) {
+  typename GesturalType::gesture_parameter_type;
+
   {
     g.event(std::declval<typename usagi::type::gesture_traits<
                 typename GesturalType::gesture_parameter_type>::on_down_type>())

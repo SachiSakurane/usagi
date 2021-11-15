@@ -2,7 +2,7 @@
 
 #include <usagi/geometry/geometry_traits.hpp>
 #include <usagi/geometry/rect/function.hpp>
-#include <usagi/type/mouse.hpp>
+#include <usagi/type/gesture.hpp>
 
 namespace usagi::ui::detail {
 template <usagi::concepts::arithmetic ValueType, class MouseParameterType>

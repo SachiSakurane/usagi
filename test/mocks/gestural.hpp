@@ -1,10 +1,10 @@
 #pragma once
 
-#include <usagi/type/mouse.hpp>
+#include <usagi/type/gesture.hpp>
 
 template <class ValueType>
 struct Gestural {
-  using mouse_parameter_type = usagi::type::mouse::default_parameter<ValueType>;
+  using mouse_parameter_type = usagi::type::gesture_default_parameter<ValueType>;
   using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
   bool event(typename mouse_traits::on_down_type);
   bool event(typename mouse_traits::on_drag_type);
@@ -21,7 +21,7 @@ struct Gestural {
 
 template <class ValueType>
 struct UnGestural {
-  using mouse_parameter_type = usagi::type::mouse::default_parameter<ValueType>;
+  using mouse_parameter_type = usagi::type::gesture_default_parameter<ValueType>;
   using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
   bool event(typename mouse_traits::on_down_type);
   bool event(typename mouse_traits::on_drag_type);

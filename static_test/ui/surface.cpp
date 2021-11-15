@@ -15,8 +15,9 @@ private:
 };
 
 template <usagi::concepts::arithmetic ValueType, class DrawContextType>
-struct SpecificView final : usagi::ui::base_view<ValueType, DrawContextType,
-                                                 usagi::type::mouse::default_parameter<ValueType>> {
+struct SpecificView final
+    : usagi::ui::base_view<ValueType, DrawContextType,
+                           usagi::type::gesture_default_parameter<ValueType>> {
   using value_type = ValueType;
   using draw_context_type = DrawContextType;
 

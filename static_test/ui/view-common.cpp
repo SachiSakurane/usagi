@@ -3,7 +3,7 @@
 
 namespace {
 struct DrawContext {};
-using MouseParameter = usagi::type::mouse::default_parameter<float>;
+using MouseParameter = usagi::type::gesture_default_parameter<float>;
 class SpecificView final : public usagi::ui::base_view<float, DrawContext, MouseParameter> {};
 
 // static test

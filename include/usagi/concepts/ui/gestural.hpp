@@ -4,7 +4,7 @@
 #include <utility>
 
 #include <usagi/concepts/arithmetic.hpp>
-#include <usagi/type/mouse.hpp>
+#include <usagi/type/gesture.hpp>
 
 namespace usagi::concepts::ui {
 template <class MouseParameterType>

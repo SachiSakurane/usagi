@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #include <usagi/concepts/arithmetic.hpp>
-#include <usagi/type/mouse.hpp>
+#include <usagi/type/gesture.hpp>
 #include <usagi/ui/view.hpp>
 
 namespace usagi::wrapper::iplug2 {
@@ -18,8 +18,7 @@ struct igraphic_control {
 };
 
 template <usagi::concepts::arithmetic ValueType>
-struct iplug_mouse_parameter {
-  ValueType x, y, d;
+struct iplug_mouse_parameter : type::gesture_default_parameter<ValueType> {
   igraphic_control control;
 };
 

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <usagi/type/mouse.hpp>
+#include <usagi/type/gesture.hpp>
 #include <usagi/ui/gesture.hpp>
 #include <usagi/ui/view.hpp>
 

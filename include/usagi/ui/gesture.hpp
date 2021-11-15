@@ -184,10 +184,10 @@ struct gesture {
     return holder.event(mouse);
   }
 
-  void set_mouse_down(bool flag) { holder.set_mouse_down(flag); }
-  void set_mouse_over(bool flag) { holder.set_mouse_over(flag); }
-  [[nodiscard]] bool is_mouse_downed() const { return holder.is_mouse_downed(); }
-  [[nodiscard]] bool is_mouse_overed() const { return holder.is_mouse_overed(); }
+  void set_down(bool flag) { holder.set_down(flag); }
+  void set_over(bool flag) { holder.set_over(flag); }
+  [[nodiscard]] bool on_downed() const { return holder.on_downed(); }
+  [[nodiscard]] bool on_overed() const { return holder.on_overed(); }
 
   children_value_type &add_sub_view(children_mapped_type &&sub_view) {
     return holder.add_sub_view(std::forward<children_mapped_type>(sub_view));

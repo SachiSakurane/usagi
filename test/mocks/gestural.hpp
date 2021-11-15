@@ -13,10 +13,10 @@ struct Gestural {
   void event(typename gesture_traits::on_out_type);
   bool event(typename gesture_traits::on_double_type);
   bool event(typename gesture_traits::on_wheel_type);
-  void set_mouse_down(bool flag);
-  void set_mouse_over(bool flag);
-  bool is_mouse_downed();
-  bool is_mouse_overed();
+  void set_down(bool flag);
+  void set_over(bool flag);
+  bool on_downed();
+  bool on_overed();
 };
 
 template <class ValueType>

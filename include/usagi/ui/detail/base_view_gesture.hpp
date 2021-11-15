@@ -13,20 +13,20 @@ public:
   using gesture_parameter_type = GestureParameterType;
   using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
 
-  void set_mouse_down(bool flag) { mouse_downed = flag; }
-  void set_mouse_over(bool flag) { mouse_overed = flag; }
+  void set_down(bool flag) { mouse_downed = flag; }
+  void set_over(bool flag) { mouse_overed = flag; }
 
-  [[nodiscard]] bool is_mouse_downed() const { return mouse_downed; }
-  [[nodiscard]] bool is_mouse_overed() const { return mouse_overed; }
+  [[nodiscard]] bool on_downed() const { return mouse_downed; }
+  [[nodiscard]] bool on_overed() const { return mouse_overed; }
 
   template <class ChildrenType>
   bool on_event(typename gesture_traits::on_down_type mouse, ChildrenType &children) {
-    set_mouse_down(true);
+    set_down(true);
     auto point = point_type{mouse.x, mouse.y};
     for (auto it = std::rbegin(children); it != std::rend(children); ++it) {
       auto &child = it->second;
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), point)) {
-        child.set_mouse_down(true);
+        child.set_down(true);
         if (child.event(mouse)) {
           return true;
         }
@@ -39,7 +39,7 @@ public:
   void on_event(typename gesture_traits::on_drag_type mouse, ChildrenType &children) {
     for (auto it = std::rbegin(children); it != std::rend(children); ++it) {
       auto &child = it->second;
-      if (child.is_mouse_downed()) {
+      if (child.on_downed()) {
         child.event(mouse);
       }
     }
@@ -47,12 +47,12 @@ public:
 
   template <class ChildrenType>
   void on_event(typename gesture_traits::on_up_type mouse, ChildrenType &children) {
-    set_mouse_down(false);
+    set_down(false);
     auto point = point_type{mouse.x, mouse.y};
     for (auto it = std::rbegin(children); it != std::rend(children); ++it) {
       auto &child = it->second;
-      if (child.is_mouse_downed()) {
-        child.set_mouse_down(false);
+      if (child.on_downed()) {
+        child.set_down(false);
         child.event(mouse);
       }
     }
@@ -61,16 +61,16 @@ public:
   // ここに来るイベントは contain を想定する
   template <class ChildrenType>
   bool on_event(typename gesture_traits::on_over_type mouse, ChildrenType &children) {
-    set_mouse_over(true);
+    set_over(true);
     auto point = point_type{mouse.x, mouse.y};
     auto is_resolved = false;
     for (auto it = std::rbegin(children); it != std::rend(children); ++it) {
       auto &child = it->second;
       if (!is_resolved && child.is_enabled() && usagi::geometry::contain(child.frame(), point)) {
-        child.set_mouse_over(true);
+        child.set_over(true);
         is_resolved = child.event(mouse);
-      } else if (child.is_mouse_overed() == true) {
-        child.set_mouse_over(false);
+      } else if (child.on_overed() == true) {
+        child.set_over(false);
         child.event(typename gesture_traits::on_out_type{mouse});
       }
     }
@@ -79,7 +79,7 @@ public:
 
   template <class ChildrenType>
   void on_event(typename gesture_traits::on_out_type mouse, ChildrenType &children) {
-    set_mouse_over(false);
+    set_over(false);
     for (auto it = std::rbegin(children); it != std::rend(children); ++it) {
       auto &child = it->second;
       child.event(mouse);

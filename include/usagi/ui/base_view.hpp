@@ -72,11 +72,11 @@ public:
     return gesture.on_event(mouse, hierarchy.get_children());
   }
 
-  virtual void set_mouse_down(bool flag) { gesture.set_mouse_down(flag); }
-  virtual void set_mouse_over(bool flag) { gesture.set_mouse_over(flag); }
+  virtual void set_down(bool flag) { gesture.set_down(flag); }
+  virtual void set_over(bool flag) { gesture.set_over(flag); }
 
-  [[nodiscard]] virtual bool is_mouse_downed() const { return gesture.is_mouse_downed(); }
-  [[nodiscard]] virtual bool is_mouse_overed() const { return gesture.is_mouse_overed(); }
+  [[nodiscard]] virtual bool on_downed() const { return gesture.on_downed(); }
+  [[nodiscard]] virtual bool on_overed() const { return gesture.on_overed(); }
 
   virtual children_value_type &add_sub_view(children_mapped_type &&sub_view) {
     return hierarchy.add_sub_view(std::forward<children_mapped_type>(sub_view));

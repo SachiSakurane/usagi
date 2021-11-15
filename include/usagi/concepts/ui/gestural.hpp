@@ -51,10 +51,10 @@ concept gestural = requires(GesturalType &g) {
                 typename GesturalType::gesture_parameter_type>::on_wheel_type>())
     } -> std::same_as<bool>;
 
-  g.set_mouse_down(std::declval<bool>());
-  g.set_mouse_over(std::declval<bool>());
+  g.set_down(std::declval<bool>());
+  g.set_over(std::declval<bool>());
 
-  { g.is_mouse_downed() } -> std::same_as<bool>;
-  { g.is_mouse_overed() } -> std::same_as<bool>;
+  { g.on_downed() } -> std::same_as<bool>;
+  { g.on_overed() } -> std::same_as<bool>;
 };
 } // namespace usagi::concepts::ui

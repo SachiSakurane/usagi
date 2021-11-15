@@ -13,7 +13,7 @@
 #include <usagi/concepts/ui/hierarchy.hpp>
 
 namespace usagi::ui {
-template <usagi::concepts::arithmetic ValueType, class DrawContextType, class MouseParameterType>
+template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
 class view;
 }
 

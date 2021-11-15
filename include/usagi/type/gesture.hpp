@@ -22,7 +22,7 @@ struct gesture {
 };
 
 template <class ParameterType>
-struct mouse_traits {
+struct gesture_traits {
   using parameter_type = ParameterType;
   using on_down_type = typename gesture<parameter_type>::on_down;
   using on_drag_type = typename gesture<parameter_type>::on_drag;

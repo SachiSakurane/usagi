@@ -23,8 +23,8 @@ struct surface {
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = typename ViewType::draw_context_type;
-  using mouse_parameter_type = typename ViewType::mouse_parameter_type;
-  using mouse_traits = typename usagi::type::mouse_traits<mouse_parameter_type>;
+  using gesture_parameter_type = typename ViewType::gesture_parameter_type;
+  using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
   using view_type = typename ViewType::view_type;
 
   using children_type = typename ViewType::children_type;
@@ -42,13 +42,13 @@ struct surface {
   size_type bounds() const { return holder.bounds(); }
   rect_type frame() const { return holder.frame(); }
 
-  bool event(typename mouse_traits::on_down_type mouse) { return holder.event(mouse); }
-  void event(typename mouse_traits::on_drag_type mouse) { holder.event(mouse); }
-  void event(typename mouse_traits::on_up_type mouse) { holder.event(mouse); }
-  bool event(typename mouse_traits::on_over_type mouse) { return holder.event(mouse); }
-  void event(typename mouse_traits::on_out_type mouse) { holder.event(mouse); }
-  bool event(typename mouse_traits::on_double_type mouse) { return holder.event(mouse); }
-  bool event(typename mouse_traits::on_wheel_type mouse) { return holder.event(mouse); }
+  bool event(typename gesture_traits::on_down_type mouse) { return holder.event(mouse); }
+  void event(typename gesture_traits::on_drag_type mouse) { holder.event(mouse); }
+  void event(typename gesture_traits::on_up_type mouse) { holder.event(mouse); }
+  bool event(typename gesture_traits::on_over_type mouse) { return holder.event(mouse); }
+  void event(typename gesture_traits::on_out_type mouse) { holder.event(mouse); }
+  bool event(typename gesture_traits::on_double_type mouse) { return holder.event(mouse); }
+  bool event(typename gesture_traits::on_wheel_type mouse) { return holder.event(mouse); }
 
   void set_mouse_down(bool flag) { holder.set_mouse_down(flag); }
   void set_mouse_over(bool flag) { holder.set_mouse_over(flag); }

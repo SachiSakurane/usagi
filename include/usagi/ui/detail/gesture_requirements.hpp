@@ -8,19 +8,21 @@
 namespace usagi::ui::detail {
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
 consteval bool gesture_func_requirement_impl() {
-  using mouse_traits = typename usagi::type::mouse_traits<typename ViewType::mouse_parameter_type>;
-  return std::is_invocable_r_v<bool, FunctionType, typename mouse_traits::on_down_type,
+  using gesture_traits =
+      typename usagi::type::gesture_traits<typename ViewType::gesture_parameter_type>;
+  return std::is_invocable_r_v<bool, FunctionType, typename gesture_traits::on_down_type,
                                ViewType &> ||
-         std::is_invocable_r_v<void, FunctionType, typename mouse_traits::on_drag_type,
+         std::is_invocable_r_v<void, FunctionType, typename gesture_traits::on_drag_type,
                                ViewType &> ||
-         std::is_invocable_r_v<void, FunctionType, typename mouse_traits::on_up_type, ViewType &> ||
-         std::is_invocable_r_v<bool, FunctionType, typename mouse_traits::on_over_type,
+         std::is_invocable_r_v<void, FunctionType, typename gesture_traits::on_up_type,
                                ViewType &> ||
-         std::is_invocable_r_v<void, FunctionType, typename mouse_traits::on_out_type,
+         std::is_invocable_r_v<bool, FunctionType, typename gesture_traits::on_over_type,
                                ViewType &> ||
-         std::is_invocable_r_v<bool, FunctionType, typename mouse_traits::on_double_type,
+         std::is_invocable_r_v<void, FunctionType, typename gesture_traits::on_out_type,
                                ViewType &> ||
-         std::is_invocable_r_v<bool, FunctionType, typename mouse_traits::on_wheel_type,
+         std::is_invocable_r_v<bool, FunctionType, typename gesture_traits::on_double_type,
+                               ViewType &> ||
+         std::is_invocable_r_v<bool, FunctionType, typename gesture_traits::on_wheel_type,
                                ViewType &>;
 }
 

@@ -5,8 +5,8 @@
 
 namespace {
 struct DrawContext {};
-using MouseParameter = usagi::type::gesture_default_parameter<float>;
-class SpecificView final : public usagi::ui::base_view<float, DrawContext, MouseParameter> {};
+using GestureParameterType = usagi::type::gesture_default_parameter<float>;
+class SpecificView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {};
 } // namespace
 
 TEST(ViewHierarchyTest, SubViewCase) {
@@ -23,10 +23,10 @@ TEST(ViewHierarchyTest, SubViewCase) {
   }
   ASSERT_EQ(v.sub_view_size(), 0);
 
-  decltype(auto) sub1 = v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
+  decltype(auto) sub1 = v.add_sub_view(usagi::ui::base_view<float, DrawContext, GestureParameterType>{});
   ASSERT_EQ(v.sub_view_size(), 1);
 
-  decltype(auto) sub2 = v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
+  decltype(auto) sub2 = v.add_sub_view(usagi::ui::base_view<float, DrawContext, GestureParameterType>{});
   ASSERT_EQ(v.sub_view_size(), 2);
 
   ASSERT_TRUE(v.remove_sub_view(sub1.first));

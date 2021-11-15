@@ -15,8 +15,8 @@ struct Viewable : Gestural<ValueType>, Drawable<ValueType, DrawContext> {
   using size_type = typename usagi::geometry::size<value_type>;
   using rect_type = typename usagi::geometry::rect<value_type>;
   using draw_context_type = typename Drawable<ValueType, DrawContext>::draw_context_type;
-  using mouse_parameter_type = typename Gestural<ValueType>::mouse_parameter_type;
-  using view_type = usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
+  using gesture_parameter_type = typename Gestural<ValueType>::gesture_parameter_type;
+  using view_type = usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;
 
   using children_type = std::map<view_type, size_t>;
   using children_key_type = typename children_type::key_type;
@@ -39,8 +39,8 @@ struct UnViewable : Gestural<ValueType>, Drawable<ValueType, DrawContext> {
   using size_type = typename usagi::geometry::size<value_type>;
   using rect_type = typename usagi::geometry::rect<value_type>;
   using draw_context_type = typename Drawable<ValueType, DrawContext>::draw_context_type;
-  using mouse_parameter_type = typename Gestural<ValueType>::mouse_parameter_type;
-  using view_type = usagi::ui::view<value_type, draw_context_type, mouse_parameter_type>;
+  using gesture_parameter_type = typename Gestural<ValueType>::gesture_parameter_type;
+  using view_type = usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;
   size_type bounds() const;
   rect_type frame() const;
   view_type &add_sub_view(view_type &&);

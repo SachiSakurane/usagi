@@ -5,12 +5,13 @@
 
 namespace {
 struct DrawContext {};
-using MouseParameter = usagi::type::gesture_default_parameter<float>;
-class SpecificView final : public usagi::ui::base_view<float, DrawContext, MouseParameter> {};
+using GestureParameterType = usagi::type::gesture_default_parameter<float>;
+class SpecificView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {};
 
 // static test
-static_assert(usagi::concepts::ui::viewable<usagi::ui::view<float, DrawContext, MouseParameter>>,
-              "usagi::ui::view<float, DrawContextable> has viewable concept");
+static_assert(
+    usagi::concepts::ui::viewable<usagi::ui::view<float, DrawContext, GestureParameterType>>,
+    "usagi::ui::view<float, DrawContextable> has viewable concept");
 static_assert(usagi::concepts::ui::viewable<decltype(usagi::ui::view{SpecificView{}})>,
               "view is constructable from SpecificView");
 static_assert(usagi::concepts::ui::viewable<decltype(usagi::ui::view{(SpecificView{})})>,
@@ -31,7 +32,7 @@ TEST(ViewCommonTest, CommonCase) {
 }
 
 TEST(ViewCommonTest, BoundsCase) {
-  auto v = usagi::ui::view{usagi::ui::base_view<float, DrawContext, MouseParameter>{
+  auto v = usagi::ui::view{usagi::ui::base_view<float, DrawContext, GestureParameterType>{
       usagi::geometry::rect<float>{10.f, 10.f, 40.f, 40.f}}};
   ASSERT_EQ(v.bounds(), (usagi::geometry::size<float>{30.f, 30.f}));
   ASSERT_EQ(v.frame(), (usagi::geometry::rect<float>{10.f, 10.f, 40.f, 40.f}));
@@ -40,7 +41,7 @@ TEST(ViewCommonTest, BoundsCase) {
 TEST(ViewCommonTest, PredicationCase) {
   {
     // default constructor case
-    auto v = usagi::ui::view<float, DrawContext, MouseParameter>{};
+    auto v = usagi::ui::view<float, DrawContext, GestureParameterType>{};
     ASSERT_FALSE(static_cast<bool>(v));
   }
   {
@@ -55,7 +56,7 @@ TEST(ViewCommonTest, DrawCase) {
   v.draw(context);
 
   // sub case
-  v.add_sub_view(usagi::ui::base_view<float, DrawContext, MouseParameter>{});
+  v.add_sub_view(usagi::ui::base_view<float, DrawContext, GestureParameterType>{});
   v.draw(context);
 }
 

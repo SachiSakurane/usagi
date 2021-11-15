@@ -8,10 +8,10 @@
 
 namespace usagi::concepts::ui {
 template <class GesturalParameterType>
-concept gestural_parameter = requires(GesturalParameterType &m) {
-  { m.x } -> usagi::concepts::arithmetic;
-  { m.y } -> usagi::concepts::arithmetic;
-  { m.d } -> usagi::concepts::arithmetic;
+concept gestural_parameter = requires(GesturalParameterType &g) {
+  { g.x } -> usagi::concepts::arithmetic;
+  { g.y } -> usagi::concepts::arithmetic;
+  { g.d } -> usagi::concepts::arithmetic;
 };
 
 /**

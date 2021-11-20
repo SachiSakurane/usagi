@@ -10,12 +10,12 @@ namespace usagi::ui {
  * viewable を格納する型
  */
 template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
-class view {
+class view final {
+  using base_view_type =
+      typename usagi::ui::base_view<ValueType, DrawContextType, GestureParameterType>;
+
   template <usagi::concepts::ui::viewable ViewType>
-  class view_holder final
-      : public usagi::ui::base_view<ValueType, DrawContextType, GestureParameterType> {
-    using base_view_type =
-        typename usagi::ui::base_view<ValueType, DrawContextType, GestureParameterType>;
+  class view_holder final : public base_view_type {
 
   public:
     using rect_type = typename base_view_type::rect_type;
@@ -33,7 +33,7 @@ class view {
     explicit view_holder(const ViewType &v) : holder{v} {}
     explicit view_holder(ViewType &&v) : holder{std::move(v)} {}
 
-    view_holder(view_holder &&) noexcept = default;
+    constexpr view_holder(view_holder &&) noexcept = default;
     view_holder &operator=(view_holder &&) noexcept = default;
 
     void draw(draw_context_type &d) override { holder.draw(d); }
@@ -98,10 +98,8 @@ public:
   using children_type = std::map<children_key_type, children_mapped_type>;
   using children_value_type = typename children_type::value_type;
 
-  view() : holder{nullptr} {}
-
-  template <usagi::concepts::ui::viewable ViewType>
-  view(ViewType &&v) : holder{std::make_unique<view_holder<ViewType>>(std::forward<ViewType>(v))} {}
+  constexpr view() = default;
+  explicit view(std::unique_ptr<base_view_type> &&v) : holder{std::move(v)} {}
 
   view(view &&) noexcept = default;
   view &operator=(view &&) noexcept = default;
@@ -142,8 +140,7 @@ public:
   explicit operator bool() const { return holder.operator bool(); }
 
 private:
-  std::unique_ptr<usagi::ui::base_view<value_type, draw_context_type, gesture_parameter_type>>
-      holder;
+  std::unique_ptr<base_view_type> holder{nullptr};
 };
 
 template <usagi::concepts::ui::viewable ViewType>
@@ -155,7 +152,11 @@ view(ViewType &&) -> view<typename ViewType::value_type, typename ViewType::draw
                           typename ViewType::gesture_parameter_type>;
 
 template <usagi::concepts::ui::viewable ViewType, class... Args>
-inline constexpr decltype(auto) make_view(Args &&...args) {
-  return usagi::ui::view{ViewType{std::forward<Args>(args)...}};
+inline decltype(auto) make_view(Args &&...args) {
+  return usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type,
+                         typename ViewType::gesture_parameter_type>{std::make_unique<
+      usagi::ui::base_view<typename ViewType::value_type, typename ViewType::draw_context_type,
+                           typename ViewType::gesture_parameter_type>>(
+      std::forward<Args>(args)...)};
 }
 } // namespace usagi::ui

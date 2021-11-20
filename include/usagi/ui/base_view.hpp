@@ -30,10 +30,8 @@ public:
   using children_value_type = typename base_view_hierarch_type::children_value_type;
 
   base_view() = default;
-  explicit base_view(const usagi::concepts::geometry::rect_concept auto &frame) : content{frame} {}
-
-  base_view(base_view &&) noexcept = default;
-  base_view &operator=(base_view &&) noexcept = default;
+  constexpr explicit base_view(const usagi::concepts::geometry::rect_concept auto &frame)
+      : content{frame} {}
 
   virtual ~base_view() = default;
 

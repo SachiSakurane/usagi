@@ -11,7 +11,7 @@ namespace usagi::concepts::ui {
  * 親子関係を持っているか
  */
 template <class HierarchyType>
-concept hierarchy = requires(HierarchyType &h) {
+concept layered = requires(HierarchyType &h) {
   typename HierarchyType::children_key_type;
   typename HierarchyType::children_mapped_type;
   typename HierarchyType::children_value_type;

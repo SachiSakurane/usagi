@@ -10,7 +10,6 @@
 #include <usagi/concepts/geometry/size_concept.hpp>
 #include <usagi/concepts/ui/drawable.hpp>
 #include <usagi/concepts/ui/gestural.hpp>
-#include <usagi/concepts/ui/hierarchy.hpp>
 
 namespace usagi::ui {
 template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
@@ -31,7 +30,6 @@ template <class ViewType>
 concept viewable = requires(ViewType &v) {
   requires usagi::concepts::ui::gestural<ViewType>;
   requires usagi::concepts::ui::drawable<ViewType>;
-  requires usagi::concepts::ui::hierarchy<ViewType>;
 
   { v.bounds() } -> usagi::concepts::geometry::size_concept;
   { v.frame() } -> usagi::concepts::geometry::rect_concept;

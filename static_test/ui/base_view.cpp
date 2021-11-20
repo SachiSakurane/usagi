@@ -7,7 +7,7 @@ using GestureParameterType = usagi::type::gesture_default_parameter<float>;
 using BaseViewType = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
 
 static_assert(usagi::concepts::ui::viewable<BaseViewType>);
-static_assert([](){
+static_assert([]() consteval {
   BaseViewType default_construct, rect_construct{BaseViewType::rect_type{}};
   return true;
 }());

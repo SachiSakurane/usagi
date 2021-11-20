@@ -20,10 +20,6 @@ namespace usagi::concepts::ui {
 /**
  * view を表現可能かどうか
  *
- * view は大きさを表現できる
- * view は親子関係を表現できる
- * view は drawable
- * view は clickable
  * TODO: affine の必要性について考える(view として持つ必要性がなさそうに思える)
  */
 template <class ViewType>

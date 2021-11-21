@@ -8,8 +8,18 @@ struct gesture_default_parameter {
   ValueType x, y, d;
 };
 
-template <class ParameterType>
 struct gesture {
+  struct on_down {};
+  struct on_drag {};
+  struct on_up {};
+  struct on_over {};
+  struct on_out {};
+  struct on_double {};
+  struct on_wheel {};
+};
+
+template <class ParameterType>
+struct legacy_gesture {
   struct on_down : ParameterType {};
   struct on_drag : ParameterType {};
   struct on_up : ParameterType {};
@@ -22,12 +32,12 @@ struct gesture {
 template <class ParameterType>
 struct gesture_traits {
   using parameter_type = ParameterType;
-  using on_down_type = typename gesture<parameter_type>::on_down;
-  using on_drag_type = typename gesture<parameter_type>::on_drag;
-  using on_up_type = typename gesture<parameter_type>::on_up;
-  using on_over_type = typename gesture<parameter_type>::on_over;
-  using on_out_type = typename gesture<parameter_type>::on_out;
-  using on_double_type = typename gesture<parameter_type>::on_double;
-  using on_wheel_type = typename gesture<parameter_type>::on_wheel;
+  using on_down_type = typename legacy_gesture<parameter_type>::on_down;
+  using on_drag_type = typename legacy_gesture<parameter_type>::on_drag;
+  using on_up_type = typename legacy_gesture<parameter_type>::on_up;
+  using on_over_type = typename legacy_gesture<parameter_type>::on_over;
+  using on_out_type = typename legacy_gesture<parameter_type>::on_out;
+  using on_double_type = typename legacy_gesture<parameter_type>::on_double;
+  using on_wheel_type = typename legacy_gesture<parameter_type>::on_wheel;
 };
 } // namespace usagi::type

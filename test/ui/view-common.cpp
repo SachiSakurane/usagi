@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <usagi/concepts/geometry/rect_concept.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/rect/operator.hpp>
 #include <usagi/ui/view.hpp>
@@ -6,7 +7,12 @@
 namespace {
 struct DrawContext {};
 using GestureParameterType = usagi::type::gesture_default_parameter<float>;
-class SpecificView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {};
+class SpecificView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
+public:
+  SpecificView() = default;
+  explicit SpecificView(const usagi::concepts::geometry::rect_concept auto &frame)
+      : usagi::ui::base_view<float, DrawContext, GestureParameterType>{frame} {}
+};
 } // namespace
 
 TEST(ViewCommonTest, MakeCase) {

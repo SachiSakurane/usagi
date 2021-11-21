@@ -3,17 +3,10 @@
 #include <concepts>
 #include <utility>
 
-#include <usagi/concepts/arithmetic.hpp>
+#include <usagi/concepts/type/gestural_parameter.hpp>
 #include <usagi/type/gesture.hpp>
 
 namespace usagi::concepts::ui {
-template <class GesturalParameterType>
-concept gestural_parameter = requires(GesturalParameterType g) {
-  { g.x } -> usagi::concepts::arithmetic;
-  { g.y } -> usagi::concepts::arithmetic;
-  { g.d } -> usagi::concepts::arithmetic;
-};
-
 /**
  * gesture できるやつ
  *
@@ -21,6 +14,7 @@ concept gestural_parameter = requires(GesturalParameterType g) {
  */
 template <class GesturalType>
 concept gestural = requires(GesturalType &g) {
+  requires usagi::concepts::type::gestural_parameter<typename GesturalType::gesture_parameter_type>;
   {
     g.event(std::declval<typename usagi::type::gesture_traits<
                 typename GesturalType::gesture_parameter_type>::on_down_type>())

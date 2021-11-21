@@ -24,7 +24,7 @@ namespace view_holder_ {
     usagi::ui::detail::view_holder<BaseView> copy_construct{default_construct};
     usagi::ui::detail::view_holder<BaseView> move_construct{std::move(default_construct)};
 
-    usagi::ui::detail::view_holder<SpecificView> specific_construct{0, nullptr};
+    // usagi::ui::detail::view_holder<SpecificView> specific_construct{0, nullptr};
     return true;
   }());
 } // namespace view_holder_

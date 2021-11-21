@@ -19,7 +19,7 @@ struct surface {
   using gesture_parameter_type = typename ViewType::gesture_parameter_type;
   using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
 
-  surface(ViewType &&v, FunctionType f) : holder{std::move(v)}, drawer{f} {}
+  constexpr surface(ViewType &&v, FunctionType f) : holder{std::move(v)}, drawer{f} {}
 
   void draw(draw_context_type &context) {
     drawer(context, holder);

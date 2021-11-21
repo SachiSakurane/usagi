@@ -15,7 +15,16 @@ private:
 
 using base_view =
     usagi::ui::base_view<int, DrawContext, usagi::type::gesture_default_parameter<int>>;
-using func_type = std::function<void(typename base_view::draw_context_type &, const base_view &)>;
 
-static_assert(usagi::concepts::ui::viewable<usagi::ui::surface<base_view, func_type>>);
+struct ContextFunctor final {
+  void operator()(typename base_view::draw_context_type &, const base_view &) {
+
+  }
+};
+
+static_assert(usagi::concepts::ui::viewable<usagi::ui::surface<base_view, ContextFunctor>>);
+//static_assert([]() consteval {
+//  usagi::ui::surface<base_view, Functor> s{base_view{}, Functor{}};
+//  return true;
+//}());
 } // namespace

@@ -59,7 +59,7 @@ namespace detail {
     [[nodiscard]] bool is_enabled() const override { return holder.is_enabled(); }
 
   private:
-    ViewType holder;
+    ViewType holder{};
   };
 } // namespace detail
 

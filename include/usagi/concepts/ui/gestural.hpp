@@ -3,7 +3,6 @@
 #include <concepts>
 #include <utility>
 
-#include <usagi/concepts/type/gestural_parameter.hpp>
 #include <usagi/type/gesture.hpp>
 
 namespace usagi::concepts::ui {
@@ -14,7 +13,6 @@ namespace usagi::concepts::ui {
  */
 template <class GesturalType>
 concept gestural = requires(GesturalType &g) {
-  requires usagi::concepts::type::gestural_parameter<typename GesturalType::gesture_parameter_type>;
   {
     g.event(std::declval<typename usagi::type::gesture_traits<
                 typename GesturalType::gesture_parameter_type>::on_down_type>())

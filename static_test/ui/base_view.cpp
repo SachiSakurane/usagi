@@ -29,6 +29,7 @@ static_assert([]() consteval {
 //  return true;
 //}());
 
+// viewable
 static_assert([]() consteval {
   BaseViewType view{BaseViewType::rect_type{1.f, 1.f, 3.f, 3.f}};
 
@@ -42,6 +43,5 @@ static_assert([]() consteval {
 
   return true;
 }());
-// viewable
 
 } // namespace

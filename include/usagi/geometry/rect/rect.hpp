@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cassert>
-
 #include <usagi/concepts/arithmetic.hpp>
 #include <usagi/concepts/geometry/rect_concept.hpp>
 #include <usagi/geometry/point.hpp>
@@ -18,10 +16,7 @@ public:
   constexpr rect() : left{}, top{}, right{}, bottom{} {}
 
   constexpr rect(value_type l, value_type t, value_type r, value_type b)
-      : left{l}, top{t}, right{r}, bottom{b} {
-    assert(left <= right);
-    assert(top <= bottom);
-  }
+      : left{l}, top{t}, right{r}, bottom{b} {}
 
   constexpr explicit rect(const concepts::geometry::size_concept auto &size)
       : rect(point_type{}, size) {}
@@ -29,27 +24,26 @@ public:
   constexpr rect(const concepts::geometry::point_concept auto &point,
                  const concepts::geometry::size_concept auto &size)
       : left{point.x()}, top{point.y()}, right{point.x() + size.width()}, bottom{point.y() +
-                                                                                 size.height()} {
-    assert(left <= right);
-    assert(top <= bottom);
-  }
+                                                                                 size.height()} {}
 
   constexpr explicit rect(const concepts::geometry::rect_concept auto &r)
       : left{r.l()}, top{r.t()}, right{r.r()}, bottom{r.b()} {}
 
-  value_type l() const { return left; }
-  value_type t() const { return top; }
-  value_type r() const { return right; }
-  value_type b() const { return bottom; }
+  constexpr value_type l() const { return left; }
+  constexpr value_type t() const { return top; }
+  constexpr value_type r() const { return right; }
+  constexpr value_type b() const { return bottom; }
 
-  size_type size() const { return size_type{r() - l(), b() - t()}; }
+  constexpr size_type size() const { return size_type{r() - l(), b() - t()}; }
 
-  point_type center() const {
+  constexpr point_type center() const {
     return point_type{(r() + l()) / static_cast<value_type>(2),
                       (b() + t()) / static_cast<value_type>(2)};
   }
 
-  usagi::utility::mono_tuple<value_type, 4> operator()() const { return {l(), t(), r(), b()}; }
+  constexpr usagi::utility::mono_tuple<value_type, 4> operator()() const {
+    return {l(), t(), r(), b()};
+  }
 
 private:
   value_type left, top, right, bottom;

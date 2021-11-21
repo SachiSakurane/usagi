@@ -15,10 +15,10 @@ struct point {
       : x_{s.width()}, y_{s.height()} {}
   constexpr point(value_type x, value_type y) : x_{x}, y_{y} {}
 
-  value_type x() const { return x_; }
-  value_type y() const { return y_; }
+  constexpr value_type x() const { return x_; }
+  constexpr value_type y() const { return y_; }
 
-  usagi::utility::mono_tuple<value_type, 2> operator()() const { return {x_, y_}; }
+  constexpr usagi::utility::mono_tuple<value_type, 2> operator()() const { return {x_, y_}; }
 
 private:
   value_type x_, y_;

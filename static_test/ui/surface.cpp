@@ -3,41 +3,31 @@
 #include <usagi/ui/surface.hpp>
 #include <usagi/ui/view.hpp>
 
-// static test
 namespace {
 struct DrawContext final {
-  explicit DrawContext(std::vector<int> &s) : stamp{s} {}
+  constexpr explicit DrawContext(int &s) : stamp{s} {}
 
-  void tick() { stamp.emplace_back(1); }
+  constexpr void tick() { stamp += 42; }
 
 private:
-  std::vector<int> &stamp;
+  int &stamp;
 };
 
-template <usagi::concepts::arithmetic ValueType, class DrawContextType>
-struct SpecificView final
-    : usagi::ui::base_view<ValueType, DrawContextType,
-                           usagi::type::gesture_default_parameter<ValueType>> {
-  using value_type = ValueType;
-  using draw_context_type = DrawContextType;
+using base_view =
+    usagi::ui::base_view<int, DrawContext, usagi::type::gesture_default_parameter<int>>;
 
-  explicit SpecificView(std::vector<int> &s) : stamp{s} {}
-
-  void draw(draw_context_type &c) override {
-    // 2
-    stamp.emplace_back(2);
-    c.tick();
+struct ContextFunctor final {
+  constexpr void operator()(typename base_view::draw_context_type &d, const base_view &) {
+    d.tick();
   }
-
-private:
-  std::vector<int> &stamp;
 };
 
-using local_view_type = SpecificView<int, DrawContext>;
-static_assert(
-    usagi::concepts::ui::viewable<usagi::ui::surface<
-        local_view_type, std::function<void(typename local_view_type::draw_context_type &,
-                                            const local_view_type &)>>>,
-    "usagi::ui::surface<local_view_type, std::function<void(typename "
-    "local_view_type::draw_context_type &, const local_view_type &)>> has viewable concept");
+static_assert(usagi::concepts::ui::viewable<usagi::ui::surface<base_view, ContextFunctor>>);
+static_assert([]() consteval {
+  usagi::ui::surface<base_view, ContextFunctor> s{base_view{}, ContextFunctor{}};
+  int x{0};
+  DrawContext context{x};
+  s.draw(context);
+  return x == 42;
+}());
 } // namespace

@@ -21,8 +21,6 @@ concept gestural_parameter = requires(GesturalParameterType g) {
  */
 template <class GesturalType>
 concept gestural = requires(GesturalType &g) {
-  requires gestural_parameter<typename GesturalType::gesture_parameter_type>;
-
   {
     g.event(std::declval<typename usagi::type::gesture_traits<
                 typename GesturalType::gesture_parameter_type>::on_down_type>())

@@ -21,8 +21,8 @@ namespace view_holder_ {
   static_assert(usagi::concepts::ui::viewable<usagi::ui::detail::view_holder<SpecificView>>);
   static_assert([]() constexpr {
     usagi::ui::detail::view_holder<BaseView> default_construct{};
-    usagi::ui::detail::view_holder<BaseView> copy_construct{default_construct};
-    usagi::ui::detail::view_holder<BaseView> move_construct{std::move(default_construct)};
+    // usagi::ui::detail::view_holder<BaseView> copy_construct{default_construct};
+    // usagi::ui::detail::view_holder<BaseView> move_construct{std::move(default_construct)};
 
     // usagi::ui::detail::view_holder<SpecificView> specific_construct{0, nullptr};
     return true;

@@ -21,7 +21,7 @@ public:
   constexpr explicit base_view(const usagi::concepts::geometry::rect_concept auto &frame)
       : content{frame} {}
 
-  virtual ~base_view() = default;
+  virtual constexpr ~base_view() = default;
 
   virtual void draw(draw_context_type &) {}
 

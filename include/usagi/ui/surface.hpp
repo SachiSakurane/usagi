@@ -21,7 +21,7 @@ struct surface {
 
   constexpr surface(ViewType &&v, FunctionType f) : holder{std::move(v)}, drawer{f} {}
 
-  void draw(draw_context_type &context) {
+  constexpr void draw(draw_context_type &context) {
     drawer(context, holder);
     holder.draw(context);
   }

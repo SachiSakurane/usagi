@@ -23,7 +23,7 @@ public:
 
   virtual constexpr ~base_view() = default;
 
-  virtual void draw(draw_context_type &) {}
+  virtual constexpr void draw(draw_context_type &) {}
 
   virtual size_type bounds() const { return content.size(); }
   virtual rect_type frame() const { return content; }

@@ -11,4 +11,12 @@ static_assert([]() consteval {
   BaseViewType default_construct, rect_construct{BaseViewType::rect_type{}};
   return true;
 }());
+
+// drawable
+static_assert([]() consteval {
+  BaseViewType view;
+  DrawContext context;
+  view.draw(context);
+  return true;
+}());
 } // namespace

@@ -7,14 +7,6 @@
 #include <usagi/geometry/geometry_traits.hpp>
 
 namespace usagi::ui {
-template <class FunctionType>
-struct surface_holder {
-  FunctionType func;
-};
-
-template <class FunctionType>
-surface_holder(FunctionType) -> surface_holder<FunctionType>;
-
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
 requires usagi::concepts::invocable<FunctionType, typename ViewType::draw_context_type &,
                                     const ViewType &>
@@ -61,8 +53,19 @@ private:
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
 surface(ViewType &&, FunctionType) -> surface<ViewType, FunctionType>;
 
+namespace detail {
+  template <class FunctionType>
+  struct surface_holder {
+    FunctionType func;
+  };
+
+  template <class FunctionType>
+  surface_holder(FunctionType) -> surface_holder<FunctionType>;
+} // namespace detail
+
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
-inline constexpr decltype(auto) operator|(ViewType &&v, surface_holder<FunctionType> &&holder) {
+inline constexpr decltype(auto) operator|(ViewType &&v,
+                                          detail::surface_holder<FunctionType> &&holder) {
   return surface{std::forward<ViewType>(v), std::move(holder).func};
 }
 
@@ -80,7 +83,7 @@ inline constexpr decltype(auto) operator|(ViewType &&v, surface_holder<FunctionT
  */
 template <class FunctionType>
 inline constexpr decltype(auto) surfaced(FunctionType &&func) {
-  return surface_holder<FunctionType>{func};
+  return detail::surface_holder<FunctionType>{func};
 }
 
 } // namespace usagi::ui

@@ -22,10 +22,10 @@ namespace detail {
     using gesture_parameter_type = typename base_view_type::gesture_parameter_type;
     using gesture_traits = typename base_view_type::gesture_traits;
 
-    constexpr view_holder() = default;
+    view_holder() = default;
 
     template <class... Args>
-    constexpr explicit view_holder(Args &&...args) : holder{std::forward<Args>(args)...} {}
+    explicit view_holder(Args &&...args) : holder{std::forward<Args>(args)...} {}
 
     void draw(draw_context_type &d) override { holder.draw(d); }
 

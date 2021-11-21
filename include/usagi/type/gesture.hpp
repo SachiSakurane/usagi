@@ -1,7 +1,5 @@
 #pragma once
 
-#include <type_traits>
-
 #include <usagi/concepts/arithmetic.hpp>
 
 namespace usagi::type {

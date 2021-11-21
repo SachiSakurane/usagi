@@ -22,7 +22,7 @@ namespace detail {
     using gesture_parameter_type = typename base_view_type::gesture_parameter_type;
     using gesture_traits = typename base_view_type::gesture_traits;
 
-    view_holder() = default;
+    constexpr view_holder() = default;
 
     template <class... Args>
     constexpr explicit view_holder(Args &&...args) : holder{std::forward<Args>(args)...} {}

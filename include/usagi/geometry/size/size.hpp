@@ -20,11 +20,12 @@ struct size {
     assert(height_ >= 0);
   }
 
-  value_type width() const { return width_; }
+  constexpr value_type width() const { return width_; }
+  constexpr value_type height() const { return height_; }
 
-  value_type height() const { return height_; }
-
-  usagi::utility::mono_tuple<value_type, 2> operator()() const { return {width_, height_}; }
+  constexpr usagi::utility::mono_tuple<value_type, 2> operator()() const {
+    return {width_, height_};
+  }
 
 private:
   value_type width_, height_;

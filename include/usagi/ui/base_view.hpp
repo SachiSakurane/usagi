@@ -4,6 +4,7 @@
 #include <usagi/concepts/geometry.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
+#include <usagi/geometry/rect/function.hpp>
 
 namespace usagi::ui {
 template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
@@ -25,14 +26,33 @@ public:
 
   virtual constexpr void draw(draw_context_type &) {}
 
-  virtual size_type bounds() const { return content.size(); }
-  virtual rect_type frame() const { return content; }
-
-  virtual bool event(typename gesture_traits::on_down_type) { return false; }
+  virtual bool event(typename gesture_traits::on_down_type g) {
+    auto point = point_type{g.x, g.y};
+    if (usagi::geometry::contain(frame(), point)) {
+      set_down(true);
+      return true;
+    }
+    return false;
+  }
   virtual void event(typename gesture_traits::on_drag_type) {}
-  virtual void event(typename gesture_traits::on_up_type) {}
-  virtual bool event(typename gesture_traits::on_over_type) { return false; }
-  virtual void event(typename gesture_traits::on_out_type) {}
+  virtual void event(typename gesture_traits::on_up_type) {
+    if (on_downed()) {
+      set_down(false);
+    }
+  }
+  virtual bool event(typename gesture_traits::on_over_type g) {
+    auto point = point_type{g.x, g.y};
+    if (usagi::geometry::contain(frame(), point)) {
+      set_over(true);
+      return true;
+    }
+    return false;
+  }
+  virtual void event(typename gesture_traits::on_out_type) {
+    if (on_overed()) {
+      set_over(false);
+    }
+  }
   virtual bool event(typename gesture_traits::on_double_type) { return false; }
   virtual bool event(typename gesture_traits::on_wheel_type) { return false; }
 
@@ -42,8 +62,11 @@ public:
   [[nodiscard]] virtual bool on_downed() const { return parameter_downed; }
   [[nodiscard]] virtual bool on_overed() const { return parameter_overed; }
 
-  virtual void set_enabled(bool flag) { enabled = flag; }
-  [[nodiscard]] virtual bool is_enabled() const { return enabled; }
+  virtual constexpr size_type bounds() const { return content.size(); }
+  virtual constexpr rect_type frame() const { return content; }
+
+  virtual constexpr void set_enabled(bool flag) { enabled = flag; }
+  [[nodiscard]] virtual constexpr bool is_enabled() const { return enabled; }
 
 private:
   rect_type content{};

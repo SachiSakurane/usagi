@@ -5,6 +5,8 @@
 
 #include <usagi/concepts/arithmetic.hpp>
 #include <usagi/type/gesture.hpp>
+#include <usagi/ui/base_view.hpp>
+#include <usagi/ui/layered.hpp>
 #include <usagi/ui/view.hpp>
 
 namespace usagi::wrapper::iplug2 {
@@ -52,12 +54,14 @@ public:
   }
 
   void OnMouseDown(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::gesture_traits::on_down_type{x, y, 0.f, make_igraphic_control()});
+    local_view.event(
+        iplug_traits::gesture_traits::on_down_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseDown(x, y, mod);
   }
 
   void OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::gesture_traits::on_drag_type{x, y, 0.f, make_igraphic_control()});
+    local_view.event(
+        iplug_traits::gesture_traits::on_drag_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseDrag(x, y, dX, dY, mod);
   }
 
@@ -67,7 +71,8 @@ public:
   }
 
   void OnMouseOver(float x, float y, const IMouseMod &mod) override {
-    local_view.event(iplug_traits::gesture_traits::on_over_type{x, y, 0.f, make_igraphic_control()});
+    local_view.event(
+        iplug_traits::gesture_traits::on_over_type{x, y, 0.f, make_igraphic_control()});
     IControl::OnMouseOver(x, y, mod);
   }
 
@@ -96,7 +101,7 @@ public:
   }
 
 protected:
-  iplug_traits::view_type local_view;
+  usagi::ui::layer<iplug_traits::view_type> local_view;
 
   std::optional<std::function<void(std::string)>> text_entry_completed{std::nullopt};
 

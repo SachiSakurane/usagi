@@ -6,16 +6,14 @@
 #include <usagi/ui/base_view.hpp>
 
 namespace usagi::ui {
-/**
- * viewable を格納する型
- */
-template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
-class view final {
-  using base_view_type =
-      typename usagi::ui::base_view<ValueType, DrawContextType, GestureParameterType>;
-
+namespace detail {
   template <usagi::concepts::ui::viewable ViewType>
-  class view_holder final : public base_view_type {
+  class view_holder final : public usagi::ui::base_view<typename ViewType::value_type,
+                                                        typename ViewType::draw_context_type,
+                                                        typename ViewType::gesture_parameter_type> {
+    using base_view_type = typename usagi::ui::base_view<typename ViewType::value_type,
+                                                         typename ViewType::draw_context_type,
+                                                         typename ViewType::gesture_parameter_type>;
 
   public:
     using rect_type = typename base_view_type::rect_type;
@@ -24,11 +22,10 @@ class view final {
     using gesture_parameter_type = typename base_view_type::gesture_parameter_type;
     using gesture_traits = typename base_view_type::gesture_traits;
 
-    explicit view_holder(const ViewType &v) : holder{v} {}
-    explicit view_holder(ViewType &&v) : holder{std::move(v)} {}
+    view_holder() = default;
 
-    constexpr view_holder(view_holder &&) noexcept = default;
-    view_holder &operator=(view_holder &&) noexcept = default;
+    template <class... Args>
+    explicit view_holder(Args &&...args) : holder{std::forward<Args>(args)...} {}
 
     void draw(draw_context_type &d) override { holder.draw(d); }
 
@@ -62,8 +59,17 @@ class view final {
     [[nodiscard]] bool is_enabled() const override { return holder.is_enabled(); }
 
   private:
-    ViewType holder;
+    ViewType holder{};
   };
+} // namespace detail
+
+/**
+ * viewable を格納する型
+ */
+template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
+class view final {
+  using base_view_type =
+      typename usagi::ui::base_view<ValueType, DrawContextType, GestureParameterType>;
 
 public:
   using value_type = ValueType;
@@ -118,9 +124,7 @@ view(ViewType &&) -> view<typename ViewType::value_type, typename ViewType::draw
 template <usagi::concepts::ui::viewable ViewType, class... Args>
 inline decltype(auto) make_view(Args &&...args) {
   return usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type,
-                         typename ViewType::gesture_parameter_type>{std::make_unique<
-      usagi::ui::base_view<typename ViewType::value_type, typename ViewType::draw_context_type,
-                           typename ViewType::gesture_parameter_type>>(
-      std::forward<Args>(args)...)};
+                         typename ViewType::gesture_parameter_type>{
+      std::make_unique<detail::view_holder<ViewType>>(std::forward<Args>(args)...)};
 }
 } // namespace usagi::ui

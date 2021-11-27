@@ -15,14 +15,14 @@ namespace detail {
   };
 } // namespace detail
 
-template <size_t Index, class TupleType>
+template <class TupleType, size_t Index>
 struct erase {
   using type =
       typename detail::erase_impl<TupleType, Index,
                                   std::make_index_sequence<std::tuple_size_v<TupleType> - 1>>::type;
 };
 
-template <size_t Index, class TupleType>
-using erase_t = typename erase<Index, TupleType>::type;
+template <class TupleType, size_t Index>
+using erase_t = typename erase<TupleType, Index>::type;
 
 } // namespace usagi::tuple

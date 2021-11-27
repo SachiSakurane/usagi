@@ -2,7 +2,7 @@
 
 namespace {
 static_assert(std::is_same_v<std::tuple<bool, void>,
-                             usagi::tuple::erase<0, std::tuple<int, bool, void>>::type>);
+                             usagi::tuple::erase<std::tuple<int, bool, void>, 0>::type>);
 static_assert(std::is_same_v<std::tuple<int, bool>,
-                             usagi::tuple::erase<2, std::tuple<int, bool, void>>::type>);
+                             usagi::tuple::erase<std::tuple<int, bool, void>, 2>::type>);
 } // namespace

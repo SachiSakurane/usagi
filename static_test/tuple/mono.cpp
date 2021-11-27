@@ -2,7 +2,7 @@
 
 namespace {
 static_assert(std::is_same_v<std::tuple<bool, bool>,
-                             usagi::tuple::mono<2, bool>::type>);
+                             usagi::tuple::mono<bool, 2>::type>);
 static_assert(std::is_same_v<std::tuple<>,
-                             usagi::tuple::mono<0, bool>::type>);
+                             usagi::tuple::mono<bool, 0>::type>);
 } // namespace

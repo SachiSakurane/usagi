@@ -18,7 +18,7 @@ struct point {
   constexpr value_type x() const { return x_; }
   constexpr value_type y() const { return y_; }
 
-  constexpr usagi::tuple::mono<value_type, 2> operator()() const { return {x_, y_}; }
+  constexpr usagi::tuple::mono_t<value_type, 2> operator()() const { return {x_, y_}; }
 
 private:
   value_type x_, y_;
@@ -33,7 +33,7 @@ point(const SizeType &) -> point<typename SizeType::value_type>;
 template <usagi::concepts::arithmetic Type>
 struct variable_point {
   using value_type = Type;
-  using mono_type = usagi::tuple::mono<value_type, 2>;
+  using mono_type = usagi::tuple::mono_t<value_type, 2>;
   using variable_type = typename usagi::variable_traits<mono_type>::variable_type;
 
   constexpr variable_point() : functor{} {}

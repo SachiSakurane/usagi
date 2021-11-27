@@ -27,7 +27,7 @@ struct basic_color {
 
   value_type blue() const { return b_; }
 
-  usagi::tuple::mono<value_type, 4> operator()() const { return {alpha(), red(), green(), blue()}; }
+  usagi::tuple::mono_t<value_type, 4> operator()() const { return {alpha(), red(), green(), blue()}; }
 
 private:
   value_type a_, r_, g_, b_;
@@ -53,7 +53,7 @@ struct variable_color {
 
   value_type alpha() const { return a_(); }
 
-  usagi::tuple::mono<value_type, 4> operator()() const { return {a_(), r_(), g_(), b_()}; }
+  usagi::tuple::mono_t<value_type, 4> operator()() const { return {a_(), r_(), g_(), b_()}; }
 
   variable_color<value_type> duplicate() const {
     return variable_color<value_type>{alpha(), red(), green(), blue()};

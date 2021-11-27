@@ -41,7 +41,7 @@ public:
                       (b() + t()) / static_cast<value_type>(2)};
   }
 
-  constexpr usagi::tuple::mono<value_type, 4> operator()() const {
+  constexpr usagi::tuple::mono_t<value_type, 4> operator()() const {
     return {l(), t(), r(), b()};
   }
 
@@ -65,7 +65,7 @@ template <usagi::concepts::arithmetic Type>
 struct variable_rect {
 public:
   using value_type = typename usagi::variable_traits<Type>::value_type;
-  using pair_type = usagi::tuple::mono<value_type, 4>;
+  using pair_type = usagi::tuple::mono_t<value_type, 4>;
   using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
   using size_type = geometry::size<value_type>;
   using point_type = geometry::point<value_type>;
@@ -111,7 +111,7 @@ public:
                       }};
   }
 
-  usagi::tuple::mono<value_type, 4> operator()() const {
+  usagi::tuple::mono_t<value_type, 4> operator()() const {
     auto [l, t, r, b] = functor();
     assert(l <= r);
     assert(t <= b);

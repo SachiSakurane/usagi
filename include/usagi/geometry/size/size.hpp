@@ -3,7 +3,7 @@
 #include <cassert>
 
 #include <usagi/concepts/arithmetic.hpp>
-#include <usagi/utility/mono_tuple.hpp>
+#include <usagi/tuple/mono.hpp>
 #include <usagi/variable/variable_traits.hpp>
 
 namespace usagi::geometry {
@@ -23,7 +23,7 @@ struct size {
   constexpr value_type width() const { return width_; }
   constexpr value_type height() const { return height_; }
 
-  constexpr usagi::utility::mono_tuple<value_type, 2> operator()() const {
+  constexpr usagi::tuple::mono<value_type, 2> operator()() const {
     return {width_, height_};
   }
 
@@ -37,7 +37,7 @@ private:
 template <usagi::concepts::arithmetic Type>
 struct variable_size {
   using value_type = Type;
-  using pair_type = usagi::utility::mono_tuple<value_type, 2>;
+  using pair_type = usagi::tuple::mono<value_type, 2>;
   using size_type = typename usagi::variable_traits<pair_type>::value_type;
   using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
 
@@ -56,7 +56,7 @@ struct variable_size {
     return h;
   }
 
-  usagi::utility::mono_tuple<value_type, 2> operator()() const {
+  usagi::tuple::mono<value_type, 2> operator()() const {
     auto [w, h] = functor();
     assert(w >= 0);
     assert(h >= 0);

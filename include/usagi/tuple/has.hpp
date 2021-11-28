@@ -41,5 +41,5 @@ struct has {
 };
 
 template <class TargetType, class TupleType>
-using has_v = typename has<TargetType, TupleType>::value;
+inline constexpr bool has_v = has<TargetType, TupleType>::value;
 } // namespace usagi::tuple

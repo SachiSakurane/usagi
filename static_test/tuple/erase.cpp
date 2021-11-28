@@ -1,3 +1,5 @@
+#include <type_traits>
+
 #include <usagi/tuple/erase.hpp>
 
 namespace {

@@ -2,7 +2,7 @@
 
 #include <usagi/concepts/arithmetic.hpp>
 #include <usagi/concepts/geometry/size_concept.hpp>
-#include <usagi/utility/mono_tuple.hpp>
+#include <usagi/tuple/mono.hpp>
 #include <usagi/variable/variable_traits.hpp>
 
 namespace usagi::geometry {
@@ -18,7 +18,7 @@ struct point {
   constexpr value_type x() const { return x_; }
   constexpr value_type y() const { return y_; }
 
-  constexpr usagi::utility::mono_tuple<value_type, 2> operator()() const { return {x_, y_}; }
+  constexpr usagi::tuple::mono_t<value_type, 2> operator()() const { return {x_, y_}; }
 
 private:
   value_type x_, y_;
@@ -33,8 +33,8 @@ point(const SizeType &) -> point<typename SizeType::value_type>;
 template <usagi::concepts::arithmetic Type>
 struct variable_point {
   using value_type = Type;
-  using pair_type = usagi::utility::mono_tuple<value_type, 2>;
-  using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
+  using mono_type = usagi::tuple::mono_t<value_type, 2>;
+  using variable_type = typename usagi::variable_traits<mono_type>::variable_type;
 
   constexpr variable_point() : functor{} {}
   constexpr variable_point(variable_type s) : functor{s} {}
@@ -42,7 +42,7 @@ struct variable_point {
   value_type x() const { return std::get<0>(functor()); }
   value_type y() const { return std::get<1>(functor()); }
 
-  usagi::utility::mono_tuple<value_type, 2> operator()() const { return {functor()}; }
+  typename variable_type::value_type operator()() const { return {functor()}; }
 
   variable_point<value_type> duplicate() const { return variable_point<value_type>{functor()}; }
 

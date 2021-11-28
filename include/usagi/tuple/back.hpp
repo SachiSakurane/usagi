@@ -9,5 +9,5 @@ struct back {
 };
 
 template <class TupleType>
-using back_t = using back<TupleType>::type;
+using back_t = typename back<TupleType>::type;
 } // namespace usagi::tuple

@@ -9,5 +9,5 @@ struct front {
 };
 
 template <class TupleType>
-using front_t = using front<TupleType>::type;
+using front_t = typename front<TupleType>::type;
 } // namespace usagi::tuple

@@ -22,7 +22,23 @@ struct erase {
                                   std::make_index_sequence<std::tuple_size_v<TupleType> - 1>>::type;
 };
 
+template <class TupleType>
+struct erase_front {
+  using type = typename erase<TupleType, 0>::type;
+};
+
+template <class TupleType>
+struct erase_back {
+  using type = typename erase<TupleType, std::tuple_size_v<TupleType> - 1>::type;
+};
+
 template <class TupleType, size_t Index>
 using erase_t = typename erase<TupleType, Index>::type;
+
+template <class TupleType>
+using erase_front_t = typename erase_front<TupleType>::type;
+
+template <class TupleType>
+using erase_back_t = typename erase_back<TupleType>::type;
 
 } // namespace usagi::tuple

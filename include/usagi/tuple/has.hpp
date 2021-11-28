@@ -26,6 +26,11 @@ namespace detail {
         has_impl_impl<TargetType, std::tuple_element_t<Indexes, TupleType>...>::value;
   };
 
+  template <class TargetType, class TupleType>
+  struct has_impl<TargetType, TupleType, std::index_sequence<>> {
+    static constexpr bool value = false;
+  };
+
 } // namespace detail
 
 template <class TargetType, class TupleType>

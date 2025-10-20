@@ -40,8 +40,8 @@ struct iplug_traits {
 class view_wrapper : public IControl {
 public:
   explicit view_wrapper(const IRECT &bounds)
-      : IControl{bounds}, local_view{iplug_traits::base_view_type{
-                              iplug_traits::rect_type{bounds.L, bounds.T, bounds.R, bounds.B}}} {}
+      : IControl{bounds}, local_view{usagi::ui::make_view<iplug_traits::base_view_type>(
+                              iplug_traits::rect_type{bounds.L, bounds.T, bounds.R, bounds.B})} {}
 
   void set_double_click_enabled(bool flag) { mDblAsSingleClick = !flag; }
 

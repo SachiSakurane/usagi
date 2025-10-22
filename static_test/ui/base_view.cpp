@@ -4,7 +4,7 @@
 
 namespace {
 struct DrawContext {};
-using GestureParameterType = usagi::type::gesture_default_parameter<float>;
+using GestureParameterType = usagi::type::gesture_parameter<float>;
 using BaseViewType = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
 
 static_assert(usagi::concepts::ui::viewable<BaseViewType>);
@@ -17,7 +17,7 @@ static_assert([]() consteval {
 static_assert([]() consteval {
   BaseViewType view;
   DrawContext context;
-  view.draw(context);
+  view.draw(context, typename BaseViewType::offset_type{});
   return true;
 }());
 

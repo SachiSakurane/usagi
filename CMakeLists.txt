@@ -6,6 +6,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(usagi)
 
+include(CTest)
+enable_testing()
+
 add_executable(${CMAKE_PROJECT_NAME} main.cpp main.cpp)
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE

@@ -11,19 +11,19 @@ consteval bool gesture_func_requirement_impl() {
   using gesture_traits =
       typename usagi::type::gesture_traits<typename ViewType::gesture_parameter_type>;
   return std::is_invocable_r_v<bool, FunctionType, typename gesture_traits::on_down_type,
-                               ViewType &> ||
+                               typename gesture_traits::offset_type, ViewType &> ||
          std::is_invocable_r_v<void, FunctionType, typename gesture_traits::on_drag_type,
-                               ViewType &> ||
+                               typename gesture_traits::offset_type, ViewType &> ||
          std::is_invocable_r_v<void, FunctionType, typename gesture_traits::on_up_type,
-                               ViewType &> ||
+                               typename gesture_traits::offset_type, ViewType &> ||
          std::is_invocable_r_v<bool, FunctionType, typename gesture_traits::on_over_type,
-                               ViewType &> ||
+                               typename gesture_traits::offset_type, ViewType &> ||
          std::is_invocable_r_v<void, FunctionType, typename gesture_traits::on_out_type,
-                               ViewType &> ||
+                               typename gesture_traits::offset_type, ViewType &> ||
          std::is_invocable_r_v<bool, FunctionType, typename gesture_traits::on_double_type,
-                               ViewType &> ||
+                               typename gesture_traits::offset_type, ViewType &> ||
          std::is_invocable_r_v<bool, FunctionType, typename gesture_traits::on_wheel_type,
-                               ViewType &>;
+                               typename gesture_traits::offset_type, ViewType &>;
 }
 
 template <usagi::concepts::ui::viewable ViewType>
@@ -44,6 +44,6 @@ consteval bool apply_tuple_requirement(std::index_sequence<Sequence...>) {
 
 template <class TupleType, class ViewType>
 concept gesture_tuple_requirement = usagi::concepts::ui::viewable<ViewType> &&
-    apply_tuple_requirement<TupleType, ViewType>(
-        std::make_index_sequence<std::tuple_size_v<TupleType>>());
+                                    apply_tuple_requirement<TupleType, ViewType>(
+                                        std::make_index_sequence<std::tuple_size_v<TupleType>>());
 } // namespace usagi::ui::detail

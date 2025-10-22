@@ -6,7 +6,7 @@
 
 namespace {
 struct DrawContext {};
-using GestureParameterType = usagi::type::gesture_default_parameter<float>;
+using GestureParameterType = usagi::type::gesture_parameter<float>;
 
 static_assert(
     usagi::concepts::ui::viewable<usagi::ui::view<float, DrawContext, GestureParameterType>>);

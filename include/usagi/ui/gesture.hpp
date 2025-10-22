@@ -81,27 +81,27 @@ struct gestures {
   template <class TupleType>
   explicit gestures(TupleType t)
       : on_down_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename gesture_traits::on_down_type, ViewType &>>(t)},
+            std::tuple<bool, typename gesture_traits::on_down_type, typename gesture_traits::offset_type, ViewType &>>(t)},
         on_drag_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<void, typename gesture_traits::on_drag_type, ViewType &>>(t)},
+            std::tuple<void, typename gesture_traits::on_drag_type, typename gesture_traits::offset_type, ViewType &>>(t)},
         on_up_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<void, typename gesture_traits::on_up_type, ViewType &>>(t)},
+            std::tuple<void, typename gesture_traits::on_up_type, typename gesture_traits::offset_type, ViewType &>>(t)},
         on_over_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename gesture_traits::on_over_type, ViewType &>>(t)},
+            std::tuple<bool, typename gesture_traits::on_over_type, typename gesture_traits::offset_type, ViewType &>>(t)},
         on_out_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<void, typename gesture_traits::on_out_type, ViewType &>>(t)},
+            std::tuple<void, typename gesture_traits::on_out_type, typename gesture_traits::offset_type, ViewType &>>(t)},
         on_double_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename gesture_traits::on_double_type, ViewType &>>(t)},
+            std::tuple<bool, typename gesture_traits::on_double_type, typename gesture_traits::offset_type, ViewType &>>(t)},
         on_wheel_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename gesture_traits::on_wheel_type, ViewType &>>(t)} {}
+            std::tuple<bool, typename gesture_traits::on_wheel_type, typename gesture_traits::offset_type, ViewType &>>(t)} {}
 
-  std::function<bool(typename gesture_traits::on_down_type, ViewType &)> on_down_holder;
-  std::function<void(typename gesture_traits::on_drag_type, ViewType &)> on_drag_holder;
-  std::function<void(typename gesture_traits::on_up_type, ViewType &)> on_up_holder;
-  std::function<bool(typename gesture_traits::on_over_type, ViewType &)> on_over_holder;
-  std::function<void(typename gesture_traits::on_out_type, ViewType &)> on_out_holder;
-  std::function<bool(typename gesture_traits::on_double_type, ViewType &)> on_double_holder;
-  std::function<bool(typename gesture_traits::on_wheel_type, ViewType &)> on_wheel_holder;
+  std::function<bool(typename gesture_traits::on_down_type, typename gesture_traits::offset_type, ViewType &)> on_down_holder;
+  std::function<void(typename gesture_traits::on_drag_type, typename gesture_traits::offset_type, ViewType &)> on_drag_holder;
+  std::function<void(typename gesture_traits::on_up_type, typename gesture_traits::offset_type, ViewType &)> on_up_holder;
+  std::function<bool(typename gesture_traits::on_over_type, typename gesture_traits::offset_type, ViewType &)> on_over_holder;
+  std::function<void(typename gesture_traits::on_out_type, typename gesture_traits::offset_type, ViewType &)> on_out_holder;
+  std::function<bool(typename gesture_traits::on_double_type, typename gesture_traits::offset_type, ViewType &)> on_double_holder;
+  std::function<bool(typename gesture_traits::on_wheel_type, typename gesture_traits::offset_type, ViewType &)> on_wheel_holder;
 };
 
 template <usagi::concepts::ui::viewable ViewType>
@@ -111,6 +111,7 @@ struct gesture {
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = typename ViewType::draw_context_type;
+  using offset_type = typename ViewType::offset_type;
   using gesture_parameter_type = typename ViewType::gesture_parameter_type;
   using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
 
@@ -122,67 +123,67 @@ struct gesture {
   size_type bounds() const { return holder.bounds(); }
   rect_type frame() const { return holder.frame(); }
 
-  bool event(typename gesture_traits::on_down_type parameter) {
+  bool event(typename gesture_traits::on_down_type parameter, offset_type offset) {
     if (g.on_down_holder) {
-      if (g.on_down_holder(parameter, holder)) {
+      if (g.on_down_holder(parameter, offset, holder)) {
         return true;
       }
     }
-    return holder.event(parameter);
+    return holder.event(parameter, offset);
   }
 
-  void event(typename gesture_traits::on_drag_type parameter) {
+  void event(typename gesture_traits::on_drag_type parameter, offset_type offset) {
     if (g.on_drag_holder) {
-      g.on_drag_holder(parameter, holder);
+      g.on_drag_holder(parameter, offset, holder);
     }
-    holder.event(parameter);
+    holder.event(parameter, offset);
   }
 
-  void event(typename gesture_traits::on_up_type parameter) {
+  void event(typename gesture_traits::on_up_type parameter, offset_type offset) {
     if (g.on_up_holder) {
-      g.on_up_holder(parameter, holder);
+      g.on_up_holder(parameter, offset, holder);
     }
-    holder.event(parameter);
+    holder.event(parameter, offset);
   }
 
-  bool event(typename gesture_traits::on_over_type parameter) {
+  bool event(typename gesture_traits::on_over_type parameter, offset_type offset) {
     if (g.on_over_holder) {
-      if (g.on_over_holder(parameter, holder)) {
+      if (g.on_over_holder(parameter, offset, holder)) {
         return true;
       }
     }
-    return holder.event(parameter);
+    return holder.event(parameter, offset);
   }
 
-  void event(typename gesture_traits::on_out_type parameter) {
+  void event(typename gesture_traits::on_out_type parameter, offset_type offset) {
     if (g.on_out_holder) {
-      g.on_out_holder(parameter, holder);
+      g.on_out_holder(parameter, offset, holder);
     }
-    holder.event(parameter);
+    holder.event(parameter, offset);
   }
 
-  bool event(typename gesture_traits::on_double_type parameter) {
+  bool event(typename gesture_traits::on_double_type parameter, offset_type offset) {
     if (g.on_double_holder) {
-      if (g.on_double_holder(parameter, holder)) {
+      if (g.on_double_holder(parameter, offset, holder)) {
         return true;
       }
     }
-    return holder.event(parameter);
+    return holder.event(parameter, offset);
   }
 
-  bool event(typename gesture_traits::on_wheel_type parameter) {
+  bool event(typename gesture_traits::on_wheel_type parameter, offset_type offset) {
     if (g.on_wheel_holder) {
-      if (g.on_wheel_holder(parameter, holder)) {
+      if (g.on_wheel_holder(parameter, offset, holder)) {
         return true;
       }
     }
-    return holder.event(parameter);
+    return holder.event(parameter, offset);
   }
 
   void set_down(bool flag) { holder.set_down(flag); }
   void set_over(bool flag) { holder.set_over(flag); }
-  [[nodiscard]] bool on_downed() const { return holder.on_downed(); }
-  [[nodiscard]] bool on_overed() const { return holder.on_overed(); }
+  [[nodiscard]] bool is_downed() const { return holder.is_downed(); }
+  [[nodiscard]] bool is_overed() const { return holder.is_overed(); }
 
   void set_enabled(bool flag) { holder.set_enabled(flag); }
   [[nodiscard]] bool is_enabled() const { return holder.is_enabled(); }

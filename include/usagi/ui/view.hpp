@@ -19,6 +19,7 @@ namespace detail {
     using rect_type = typename base_view_type::rect_type;
     using size_type = typename base_view_type::size_type;
     using draw_context_type = typename base_view_type::draw_context_type;
+    using offset_type = typename base_view_type::offset_type;
     using gesture_parameter_type = typename base_view_type::gesture_parameter_type;
     using gesture_traits = typename base_view_type::gesture_traits;
 
@@ -27,33 +28,39 @@ namespace detail {
     template <class... Args>
     explicit view_holder(Args &&...args) : holder{std::forward<Args>(args)...} {}
 
-    void draw(draw_context_type &d) override { holder.draw(d); }
+    void draw(draw_context_type &context, offset_type offset) override {
+      holder.draw(context, offset);
+    }
 
     size_type bounds() const override { return holder.bounds(); }
     rect_type frame() const override { return holder.frame(); }
 
-    bool event(typename gesture_traits::on_down_type parameter) override {
-      return holder.event(parameter);
+    bool event(typename gesture_traits::on_down_type parameter, offset_type offset) override {
+      return holder.event(parameter, offset);
     }
-    void event(typename gesture_traits::on_drag_type parameter) override {
-      holder.event(parameter);
+    void event(typename gesture_traits::on_drag_type parameter, offset_type offset) override {
+      holder.event(parameter, offset);
     }
-    void event(typename gesture_traits::on_up_type parameter) override { holder.event(parameter); }
-    bool event(typename gesture_traits::on_over_type parameter) override {
-      return holder.event(parameter);
+    void event(typename gesture_traits::on_up_type parameter, offset_type offset) override {
+      holder.event(parameter, offset);
     }
-    void event(typename gesture_traits::on_out_type parameter) override { holder.event(parameter); }
-    bool event(typename gesture_traits::on_double_type parameter) override {
-      return holder.event(parameter);
+    bool event(typename gesture_traits::on_over_type parameter, offset_type offset) override {
+      return holder.event(parameter, offset);
     }
-    bool event(typename gesture_traits::on_wheel_type parameter) override {
-      return holder.event(parameter);
+    void event(typename gesture_traits::on_out_type parameter, offset_type offset) override {
+      holder.event(parameter, offset);
+    }
+    bool event(typename gesture_traits::on_double_type parameter, offset_type offset) override {
+      return holder.event(parameter, offset);
+    }
+    bool event(typename gesture_traits::on_wheel_type parameter, offset_type offset) override {
+      return holder.event(parameter, offset);
     }
 
     void set_down(bool flag) override { holder.set_down(flag); }
     void set_over(bool flag) override { holder.set_over(flag); }
-    [[nodiscard]] bool on_downed() const override { return holder.on_downed(); }
-    [[nodiscard]] bool on_overed() const override { return holder.on_overed(); }
+    [[nodiscard]] bool is_downed() const override { return holder.is_downed(); }
+    [[nodiscard]] bool is_overed() const override { return holder.is_overed(); }
 
     void set_enabled(bool flag) override { holder.set_enabled(flag); }
     [[nodiscard]] bool is_enabled() const override { return holder.is_enabled(); }
@@ -77,6 +84,7 @@ public:
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = DrawContextType;
+  using offset_type = typename usagi::geometry::geometry_traits<value_type>::point_type;
   using gesture_parameter_type = GestureParameterType;
   using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
 
@@ -86,23 +94,37 @@ public:
   view(view &&) noexcept = default;
   view &operator=(view &&) noexcept = default;
 
-  void draw(draw_context_type &d) { holder->draw(d); }
+  void draw(draw_context_type &context, offset_type offset) { holder->draw(context, offset); }
 
   size_type bounds() const { return holder->bounds(); }
   rect_type frame() const { return holder->frame(); }
 
-  bool event(typename gesture_traits::on_down_type parameter) { return holder->event(parameter); }
-  void event(typename gesture_traits::on_drag_type parameter) { holder->event(parameter); }
-  void event(typename gesture_traits::on_up_type parameter) { holder->event(parameter); }
-  bool event(typename gesture_traits::on_over_type parameter) { return holder->event(parameter); }
-  void event(typename gesture_traits::on_out_type parameter) { holder->event(parameter); }
-  bool event(typename gesture_traits::on_double_type parameter) { return holder->event(parameter); }
-  bool event(typename gesture_traits::on_wheel_type parameter) { return holder->event(parameter); }
+  bool event(typename gesture_traits::on_down_type parameter, offset_type offset) {
+    return holder->event(parameter, offset);
+  }
+  void event(typename gesture_traits::on_drag_type parameter, offset_type offset) {
+    holder->event(parameter, offset);
+  }
+  void event(typename gesture_traits::on_up_type parameter, offset_type offset) {
+    holder->event(parameter, offset);
+  }
+  bool event(typename gesture_traits::on_over_type parameter, offset_type offset) {
+    return holder->event(parameter, offset);
+  }
+  void event(typename gesture_traits::on_out_type parameter, offset_type offset) {
+    holder->event(parameter, offset);
+  }
+  bool event(typename gesture_traits::on_double_type parameter, offset_type offset) {
+    return holder->event(parameter, offset);
+  }
+  bool event(typename gesture_traits::on_wheel_type parameter, offset_type offset) {
+    return holder->event(parameter, offset);
+  }
 
   void set_down(bool flag) { holder->set_down(flag); }
   void set_over(bool flag) { holder->set_over(flag); }
-  [[nodiscard]] bool on_downed() const { return holder->on_downed(); }
-  [[nodiscard]] bool on_overed() const { return holder->on_overed(); }
+  [[nodiscard]] bool is_downed() const { return holder->is_downed(); }
+  [[nodiscard]] bool is_overed() const { return holder->is_overed(); }
 
   void set_enabled(bool flag) { holder->set_enabled(flag); }
   [[nodiscard]] bool is_enabled() const { return holder->is_enabled(); }

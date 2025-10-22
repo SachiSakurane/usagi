@@ -16,14 +16,14 @@ private:
 
 template <usagi::concepts::arithmetic ValueType, class DrawContextType>
 struct SpecificView final
-    : usagi::ui::base_view<ValueType, DrawContextType,
-                           usagi::type::gesture_default_parameter<ValueType>> {
+    : usagi::ui::base_view<ValueType, DrawContextType, usagi::type::gesture_parameter<ValueType>> {
   using value_type = ValueType;
   using draw_context_type = DrawContextType;
+  using offset_type = typename usagi::geometry::geometry_traits<value_type>::point_type;
 
   explicit SpecificView(std::vector<int> &s) : stamp{s} {}
 
-  void draw(draw_context_type &c) override {
+  void draw(draw_context_type &c, offset_type offset) override {
     // 2
     stamp.emplace_back(2);
     c.tick();
@@ -38,13 +38,14 @@ using local_view_type = SpecificView<int, DrawContext>;
 
 TEST(SurfaceTest, SequentialCase) {
   std::vector<int> stamp;
-  auto s = usagi::ui::surface{local_view_type{stamp}, [&stamp](auto &context, const auto &) {
+  auto s = usagi::ui::surface{local_view_type{stamp},
+                              [&stamp](auto &context, auto offset, const auto &) {
                                 // 0
                                 stamp.emplace_back(0);
                                 context.tick();
                               }};
   auto context = DrawContext{stamp};
-  s.draw(context);
+  s.draw(context, typename local_view_type::offset_type{});
 
   // 0 が先に呼ばれているので surface に渡したラムダが先に到達していることがわかる
   ASSERT_EQ(stamp.size(), 4);
@@ -56,13 +57,14 @@ TEST(SurfaceTest, SequentialCase) {
 
 TEST(SurfaceTest, SurfacedCase) {
   std::vector<int> stamp;
-  auto s = local_view_type{stamp} | usagi::ui::surfaced([&stamp](auto &context, const auto &) {
+  auto s = local_view_type{stamp} |
+           usagi::ui::surfaced([&stamp](auto &context, auto offset, const auto &) {
              // 0
              stamp.emplace_back(0);
              context.tick();
            });
   auto context = DrawContext{stamp};
-  s.draw(context);
+  s.draw(context, typename local_view_type::offset_type{});
 
   // 0 が先に呼ばれているので surface に渡したラムダが先に到達していることがわかる
   ASSERT_EQ(stamp.size(), 4);

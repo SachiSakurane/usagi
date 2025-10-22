@@ -2,7 +2,7 @@
 
 #include <usagi/concepts/geometry.hpp>
 
-#include "SkRect.h"
+#include "include/core/SkRect.h"
 
 namespace usagi::wrapper::skia {
 

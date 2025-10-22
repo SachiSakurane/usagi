@@ -6,7 +6,7 @@
 
 namespace {
 struct DrawContext {};
-using GestureParameterType = usagi::type::gesture_default_parameter<float>;
+using GestureParameterType = usagi::type::gesture_parameter<float>;
 class SpecificView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
 public:
   SpecificView() = default;
@@ -54,5 +54,5 @@ TEST(ViewCommonTest, PredicationCase) {
 TEST(ViewCommonTest, DrawCase) {
   auto v = usagi::ui::make_view<SpecificView>();
   auto context = DrawContext{};
-  v.draw(context);
+  v.draw(context, typename SpecificView::offset_type{});
 }

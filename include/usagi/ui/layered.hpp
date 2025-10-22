@@ -14,6 +14,7 @@ struct layer {
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
   using draw_context_type = typename ViewType::draw_context_type;
+  using offset_type = typename ViewType::offset_type;
   using gesture_parameter_type = typename ViewType::gesture_parameter_type;
   using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
 
@@ -23,11 +24,11 @@ struct layer {
 
   explicit layer(ViewType &&v) : holder{std::move(v)} {}
 
-  virtual void draw(draw_context_type &context) {
+  virtual void draw(draw_context_type &context, offset_type offset) {
     for (auto &value : sub_views) {
       auto &child = value.second;
       if (child.is_enabled()) {
-        child.draw(context);
+        child.draw(context, offset + offset_type{child.frame().l(), child.frame().t()});
       }
     }
   }
@@ -35,14 +36,13 @@ struct layer {
   virtual size_type bounds() const { return holder.bounds(); }
   virtual rect_type frame() const { return holder.frame(); }
 
-  virtual bool event(typename gesture_traits::on_down_type parameter) {
+  virtual bool event(typename gesture_traits::on_down_type parameter, offset_type offset) {
     set_down(true);
-    auto point = point_type{parameter.x, parameter.y};
     for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
       auto &child = it->second;
-      if (child.is_enabled() && usagi::geometry::contain(child.frame(), point)) {
+      if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
         child.set_down(true);
-        if (child.event(parameter)) {
+        if (child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()})) {
           return true;
         }
       }
@@ -50,59 +50,58 @@ struct layer {
     return false;
   }
 
-  virtual void event(typename gesture_traits::on_drag_type parameter) {
+  virtual void event(typename gesture_traits::on_drag_type parameter, offset_type offset) {
     for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
       auto &child = it->second;
-      if (child.on_downed()) {
-        child.event(parameter);
+      if (child.is_downed()) {
+        child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()});
       }
     }
   }
 
-  virtual void event(typename gesture_traits::on_up_type parameter) {
+  virtual void event(typename gesture_traits::on_up_type parameter, offset_type offset) {
     set_down(false);
-    auto point = point_type{parameter.x, parameter.y};
     for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
       auto &child = it->second;
-      if (child.on_downed()) {
+      if (child.is_downed()) {
         child.set_down(false);
-        child.event(parameter);
+        child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()});
       }
     }
   }
 
   // ここに来るイベントは contain を想定する
-  virtual bool event(typename gesture_traits::on_over_type parameter) {
+  virtual bool event(typename gesture_traits::on_over_type parameter, offset_type offset) {
     set_over(true);
-    auto point = point_type{parameter.x, parameter.y};
     auto is_resolved = false;
     for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
       auto &child = it->second;
-      if (!is_resolved && child.is_enabled() && usagi::geometry::contain(child.frame(), point)) {
+      if (!is_resolved && child.is_enabled() &&
+          usagi::geometry::contain(child.frame(), parameter.position)) {
         child.set_over(true);
-        is_resolved = child.event(parameter);
-      } else if (child.on_overed() == true) {
+        is_resolved =
+            child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()});
+      } else if (child.is_overed() == true) {
         child.set_over(false);
-        child.event(typename gesture_traits::on_out_type{parameter});
+        child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()});
       }
     }
     return is_resolved;
   }
 
-  virtual void event(typename gesture_traits::on_out_type parameter) {
+  virtual void event(typename gesture_traits::on_out_type parameter, offset_type offset) {
     set_over(false);
     for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
       auto &child = it->second;
-      child.event(parameter);
+      child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()});
     }
   }
 
-  virtual bool event(typename gesture_traits::on_double_type parameter) {
-    auto point = point_type{parameter.x, parameter.y};
+  virtual bool event(typename gesture_traits::on_double_type parameter, offset_type offset) {
     for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
       auto &child = it->second;
-      if (child.is_enabled() && usagi::geometry::contain(child.frame(), point)) {
-        if (child.event(parameter)) {
+      if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
+        if (child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()})) {
           return true;
         }
       }
@@ -110,12 +109,11 @@ struct layer {
     return false;
   }
 
-  virtual bool event(typename gesture_traits::on_wheel_type parameter) {
-    auto point = point_type{parameter.x, parameter.y};
+  virtual bool event(typename gesture_traits::on_wheel_type parameter, offset_type offset) {
     for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
       auto &child = it->second;
-      if (child.is_enabled() && usagi::geometry::contain(child.frame(), point)) {
-        if (child.event(parameter)) {
+      if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
+        if (child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()})) {
           return true;
         }
       }
@@ -126,8 +124,8 @@ struct layer {
   virtual void set_down(bool flag) { holder.set_down(flag); }
   virtual void set_over(bool flag) { holder.set_over(flag); }
 
-  [[nodiscard]] virtual bool on_downed() const { return holder.on_downed(); }
-  [[nodiscard]] virtual bool on_overed() const { return holder.on_overed(); }
+  [[nodiscard]] virtual bool is_downed() const { return holder.is_downed(); }
+  [[nodiscard]] virtual bool is_overed() const { return holder.is_overed(); }
 
   virtual void set_enabled(bool flag) { holder.set_enabled(flag); }
   [[nodiscard]] virtual bool is_enabled() const { return holder.is_enabled(); }

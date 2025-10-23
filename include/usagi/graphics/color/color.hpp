@@ -36,6 +36,8 @@ private:
 template <usagi::concepts::floating_point FloatType>
 using float_color = basic_color<FloatType>;
 
+using color = basic_color<std::uint8_t>;
+
 template <usagi::concepts::arithmetic Type>
 struct variable_color {
   using value_type = typename usagi::variable_traits<Type>::value_type;

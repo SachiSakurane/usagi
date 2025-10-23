@@ -17,6 +17,10 @@ concept basic_color_concept = requires(ColorType &c) {
   { c.blue() } -> usagi::concepts::arithmetic;
 };
 
+template <class ByteSizeType>
+concept byte_color_concept = std::is_same_v<typename ByteSizeType::value_type, std::uint8_t> &&
+    basic_color_concept<ByteSizeType>;
+
 template <class FloatSizeType>
 concept float_color_concept = usagi::concepts::floating_point<typename FloatSizeType::value_type> &&
     basic_color_concept<FloatSizeType>;

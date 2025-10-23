@@ -18,7 +18,7 @@ struct gesture {
   struct on_drag : ParameterType {};
   struct on_up : ParameterType {};
   struct on_over : ParameterType {};
-  struct on_out {};
+  struct on_out : ParameterType {};
   struct on_double : ParameterType {};
   struct on_wheel : ParameterType {};
 };

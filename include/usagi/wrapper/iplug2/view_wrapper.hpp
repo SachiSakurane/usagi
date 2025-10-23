@@ -89,7 +89,10 @@ public:
   }
 
   void OnMouseOut() override {
-    local_view.event(iplug_traits::gesture_traits::on_out_type{}, iplug_traits::offset_type{});
+    local_view.event(iplug_traits::gesture_traits::on_out_type{usagi::geometry::point<float>{}, 0.f,
+                                                               false, false, false, false, false,
+                                                               make_igraphic_control()},
+                     iplug_traits::offset_type{});
     IControl::OnMouseOut();
   }
 

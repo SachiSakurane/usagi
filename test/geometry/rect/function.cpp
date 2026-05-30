@@ -44,6 +44,11 @@ TEST(RectFunctionTest, FromCase) {
     auto rr = usagi::geometry::from_height(r, 42.f);
     ASSERT_EQ(rr.size().height(), 42.f);
   }
+  {
+    auto rr = usagi::geometry::from_size(r, 10.f, 8.f);
+    ASSERT_EQ(rr, (usagi::geometry::rect<float>{17.f, 10.f, 27.f, 18.f}));
+    ASSERT_EQ(rr.center(), r.center());
+  }
 }
 
 TEST(RectFunctionTest, ReduceFromCase) {
@@ -81,7 +86,10 @@ TEST(RectFunctionTest, ReduceFromCase) {
 TEST(RectFunctionTest, ContainCase) {
   usagi::geometry::rect<float> a{0.f, 0.f, 42.f, 42.f};
   ASSERT_TRUE(usagi::geometry::contain(a, usagi::geometry::point<float>{3.f, 4.f}));
+  ASSERT_TRUE(usagi::geometry::contain(a, usagi::geometry::point<float>{0.f, 0.f}));
+  ASSERT_TRUE(usagi::geometry::contain(a, usagi::geometry::point<float>{42.f, 42.f}));
   ASSERT_FALSE(usagi::geometry::contain(a, usagi::geometry::point<float>{-3.f, 4.f}));
+  ASSERT_FALSE(usagi::geometry::contain(a, usagi::geometry::point<float>{3.f, 43.f}));
 }
 
 TEST(RectFunctionTest, PaddingCase) {
@@ -94,12 +102,30 @@ TEST(RectFunctionTest, PaddingCase) {
   }
   {
     usagi::geometry::rect<float> a{0.f, 0.f, 42.f, 42.f};
+    ASSERT_EQ(usagi::geometry::padding(a, 4.f, 8.f),
+              (usagi::geometry::rect<float>{8.f, 4.f, 34.f, 38.f}));
+    ASSERT_EQ(usagi::geometry::padding(a, 30.f, 4.f),
+              (usagi::geometry::rect<float>{4.f, 21.f, 38.f, 21.f}));
+  }
+  {
+    usagi::geometry::rect<float> a{0.f, 0.f, 42.f, 42.f};
+    ASSERT_EQ(usagi::geometry::padding(a, 2.f, 4.f, 6.f),
+              (usagi::geometry::rect<float>{4.f, 2.f, 38.f, 36.f}));
+    ASSERT_EQ(usagi::geometry::padding(a, 30.f, 4.f, 20.f),
+              (usagi::geometry::rect<float>{4.f, 26.f, 38.f, 26.f}));
+  }
+  {
+    usagi::geometry::rect<float> a{0.f, 0.f, 42.f, 42.f};
     ASSERT_EQ(usagi::geometry::padding_width(a, 16.f),
               (usagi::geometry::rect<float>{16.f, 0.f, 26.f, 42.f}));
+    ASSERT_EQ(usagi::geometry::padding_width(a, 30.f),
+              (usagi::geometry::rect<float>{21.f, 0.f, 21.f, 42.f}));
   }
   {
     usagi::geometry::rect<float> a{0.f, 0.f, 42.f, 42.f};
     ASSERT_EQ(usagi::geometry::padding_height(a, 16.f),
               (usagi::geometry::rect<float>{0.f, 16.f, 42.f, 26.f}));
+    ASSERT_EQ(usagi::geometry::padding_height(a, 30.f),
+              (usagi::geometry::rect<float>{0.f, 21.f, 42.f, 21.f}));
   }
 }

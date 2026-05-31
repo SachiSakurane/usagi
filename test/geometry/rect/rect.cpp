@@ -67,6 +67,19 @@ TEST(RectTest, ConstructorCase) {
     side = 20;
     ASSERT_EQ(r.r(), 20.f);
   }
+
+  {
+    float right = 42.f;
+    float bottom = 24.f;
+    auto r{usagi::geometry::variable_rect<float>{
+        [&right, &bottom]() { return std::make_tuple(2.f, 4.f, right, bottom); }}};
+    ASSERT_EQ(r.size(), (usagi::geometry::size<float>{40.f, 20.f}));
+    ASSERT_EQ(r.center(), (usagi::geometry::point<float>{22.f, 14.f}));
+    right = 20.f;
+    bottom = 12.f;
+    ASSERT_EQ(r.size(), (usagi::geometry::size<float>{18.f, 8.f}));
+    ASSERT_EQ(r.center(), (usagi::geometry::point<float>{11.f, 8.f}));
+  }
 }
 
 TEST(RectTest, BindCase) {

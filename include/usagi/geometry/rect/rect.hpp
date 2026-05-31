@@ -67,8 +67,8 @@ public:
   using value_type = typename usagi::variable_traits<Type>::value_type;
   using pair_type = usagi::tuple::mono_t<value_type, 4>;
   using variable_type = typename usagi::variable_traits<pair_type>::variable_type;
-  using size_type = geometry::size<value_type>;
-  using point_type = geometry::point<value_type>;
+  using size_type = geometry::variable_size<value_type>;
+  using point_type = geometry::variable_point<value_type>;
 
   constexpr variable_rect() : functor{} {}
   constexpr explicit variable_rect(variable_type v) : functor{v} {}
@@ -98,17 +98,18 @@ public:
   }
 
   size_type size() const {
-    return size_type{[f = this->functor]() { return std::get<2>(f()) - std::get<0>(f()); },
-                     [f = this->functor]() { return std::get<3>(f()) - std::get<1>(f()); }};
+    return size_type{[f = this->functor]() {
+      auto [l, t, r, b] = f();
+      return std::make_tuple(r - l, b - t);
+    }};
   }
 
   point_type center() const {
     return point_type{[f = this->functor]() {
-                        return (std::get<2>(f()) + std::get<0>(f())) / static_cast<value_type>(2);
-                      },
-                      [f = this->functor]() {
-                        return (std::get<3>(f()) + std::get<1>(f())) / static_cast<value_type>(2);
-                      }};
+      auto [l, t, r, b] = f();
+      return std::make_tuple((r + l) / static_cast<value_type>(2),
+                             (b + t) / static_cast<value_type>(2));
+    }};
   }
 
   usagi::tuple::mono_t<value_type, 4> operator()() const {

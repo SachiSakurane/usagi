@@ -12,3 +12,12 @@ draw_context_type &, offset_type, const ViewType &
 Do not require mutable access to the wrapped view from an `on_draw` callback.
 If a behavior needs to mutate view state, model it outside the surface draw
 handler path.
+
+## View Moved-From State
+
+`usagi::ui::view` is a non-null owning handle during normal use. A moved-from
+`view` may be empty; only destruction, assignment, and `operator bool()` are
+valid on a moved-from `view`.
+
+Do not call `draw`, `event`, `bounds`, `frame`, state accessors, or mutators on
+a moved-from `view`.

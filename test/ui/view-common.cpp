@@ -27,6 +27,14 @@ TEST(ViewCommonTest, ConstructMoveCase) {
   ASSERT_TRUE(static_cast<bool>(vv));
 }
 
+TEST(ViewCommonTest, MoveLeavesSourceEmptyCase) {
+  auto source = usagi::ui::make_view<SpecificView>();
+  auto moved = std::move(source);
+
+  ASSERT_FALSE(static_cast<bool>(source));
+  ASSERT_TRUE(static_cast<bool>(moved));
+}
+
 TEST(ViewCommonTest, CommonCase) {
   auto v = usagi::ui::make_view<SpecificView>();
   ASSERT_TRUE(v.is_enabled());

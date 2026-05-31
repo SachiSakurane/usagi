@@ -20,12 +20,12 @@ template <class HandlerType>
 inline constexpr bool is_gesture_handler_v =
     is_gesture_handler<std::remove_cvref_t<HandlerType>>::value;
 
+namespace detail {
 template <class HandlerType, class Tag>
 concept gesture_handler_for =
     is_gesture_handler_v<HandlerType> &&
     std::same_as<typename std::remove_cvref_t<HandlerType>::tag_type, Tag>;
 
-namespace detail {
 template <class HandlerType, class Tag, class ReturnType, class... Args>
 consteval bool tagged_gesture_func_requirement_impl() {
   if constexpr (!gesture_handler_for<HandlerType, Tag>) {

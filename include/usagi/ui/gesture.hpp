@@ -12,7 +12,7 @@ namespace usagi::ui {
 namespace detail {
   template <class Tag, class HandlerType, class... Args>
   constexpr bool invoke_consumable_handler(HandlerType &handler, Args &&...args) {
-    if constexpr (usagi::concepts::ui::gesture_handler_for<HandlerType, Tag>) {
+    if constexpr (usagi::concepts::ui::detail::gesture_handler_for<HandlerType, Tag>) {
       return handler.func(std::forward<Args>(args)...);
     } else {
       return false;
@@ -21,7 +21,7 @@ namespace detail {
 
   template <class Tag, class HandlerType, class... Args>
   constexpr void invoke_nonconsumable_handler(HandlerType &handler, Args &&...args) {
-    if constexpr (usagi::concepts::ui::gesture_handler_for<HandlerType, Tag>) {
+    if constexpr (usagi::concepts::ui::detail::gesture_handler_for<HandlerType, Tag>) {
       handler.func(std::forward<Args>(args)...);
     }
   }
@@ -47,15 +47,15 @@ namespace detail {
         },
         handlers);
   }
+
+  template <class TupleType>
+  struct gesture_holder {
+    TupleType elem;
+  };
+
+  template <class TupleType>
+  gesture_holder(TupleType &&) -> gesture_holder<TupleType>;
 } // namespace detail
-
-template <class TupleType>
-struct gesture_holder {
-  TupleType elem;
-};
-
-template <class TupleType>
-gesture_holder(TupleType &&) -> gesture_holder<TupleType>;
 
 template <usagi::concepts::ui::viewable ViewType, class TupleType>
 struct gesture {
@@ -140,13 +140,15 @@ private:
 
 template <usagi::concepts::ui::viewable ViewType,
           usagi::concepts::ui::gesture_tuple_requirement<ViewType> TupleType>
-inline constexpr decltype(auto) operator|(ViewType &&v, gesture_holder<TupleType> &&wrapped) {
+inline constexpr decltype(auto) operator|(ViewType &&v,
+                                          detail::gesture_holder<TupleType> &&wrapped) {
   return gesture<ViewType, TupleType>{std::forward<ViewType>(v),
-                                      std::forward<gesture_holder<TupleType>>(wrapped).elem};
+                                      std::forward<detail::gesture_holder<TupleType>>(wrapped)
+                                          .elem};
 }
 
 template <class... FunctionTypes>
 inline constexpr decltype(auto) gestured(FunctionTypes &&...funcs) {
-  return gesture_holder{std::make_tuple(std::forward<FunctionTypes>(funcs)...)};
+  return detail::gesture_holder{std::make_tuple(std::forward<FunctionTypes>(funcs)...)};
 }
 } // namespace usagi::ui

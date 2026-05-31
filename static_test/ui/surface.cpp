@@ -36,8 +36,21 @@ struct MoveOnlyFunctor final {
   }
 };
 
+struct MutableViewFunctor final {
+  constexpr void operator()(typename base_view::draw_context_type &d,
+                            typename base_view::offset_type offset, base_view &) {
+    d.tick();
+  }
+};
+
+template <class HandlerType>
+concept surfaceable = requires {
+  typename usagi::ui::surface<base_view, HandlerType>;
+};
+
 static_assert(usagi::concepts::ui::viewable<
               usagi::ui::surface<base_view, decltype(usagi::ui::on_draw(ContextFunctor{}))>>);
+static_assert(!surfaceable<decltype(usagi::ui::on_draw(MutableViewFunctor{}))>);
 static_assert([]() consteval {
   usagi::ui::surface s{base_view{}, usagi::ui::on_draw(ContextFunctor{})};
   int x{0};

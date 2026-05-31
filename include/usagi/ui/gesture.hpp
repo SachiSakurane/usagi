@@ -58,13 +58,6 @@ template <class TupleType>
 gesture_holder(TupleType &&) -> gesture_holder<TupleType>;
 
 template <usagi::concepts::ui::viewable ViewType, class TupleType>
-struct gestures {
-  explicit constexpr gestures(TupleType t) : handlers{std::move(t)} {}
-
-  TupleType handlers;
-};
-
-template <usagi::concepts::ui::viewable ViewType, class TupleType>
 struct gesture {
   using value_type = typename ViewType::value_type;
   using point_type = typename usagi::geometry::geometry_traits<value_type>::point_type;
@@ -75,7 +68,8 @@ struct gesture {
   using gesture_parameter_type = typename ViewType::gesture_parameter_type;
   using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
 
-  gesture(ViewType &&v, TupleType &&t) : holder{std::move(v)}, g{std::forward<TupleType>(t)} {}
+  gesture(ViewType &&v, TupleType &&t)
+      : holder{std::move(v)}, handlers{std::forward<TupleType>(t)} {}
 
   void draw(draw_context_type &context, offset_type offset) { holder.draw(context, offset); }
 
@@ -83,7 +77,7 @@ struct gesture {
   rect_type frame() const { return holder.frame(); }
 
   bool event(typename gesture_traits::on_down_type parameter, offset_type offset) {
-    if (detail::invoke_consumable_handlers<detail::on_down_tag>(g.handlers, parameter, offset,
+    if (detail::invoke_consumable_handlers<detail::on_down_tag>(handlers, parameter, offset,
                                                                 holder)) {
       return true;
     }
@@ -91,18 +85,18 @@ struct gesture {
   }
 
   void event(typename gesture_traits::on_drag_type parameter, offset_type offset) {
-    detail::invoke_nonconsumable_handlers<detail::on_drag_tag>(g.handlers, parameter, offset,
+    detail::invoke_nonconsumable_handlers<detail::on_drag_tag>(handlers, parameter, offset,
                                                                holder);
     holder.event(parameter, offset);
   }
 
   void event(typename gesture_traits::on_up_type parameter, offset_type offset) {
-    detail::invoke_nonconsumable_handlers<detail::on_up_tag>(g.handlers, parameter, offset, holder);
+    detail::invoke_nonconsumable_handlers<detail::on_up_tag>(handlers, parameter, offset, holder);
     holder.event(parameter, offset);
   }
 
   bool event(typename gesture_traits::on_over_type parameter, offset_type offset) {
-    if (detail::invoke_consumable_handlers<detail::on_over_tag>(g.handlers, parameter, offset,
+    if (detail::invoke_consumable_handlers<detail::on_over_tag>(handlers, parameter, offset,
                                                                 holder)) {
       return true;
     }
@@ -110,13 +104,13 @@ struct gesture {
   }
 
   void event(typename gesture_traits::on_out_type parameter, offset_type offset) {
-    detail::invoke_nonconsumable_handlers<detail::on_out_tag>(g.handlers, parameter, offset,
+    detail::invoke_nonconsumable_handlers<detail::on_out_tag>(handlers, parameter, offset,
                                                               holder);
     holder.event(parameter, offset);
   }
 
   bool event(typename gesture_traits::on_double_type parameter, offset_type offset) {
-    if (detail::invoke_consumable_handlers<detail::on_double_tag>(g.handlers, parameter, offset,
+    if (detail::invoke_consumable_handlers<detail::on_double_tag>(handlers, parameter, offset,
                                                                   holder)) {
       return true;
     }
@@ -124,7 +118,7 @@ struct gesture {
   }
 
   bool event(typename gesture_traits::on_wheel_type parameter, offset_type offset) {
-    if (detail::invoke_consumable_handlers<detail::on_wheel_tag>(g.handlers, parameter, offset,
+    if (detail::invoke_consumable_handlers<detail::on_wheel_tag>(handlers, parameter, offset,
                                                                  holder)) {
       return true;
     }
@@ -141,7 +135,7 @@ struct gesture {
 
 private:
   ViewType holder;
-  gestures<ViewType, TupleType> g;
+  TupleType handlers;
 };
 
 template <usagi::concepts::ui::viewable ViewType,

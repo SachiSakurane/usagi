@@ -167,7 +167,8 @@ public:
     return holder->is_enabled();
   }
 
-  explicit operator bool() const { return holder.operator bool(); }
+  [[nodiscard]] bool has_view() const { return holder.operator bool(); }
+  explicit operator bool() const { return has_view(); }
 
 private:
   std::unique_ptr<base_view_type> holder;

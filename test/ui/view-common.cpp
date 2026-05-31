@@ -18,6 +18,7 @@ public:
 
 TEST(ViewCommonTest, MakeCase) {
   auto v = usagi::ui::make_view<SpecificView>();
+  ASSERT_TRUE(v.has_view());
   ASSERT_TRUE(static_cast<bool>(v));
 }
 
@@ -31,7 +32,9 @@ TEST(ViewCommonTest, MoveLeavesSourceEmptyCase) {
   auto source = usagi::ui::make_view<SpecificView>();
   auto moved = std::move(source);
 
+  ASSERT_FALSE(source.has_view());
   ASSERT_FALSE(static_cast<bool>(source));
+  ASSERT_TRUE(moved.has_view());
   ASSERT_TRUE(static_cast<bool>(moved));
 }
 
@@ -50,6 +53,7 @@ TEST(ViewCommonTest, BoundsCase) {
 
 TEST(ViewCommonTest, PredicationCase) {
   auto v = usagi::ui::make_view<SpecificView>();
+  ASSERT_TRUE(v.has_view());
   ASSERT_TRUE(static_cast<bool>(v));
 }
 

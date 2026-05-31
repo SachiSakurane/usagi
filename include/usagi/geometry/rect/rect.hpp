@@ -45,6 +45,10 @@ public:
     return {l(), t(), r(), b()};
   }
 
+  constexpr rect<value_type> duplicate() const {
+    return rect<value_type>{left, top, right, bottom};
+  }
+
 private:
   value_type left, top, right, bottom;
 };

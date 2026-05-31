@@ -6,12 +6,22 @@
 
 TEST(GeometryAlgorithmTest, DuplicateCase) {
   {
+    usagi::geometry::point<float> p{42.f, 24.f};
+    auto c = usagi::geometry::duplicate(p);
+    ASSERT_EQ(p, c);
+  }
+  {
     float side = 42.f;
     usagi::geometry::variable_point<float> p{[&side]() { return std::make_tuple(42.f, side); }};
     auto c = usagi::geometry::duplicate(p);
     ASSERT_EQ(p, c);
     side = 10.f;
     ASSERT_NE(p, c);
+  }
+  {
+    usagi::geometry::size<float> s{42.f, 24.f};
+    auto c = usagi::geometry::duplicate(s);
+    ASSERT_EQ(s, c);
   }
   {
     float height = 24.f;
@@ -21,6 +31,11 @@ TEST(GeometryAlgorithmTest, DuplicateCase) {
     ASSERT_EQ(s, c);
     height = 12.f;
     ASSERT_NE(s, c);
+  }
+  {
+    usagi::geometry::rect<float> r{2.f, 4.f, 42.f, 24.f};
+    auto c = usagi::geometry::duplicate(r);
+    ASSERT_EQ(r, c);
   }
   {
     float right = 42.f;

@@ -20,6 +20,8 @@ struct point {
 
   constexpr usagi::tuple::mono_t<value_type, 2> operator()() const { return {x_, y_}; }
 
+  constexpr point<value_type> duplicate() const { return point<value_type>{x_, y_}; }
+
 private:
   value_type x_, y_;
 };

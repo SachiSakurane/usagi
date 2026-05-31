@@ -27,6 +27,8 @@ struct size {
     return {width_, height_};
   }
 
+  constexpr size<value_type> duplicate() const { return size<value_type>{width_, height_}; }
+
 private:
   value_type width_, height_;
 };

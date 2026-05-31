@@ -17,3 +17,11 @@ TEST(SizeOperatorTest, AuthmeticCase) {
   ASSERT_EQ(s1 / 2.f, (usagi::geometry::size<float>{20.f, 20.f}));
   ASSERT_EQ(2.f / s1, (usagi::geometry::size<float>{0.05f, 0.05f}));
 }
+
+#ifndef NDEBUG
+TEST(SizeOperatorTest, DivideByZeroCase) {
+  ASSERT_DEATH((void)(2.f / usagi::geometry::size<float>{0.f, 2.f}), "");
+  ASSERT_DEATH((void)(2.f / usagi::geometry::size<float>{2.f, 0.f}), "");
+  ASSERT_DEATH((void)(usagi::geometry::size<float>{2.f, 2.f} / 0.f), "");
+}
+#endif

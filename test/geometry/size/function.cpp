@@ -11,3 +11,10 @@ TEST(SizeFunctionTest, AspectRatio) {
     ASSERT_EQ(usagi::geometry::aspect_ratio(s), 0.5f);
   }
 }
+
+#ifndef NDEBUG
+TEST(SizeFunctionTest, ZeroHeightAspectRatioCase) {
+  usagi::geometry::size<float> s{2.f, 0.f};
+  ASSERT_DEATH((void)usagi::geometry::aspect_ratio(s), "");
+}
+#endif

@@ -12,7 +12,7 @@
 
 namespace usagi::ui {
 template <usagi::concepts::ui::viewable ViewType>
-struct layer {
+struct view_stack {
   using value_type = typename ViewType::value_type;
   using point_type = typename usagi::geometry::geometry_traits<value_type>::point_type;
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
@@ -22,17 +22,15 @@ struct layer {
   using gesture_parameter_type = typename ViewType::gesture_parameter_type;
   using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
 
-  using sub_view_type = usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;
-  using sub_view_key_type = size_t;
-  using sub_view_map_type = std::map<sub_view_key_type, sub_view_type>;
-  using children_key_type = sub_view_key_type;
-  using children_mapped_type = sub_view_type;
-  using children_value_type = typename sub_view_map_type::value_type;
+  using child_view_type = usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;
+  using child_view_key_type = size_t;
+  using child_view_map_type = std::map<child_view_key_type, child_view_type>;
+  using child_view_value_type = typename child_view_map_type::value_type;
 
-  explicit layer(ViewType &&v) : holder{std::move(v)} {}
+  explicit view_stack(ViewType &&v) : holder{std::move(v)} {}
 
   virtual void draw(draw_context_type &context, offset_type offset) {
-    for (auto &value : sub_views) {
+    for (auto &value : child_views) {
       auto &child = value.second;
       if (child.is_enabled()) {
         child.draw(context, offset + offset_type{child.frame().l(), child.frame().t()});
@@ -45,7 +43,7 @@ struct layer {
 
   virtual bool event(typename gesture_traits::on_down_type parameter, offset_type offset) {
     set_down(true);
-    for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
+    for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
         child.set_down(true);
@@ -58,7 +56,7 @@ struct layer {
   }
 
   virtual void event(typename gesture_traits::on_drag_type parameter, offset_type offset) {
-    for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
+    for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
       if (child.is_downed()) {
         child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()});
@@ -68,7 +66,7 @@ struct layer {
 
   virtual void event(typename gesture_traits::on_up_type parameter, offset_type offset) {
     set_down(false);
-    for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
+    for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
       if (child.is_downed()) {
         child.set_down(false);
@@ -81,7 +79,7 @@ struct layer {
   virtual bool event(typename gesture_traits::on_over_type parameter, offset_type offset) {
     set_over(true);
     auto is_resolved = false;
-    for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
+    for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
       if (!is_resolved && child.is_enabled() &&
           usagi::geometry::contain(child.frame(), parameter.position)) {
@@ -98,14 +96,14 @@ struct layer {
 
   virtual void event(typename gesture_traits::on_out_type parameter, offset_type offset) {
     set_over(false);
-    for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
+    for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
       child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()});
     }
   }
 
   virtual bool event(typename gesture_traits::on_double_type parameter, offset_type offset) {
-    for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
+    for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
         if (child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()})) {
@@ -117,7 +115,7 @@ struct layer {
   }
 
   virtual bool event(typename gesture_traits::on_wheel_type parameter, offset_type offset) {
-    for (auto it = std::rbegin(sub_views); it != std::rend(sub_views); ++it) {
+    for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
         if (child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()})) {
@@ -137,32 +135,32 @@ struct layer {
   virtual void set_enabled(bool flag) { holder.set_enabled(flag); }
   [[nodiscard]] virtual bool is_enabled() const { return holder.is_enabled(); }
 
-  typename sub_view_map_type::value_type &add_sub_view(sub_view_type &&sub_view) {
+  child_view_value_type &add_child_view(child_view_type &&child_view) {
     const auto current_index = children_next_index;
     children_next_index += 1;
-    return *sub_views.try_emplace(std::end(sub_views), current_index,
-                                  std::forward<sub_view_type>(sub_view));
+    return *child_views.try_emplace(std::end(child_views), current_index,
+                                    std::forward<child_view_type>(child_view));
   }
 
-  typename sub_view_map_type::mapped_type &get_sub_view(sub_view_key_type index) {
-    assert(sub_views.find(index) != std::end(sub_views));
-    return sub_views.at(index);
+  typename child_view_map_type::mapped_type &get_child_view(child_view_key_type index) {
+    assert(child_views.find(index) != std::end(child_views));
+    return child_views.at(index);
   }
 
-  bool remove_sub_view(sub_view_key_type index) {
-    if (auto it = sub_views.find(index); it != std::end(sub_views)) {
-      sub_views.erase(it);
+  bool remove_child_view(child_view_key_type index) {
+    if (auto it = child_views.find(index); it != std::end(child_views)) {
+      child_views.erase(it);
       return true;
     }
     return false;
   }
 
-  [[nodiscard]] size_t sub_view_size() const { return sub_views.size(); }
+  [[nodiscard]] size_t child_view_size() const { return child_views.size(); }
 
 private:
   ViewType holder;
   size_t children_next_index{0};
-  sub_view_map_type sub_views;
+  child_view_map_type child_views;
 };
 
 } // namespace usagi::ui

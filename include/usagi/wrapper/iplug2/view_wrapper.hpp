@@ -6,8 +6,8 @@
 #include <usagi/concepts/arithmetic.hpp>
 #include <usagi/type/gesture.hpp>
 #include <usagi/ui/base_view.hpp>
-#include <usagi/ui/layered.hpp>
 #include <usagi/ui/view.hpp>
+#include <usagi/ui/view_stack.hpp>
 
 namespace usagi::wrapper::iplug2 {
 
@@ -122,7 +122,7 @@ public:
   }
 
 protected:
-  usagi::ui::layer<iplug_traits::view_type> local_view;
+  usagi::ui::view_stack<iplug_traits::view_type> local_view;
 
   std::optional<std::function<void(std::string)>> text_entry_completed{std::nullopt};
 

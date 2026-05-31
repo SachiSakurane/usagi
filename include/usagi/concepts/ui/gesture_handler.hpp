@@ -25,6 +25,7 @@ concept gesture_handler_for =
     is_gesture_handler_v<HandlerType> &&
     std::same_as<typename std::remove_cvref_t<HandlerType>::tag_type, Tag>;
 
+namespace detail {
 template <class HandlerType, class Tag, class ReturnType, class... Args>
 consteval bool tagged_gesture_func_requirement_impl() {
   if constexpr (!gesture_handler_for<HandlerType, Tag>) {
@@ -77,9 +78,10 @@ template <class TupleType, usagi::concepts::ui::viewable ViewType, std::size_t..
 consteval bool apply_tuple_requirement(std::index_sequence<Sequence...>) {
   return gesture_handler_requirement<ViewType, std::tuple_element_t<Sequence, TupleType>...>();
 }
+} // namespace detail
 
 template <class TupleType, class ViewType>
 concept gesture_tuple_requirement = usagi::concepts::ui::viewable<ViewType> &&
-                                    apply_tuple_requirement<TupleType, ViewType>(
+                                    detail::apply_tuple_requirement<TupleType, ViewType>(
                                         std::make_index_sequence<std::tuple_size_v<TupleType>>());
 } // namespace usagi::concepts::ui

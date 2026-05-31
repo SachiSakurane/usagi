@@ -174,14 +174,6 @@ private:
   std::unique_ptr<base_view_type> holder;
 };
 
-template <usagi::concepts::ui::viewable ViewType>
-view(const ViewType &) -> view<typename ViewType::value_type, typename ViewType::draw_context_type,
-                               typename ViewType::gesture_parameter_type>;
-
-template <usagi::concepts::ui::viewable ViewType>
-view(ViewType &&) -> view<typename ViewType::value_type, typename ViewType::draw_context_type,
-                          typename ViewType::gesture_parameter_type>;
-
 template <usagi::concepts::ui::viewable ViewType, class... Args>
 inline decltype(auto) make_view(Args &&...args) {
   return usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type,

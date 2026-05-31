@@ -17,8 +17,6 @@ class view;
 namespace usagi::concepts::ui {
 /**
  * view を表現可能かどうか
- *
- * TODO: affine の必要性について考える(view として持つ必要性がなさそうに思える)
  */
 template <class ViewType>
 concept viewable = requires(ViewType &v) {

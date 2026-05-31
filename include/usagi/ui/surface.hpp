@@ -75,18 +75,6 @@ inline constexpr decltype(auto) operator|(ViewType &&v,
   return surface{std::forward<ViewType>(v), std::move(holder).func};
 }
 
-/**
- * Adapter for wrapping the surface
- *
- * @tparam FunctionType must be able to execute a function with
- * @code
- * invocable&lt;FunctionType, typename ViewType::draw_context_type &, const ViewType &&gt;
- * @endcode
- * as arguments.
- *
- * @param func to be wrapped by surface
- * @return surface_wrapper
- */
 template <usagi::concepts::ui::draw_handler HandlerType>
 inline constexpr decltype(auto) surfaced(HandlerType &&handler) {
   return detail::surface_holder<std::decay_t<HandlerType>>{std::forward<HandlerType>(handler)};

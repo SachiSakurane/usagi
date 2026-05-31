@@ -1,6 +1,7 @@
 #include <vector>
 
 #include <usagi/ui/surface.hpp>
+#include <usagi/ui/base_view.hpp>
 #include <usagi/ui/view.hpp>
 
 namespace {

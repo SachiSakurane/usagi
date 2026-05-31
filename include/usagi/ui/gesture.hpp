@@ -118,7 +118,7 @@ struct gesture {
   template <class TupleType>
   gesture(ViewType &&v, TupleType &&t) : holder{std::move(v)}, g{std::forward<TupleType>(t)} {}
 
-  void draw(draw_context_type &context) { holder.draw(context); }
+  void draw(draw_context_type &context, offset_type offset) { holder.draw(context, offset); }
 
   size_type bounds() const { return holder.bounds(); }
   rect_type frame() const { return holder.frame(); }

@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <usagi/type/gesture.hpp>
+#include <usagi/ui/base_view.hpp>
 #include <usagi/ui/gesture.hpp>
 #include <usagi/ui/view.hpp>
 

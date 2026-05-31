@@ -1,6 +1,7 @@
 #include <vector>
 
 #include <gtest/gtest.h>
+#include <usagi/ui/base_view.hpp>
 #include <usagi/ui/surface.hpp>
 #include <usagi/ui/view.hpp>
 

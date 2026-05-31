@@ -1,10 +1,12 @@
 #pragma once
 
+#include <cassert>
+#include <cstddef>
 #include <map>
-#include <tuple>
 
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry.hpp>
+#include <usagi/ui/view.hpp>
 
 namespace usagi::ui {
 template <usagi::concepts::ui::viewable ViewType>
@@ -21,6 +23,9 @@ struct layer {
   using sub_view_type = usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;
   using sub_view_key_type = size_t;
   using sub_view_map_type = std::map<sub_view_key_type, sub_view_type>;
+  using children_key_type = sub_view_key_type;
+  using children_mapped_type = sub_view_type;
+  using children_value_type = typename sub_view_map_type::value_type;
 
   explicit layer(ViewType &&v) : holder{std::move(v)} {}
 

@@ -1,27 +1,31 @@
 #pragma once
 
+#include <cassert>
 #include <iterator>
 #include <memory>
 
-#include <usagi/ui/base_view.hpp>
+#include <usagi/concepts/ui/viewable.hpp>
+#include <usagi/ui/view_interface.hpp>
 
 namespace usagi::ui {
 namespace detail {
   template <usagi::concepts::ui::viewable ViewType>
-  class view_holder final : public usagi::ui::base_view<typename ViewType::value_type,
-                                                        typename ViewType::draw_context_type,
-                                                        typename ViewType::gesture_parameter_type> {
-    using base_view_type = typename usagi::ui::base_view<typename ViewType::value_type,
-                                                         typename ViewType::draw_context_type,
-                                                         typename ViewType::gesture_parameter_type>;
+  class view_holder final
+      : public usagi::ui::view_interface<typename ViewType::value_type,
+                                         typename ViewType::draw_context_type,
+                                         typename ViewType::gesture_parameter_type> {
+    using view_interface_type =
+        typename usagi::ui::view_interface<typename ViewType::value_type,
+                                           typename ViewType::draw_context_type,
+                                           typename ViewType::gesture_parameter_type>;
 
   public:
-    using rect_type = typename base_view_type::rect_type;
-    using size_type = typename base_view_type::size_type;
-    using draw_context_type = typename base_view_type::draw_context_type;
-    using offset_type = typename base_view_type::offset_type;
-    using gesture_parameter_type = typename base_view_type::gesture_parameter_type;
-    using gesture_traits = typename base_view_type::gesture_traits;
+    using rect_type = typename view_interface_type::rect_type;
+    using size_type = typename view_interface_type::size_type;
+    using draw_context_type = typename view_interface_type::draw_context_type;
+    using offset_type = typename view_interface_type::offset_type;
+    using gesture_parameter_type = typename view_interface_type::gesture_parameter_type;
+    using gesture_traits = typename view_interface_type::gesture_traits;
 
     view_holder() = default;
 
@@ -76,7 +80,7 @@ namespace detail {
 template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
 class view final {
   using base_view_type =
-      typename usagi::ui::base_view<ValueType, DrawContextType, GestureParameterType>;
+      usagi::ui::view_interface<ValueType, DrawContextType, GestureParameterType>;
 
 public:
   using value_type = ValueType;
@@ -88,51 +92,85 @@ public:
   using gesture_parameter_type = GestureParameterType;
   using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
 
-  constexpr view() = default;
-  explicit view(std::unique_ptr<base_view_type> &&v) : holder{std::move(v)} {}
+  view() = delete;
+  explicit view(std::unique_ptr<base_view_type> &&v) : holder{std::move(v)} { assert(holder); }
 
   view(view &&) noexcept = default;
   view &operator=(view &&) noexcept = default;
 
-  void draw(draw_context_type &context, offset_type offset) { holder->draw(context, offset); }
+  void draw(draw_context_type &context, offset_type offset) {
+    assert(holder);
+    holder->draw(context, offset);
+  }
 
-  size_type bounds() const { return holder->bounds(); }
-  rect_type frame() const { return holder->frame(); }
+  size_type bounds() const {
+    assert(holder);
+    return holder->bounds();
+  }
+  rect_type frame() const {
+    assert(holder);
+    return holder->frame();
+  }
 
   bool event(typename gesture_traits::on_down_type parameter, offset_type offset) {
+    assert(holder);
     return holder->event(parameter, offset);
   }
   void event(typename gesture_traits::on_drag_type parameter, offset_type offset) {
+    assert(holder);
     holder->event(parameter, offset);
   }
   void event(typename gesture_traits::on_up_type parameter, offset_type offset) {
+    assert(holder);
     holder->event(parameter, offset);
   }
   bool event(typename gesture_traits::on_over_type parameter, offset_type offset) {
+    assert(holder);
     return holder->event(parameter, offset);
   }
   void event(typename gesture_traits::on_out_type parameter, offset_type offset) {
+    assert(holder);
     holder->event(parameter, offset);
   }
   bool event(typename gesture_traits::on_double_type parameter, offset_type offset) {
+    assert(holder);
     return holder->event(parameter, offset);
   }
   bool event(typename gesture_traits::on_wheel_type parameter, offset_type offset) {
+    assert(holder);
     return holder->event(parameter, offset);
   }
 
-  void set_down(bool flag) { holder->set_down(flag); }
-  void set_over(bool flag) { holder->set_over(flag); }
-  [[nodiscard]] bool is_downed() const { return holder->is_downed(); }
-  [[nodiscard]] bool is_overed() const { return holder->is_overed(); }
+  void set_down(bool flag) {
+    assert(holder);
+    holder->set_down(flag);
+  }
+  void set_over(bool flag) {
+    assert(holder);
+    holder->set_over(flag);
+  }
+  [[nodiscard]] bool is_downed() const {
+    assert(holder);
+    return holder->is_downed();
+  }
+  [[nodiscard]] bool is_overed() const {
+    assert(holder);
+    return holder->is_overed();
+  }
 
-  void set_enabled(bool flag) { holder->set_enabled(flag); }
-  [[nodiscard]] bool is_enabled() const { return holder->is_enabled(); }
+  void set_enabled(bool flag) {
+    assert(holder);
+    holder->set_enabled(flag);
+  }
+  [[nodiscard]] bool is_enabled() const {
+    assert(holder);
+    return holder->is_enabled();
+  }
 
   explicit operator bool() const { return holder.operator bool(); }
 
 private:
-  std::unique_ptr<base_view_type> holder{nullptr};
+  std::unique_ptr<base_view_type> holder;
 };
 
 template <usagi::concepts::ui::viewable ViewType>

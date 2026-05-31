@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <usagi/geometry/rect/operator.hpp>
+#include <usagi/ui/base_view.hpp>
 #include <usagi/ui/view.hpp>
 
 namespace {

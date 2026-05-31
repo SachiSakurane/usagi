@@ -2,6 +2,7 @@
 #include <usagi/concepts/geometry/rect_concept.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/rect/operator.hpp>
+#include <usagi/ui/base_view.hpp>
 #include <usagi/ui/view.hpp>
 
 namespace {
@@ -40,15 +41,8 @@ TEST(ViewCommonTest, BoundsCase) {
 }
 
 TEST(ViewCommonTest, PredicationCase) {
-  {
-    // default construct case
-    auto v = usagi::ui::view<float, DrawContext, GestureParameterType>{};
-    ASSERT_FALSE(static_cast<bool>(v));
-  }
-  {
-    auto v = usagi::ui::make_view<SpecificView>();
-    ASSERT_TRUE(static_cast<bool>(v));
-  }
+  auto v = usagi::ui::make_view<SpecificView>();
+  ASSERT_TRUE(static_cast<bool>(v));
 }
 
 TEST(ViewCommonTest, DrawCase) {

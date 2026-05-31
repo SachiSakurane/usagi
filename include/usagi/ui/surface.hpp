@@ -1,5 +1,6 @@
 #pragma once
 
+#include <type_traits>
 #include <utility>
 
 #include <usagi/concepts/invocable.hpp>
@@ -20,7 +21,7 @@ struct surface {
   using gesture_parameter_type = typename ViewType::gesture_parameter_type;
   using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
 
-  constexpr surface(ViewType &&v, FunctionType f) : holder{std::move(v)}, drawer{f} {}
+  constexpr surface(ViewType &&v, FunctionType f) : holder{std::move(v)}, drawer{std::move(f)} {}
 
   constexpr void draw(draw_context_type &context, offset_type offset) {
     drawer(context, offset, holder);
@@ -84,7 +85,7 @@ inline constexpr decltype(auto) operator|(ViewType &&v,
  */
 template <class FunctionType>
 inline constexpr decltype(auto) surfaced(FunctionType &&func) {
-  return detail::surface_holder<FunctionType>{func};
+  return detail::surface_holder<std::decay_t<FunctionType>>{std::forward<FunctionType>(func)};
 }
 
 } // namespace usagi::ui

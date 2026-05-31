@@ -65,7 +65,8 @@ TEST(GestureTest, Gestures) {
   // specialized
   {
     usagi::ui::gestures<view> g{std::make_tuple(
-        [&stamp](view::gesture_traits::on_drag_type, auto, auto &) { stamp.emplace_back(0); })};
+        usagi::ui::on_drag(
+            [&stamp](view::gesture_traits::on_drag_type, auto, auto &) { stamp.emplace_back(0); }))};
 
     ASSERT_FALSE(g.on_down_holder);
     ASSERT_TRUE(g.on_drag_holder);
@@ -81,6 +82,21 @@ TEST(GestureTest, Gestures) {
     ASSERT_EQ(stamp.size(), 1);
     ASSERT_EQ(stamp[0], 0);
   }
+}
+
+TEST(GestureTest, TaggedGenericGesture) {
+  using view = SpecificView<float>;
+
+  auto g = usagi::ui::gestures<view>{std::make_tuple(usagi::ui::on_down(
+      [](auto, auto, auto &) { return true; }))};
+
+  ASSERT_TRUE(g.on_down_holder);
+  ASSERT_FALSE(g.on_drag_holder);
+  ASSERT_FALSE(g.on_up_holder);
+  ASSERT_FALSE(g.on_over_holder);
+  ASSERT_FALSE(g.on_out_holder);
+  ASSERT_FALSE(g.on_double_holder);
+  ASSERT_FALSE(g.on_wheel_holder);
 }
 
 TEST(GestureTest, NullGestured) {
@@ -104,25 +120,28 @@ TEST(GestureTest, Gestured) {
   auto v =
       view{} |
       usagi::ui::gestured(
-          [&stamp](view::gesture_traits::on_down_type, auto, auto &) {
+          usagi::ui::on_down([&stamp](view::gesture_traits::on_down_type, auto, auto &) {
             stamp.emplace_back(0);
             return true;
-          },
-          [&stamp](view::gesture_traits::on_drag_type, auto, auto &) { stamp.emplace_back(1); },
-          [&stamp](view::gesture_traits::on_up_type, auto, auto &) { stamp.emplace_back(2); },
-          [&stamp](view::gesture_traits::on_over_type, auto, auto &) {
+          }),
+          usagi::ui::on_drag(
+              [&stamp](view::gesture_traits::on_drag_type, auto, auto &) { stamp.emplace_back(1); }),
+          usagi::ui::on_up(
+              [&stamp](view::gesture_traits::on_up_type, auto, auto &) { stamp.emplace_back(2); }),
+          usagi::ui::on_over([&stamp](view::gesture_traits::on_over_type, auto, auto &) {
             stamp.emplace_back(3);
             return true;
-          },
-          [&stamp](view::gesture_traits::on_out_type, auto, auto &) { stamp.emplace_back(4); },
-          [&stamp](view::gesture_traits::on_double_type, auto, auto &) {
+          }),
+          usagi::ui::on_out(
+              [&stamp](view::gesture_traits::on_out_type, auto, auto &) { stamp.emplace_back(4); }),
+          usagi::ui::on_double([&stamp](view::gesture_traits::on_double_type, auto, auto &) {
             stamp.emplace_back(5);
             return true;
-          },
-          [&stamp](view::gesture_traits::on_wheel_type, auto, auto &) {
+          }),
+          usagi::ui::on_wheel([&stamp](view::gesture_traits::on_wheel_type, auto, auto &) {
             stamp.emplace_back(6);
             return true;
-          });
+          }));
 
   {
     v.event(view::gesture_traits::on_down_type{}, typename view::offset_type{});
@@ -144,10 +163,14 @@ TEST(GestureTest, SpecializedGestured) {
   using view = SpecificView<float>;
 
   std::vector<int> stamp;
-  auto v = view{stamp} | usagi::ui::gestured([&stamp](view::gesture_traits::on_up_type, auto,
-                                                      auto &) { stamp.emplace_back(100); },
-                                             [&stamp](view::gesture_traits::on_drag_type, auto,
-                                                      auto &) { stamp.emplace_back(0); });
+  auto v = view{stamp} |
+           usagi::ui::gestured(
+               usagi::ui::on_up([&stamp](view::gesture_traits::on_up_type, auto, auto &) {
+                 stamp.emplace_back(100);
+               }),
+               usagi::ui::on_drag([&stamp](view::gesture_traits::on_drag_type, auto, auto &) {
+                 stamp.emplace_back(0);
+               }));
 
   {
     v.event(view::gesture_traits::on_up_type{}, typename view::offset_type{});

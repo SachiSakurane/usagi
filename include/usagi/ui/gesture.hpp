@@ -1,64 +1,54 @@
 #pragma once
 
+#include <functional>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
 #include <usagi/ui/detail/gesture_requirements.hpp>
-#include <usagi/utility/is_invocable_f_r_args.hpp>
 
 namespace usagi::ui {
 namespace detail {
-  template <class Func, class ArgsTuple, std::size_t... Sequence>
-  consteval bool is_apply_invocable(std::index_sequence<Sequence...>) {
-    return usagi::utility::is_invocable_f_r_args_v<Func,
-                                                   std::tuple_element_t<Sequence, ArgsTuple>...>;
-  }
+  template <class Tag, class... Args>
+  struct pick_handler;
 
-  template <class Func, class SearchArgsTuple>
-  concept apply_invocable = is_apply_invocable<Func, SearchArgsTuple>(
-      std::make_index_sequence<std::tuple_size_v<SearchArgsTuple>>());
-
-  template <class SearchArgsTuple, class... Args>
-  struct pick_func;
-
-  // iterate
-  template <class SearchArgsTuple, class Front, class... Args>
-  struct pick_func<SearchArgsTuple, Front, Args...> : pick_func<SearchArgsTuple, Args...> {
-    pick_func<SearchArgsTuple, Front, Args...>(Front &&, Args &&...args)
-        : pick_func<SearchArgsTuple, Args...>{std::forward<Args>(args)...} {}
+  template <class Tag, class Front, class... Args>
+  struct pick_handler<Tag, Front, Args...> : pick_handler<Tag, Args...> {
+    pick_handler<Tag, Front, Args...>(Front &&, Args &&...args)
+        : pick_handler<Tag, Args...>{std::forward<Args>(args)...} {}
   };
 
-  // found apply_invocable
-  template <class SearchArgsTuple, apply_invocable<SearchArgsTuple> Front, class... Args>
-  struct pick_func<SearchArgsTuple, Front, Args...> {
-    pick_func<SearchArgsTuple, Front, Args...>(Front &&f, Args &&...)
-        : elem{std::forward<Front>(f)} {}
-    Front elem;
+  template <class Tag, gesture_handler_for<Tag> Front, class... Args>
+  struct pick_handler<Tag, Front, Args...> {
+    pick_handler<Tag, Front, Args...>(Front &&handler, Args &&...)
+        : elem{std::forward<Front>(handler).func} {}
+
+    typename std::remove_cvref_t<Front>::function_type elem;
   };
 
-  // no result(return default)
-  template <class SearchArgsTuple>
-  struct pick_func<SearchArgsTuple> {
-    explicit pick_func<SearchArgsTuple>() {}
+  template <class Tag>
+  struct pick_handler<Tag> {
+    explicit pick_handler<Tag>() {}
     std::nullptr_t elem{nullptr};
   };
 
-  template <class SearchArgsTuple, class... Args>
-  inline constexpr decltype(auto) pick_func_wrapper(Args &&...args) {
-    return pick_func<SearchArgsTuple, Args...>{std::forward<Args>(args)...}.elem;
+  template <class Tag, class... Args>
+  inline constexpr decltype(auto) pick_handler_wrapper(Args &&...args) {
+    return pick_handler<Tag, Args...>{std::forward<Args>(args)...}.elem;
   }
 
-  template <class SearchArgsTuple, class Tuple, std::size_t... Sequence>
-  inline constexpr decltype(auto) pick_invocable_impl(Tuple &&t, std::index_sequence<Sequence...>) {
-    return pick_func_wrapper<SearchArgsTuple>(
+  template <class Tag, class Tuple, std::size_t... Sequence>
+  inline constexpr decltype(auto) pick_tagged_handler_impl(Tuple &&t,
+                                                          std::index_sequence<Sequence...>) {
+    return pick_handler_wrapper<Tag>(
         std::forward<std::tuple_element_t<Sequence, Tuple>>(std::get<Sequence>(t))...);
   }
 
-  template <class SearchArgsTuple, class CandidatesTuple>
-  inline constexpr decltype(auto) pick_invocable(CandidatesTuple t) {
-    return pick_invocable_impl<SearchArgsTuple>(
+  template <class Tag, class CandidatesTuple>
+  inline constexpr decltype(auto) pick_tagged_handler(CandidatesTuple t) {
+    return pick_tagged_handler_impl<Tag>(
         std::forward<CandidatesTuple>(t),
         std::make_index_sequence<std::tuple_size_v<CandidatesTuple>>());
   }
@@ -80,20 +70,15 @@ struct gestures {
 
   template <class TupleType>
   explicit gestures(TupleType t)
-      : on_down_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename gesture_traits::on_down_type, typename gesture_traits::offset_type, ViewType &>>(t)},
-        on_drag_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<void, typename gesture_traits::on_drag_type, typename gesture_traits::offset_type, ViewType &>>(t)},
-        on_up_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<void, typename gesture_traits::on_up_type, typename gesture_traits::offset_type, ViewType &>>(t)},
-        on_over_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename gesture_traits::on_over_type, typename gesture_traits::offset_type, ViewType &>>(t)},
-        on_out_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<void, typename gesture_traits::on_out_type, typename gesture_traits::offset_type, ViewType &>>(t)},
-        on_double_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename gesture_traits::on_double_type, typename gesture_traits::offset_type, ViewType &>>(t)},
-        on_wheel_holder{usagi::ui::detail::pick_invocable<
-            std::tuple<bool, typename gesture_traits::on_wheel_type, typename gesture_traits::offset_type, ViewType &>>(t)} {}
+      : on_down_holder{usagi::ui::detail::pick_tagged_handler<usagi::ui::detail::on_down_tag>(t)},
+        on_drag_holder{usagi::ui::detail::pick_tagged_handler<usagi::ui::detail::on_drag_tag>(t)},
+        on_up_holder{usagi::ui::detail::pick_tagged_handler<usagi::ui::detail::on_up_tag>(t)},
+        on_over_holder{usagi::ui::detail::pick_tagged_handler<usagi::ui::detail::on_over_tag>(t)},
+        on_out_holder{usagi::ui::detail::pick_tagged_handler<usagi::ui::detail::on_out_tag>(t)},
+        on_double_holder{
+            usagi::ui::detail::pick_tagged_handler<usagi::ui::detail::on_double_tag>(t)},
+        on_wheel_holder{
+            usagi::ui::detail::pick_tagged_handler<usagi::ui::detail::on_wheel_tag>(t)} {}
 
   std::function<bool(typename gesture_traits::on_down_type, typename gesture_traits::offset_type, ViewType &)> on_down_holder;
   std::function<void(typename gesture_traits::on_drag_type, typename gesture_traits::offset_type, ViewType &)> on_drag_holder;
@@ -203,5 +188,47 @@ inline constexpr decltype(auto) operator|(ViewType &&v, gesture_holder<TupleType
 template <class... FunctionTypes>
 inline constexpr decltype(auto) gestured(FunctionTypes &&...funcs) {
   return gesture_holder{std::make_tuple(std::forward<FunctionTypes>(funcs)...)};
+}
+
+template <class FunctionType>
+inline constexpr decltype(auto) on_down(FunctionType &&func) {
+  return detail::gesture_handler<detail::on_down_tag, std::decay_t<FunctionType>>{
+      std::forward<FunctionType>(func)};
+}
+
+template <class FunctionType>
+inline constexpr decltype(auto) on_drag(FunctionType &&func) {
+  return detail::gesture_handler<detail::on_drag_tag, std::decay_t<FunctionType>>{
+      std::forward<FunctionType>(func)};
+}
+
+template <class FunctionType>
+inline constexpr decltype(auto) on_up(FunctionType &&func) {
+  return detail::gesture_handler<detail::on_up_tag, std::decay_t<FunctionType>>{
+      std::forward<FunctionType>(func)};
+}
+
+template <class FunctionType>
+inline constexpr decltype(auto) on_over(FunctionType &&func) {
+  return detail::gesture_handler<detail::on_over_tag, std::decay_t<FunctionType>>{
+      std::forward<FunctionType>(func)};
+}
+
+template <class FunctionType>
+inline constexpr decltype(auto) on_out(FunctionType &&func) {
+  return detail::gesture_handler<detail::on_out_tag, std::decay_t<FunctionType>>{
+      std::forward<FunctionType>(func)};
+}
+
+template <class FunctionType>
+inline constexpr decltype(auto) on_double(FunctionType &&func) {
+  return detail::gesture_handler<detail::on_double_tag, std::decay_t<FunctionType>>{
+      std::forward<FunctionType>(func)};
+}
+
+template <class FunctionType>
+inline constexpr decltype(auto) on_wheel(FunctionType &&func) {
+  return detail::gesture_handler<detail::on_wheel_tag, std::decay_t<FunctionType>>{
+      std::forward<FunctionType>(func)};
 }
 } // namespace usagi::ui

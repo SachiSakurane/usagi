@@ -1,11 +1,9 @@
 #pragma once
 
 #include <concepts>
-#include <type_traits>
 #include <utility>
 
 #include <usagi/concepts/arithmetic.hpp>
-#include <usagi/concepts/convertible_to.hpp>
 #include <usagi/concepts/geometry/rect_concept.hpp>
 #include <usagi/concepts/geometry/size_concept.hpp>
 #include <usagi/concepts/ui/drawable.hpp>

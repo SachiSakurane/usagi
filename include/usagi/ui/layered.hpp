@@ -2,7 +2,9 @@
 
 #include <cassert>
 #include <cstddef>
+#include <iterator>
 #include <map>
+#include <utility>
 
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry.hpp>

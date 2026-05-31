@@ -6,29 +6,15 @@
 #include <utility>
 
 #include <usagi/concepts/ui/viewable.hpp>
+#include <usagi/ui/gesture_handler.hpp>
 
-namespace usagi::ui::detail {
-struct on_down_tag {};
-struct on_drag_tag {};
-struct on_up_tag {};
-struct on_over_tag {};
-struct on_out_tag {};
-struct on_double_tag {};
-struct on_wheel_tag {};
-
-template <class Tag, class FunctionType>
-struct gesture_handler {
-  using tag_type = Tag;
-  using function_type = FunctionType;
-
-  FunctionType func;
-};
-
+namespace usagi::concepts::ui {
 template <class>
 struct is_gesture_handler : std::false_type {};
 
 template <class Tag, class FunctionType>
-struct is_gesture_handler<gesture_handler<Tag, FunctionType>> : std::true_type {};
+struct is_gesture_handler<usagi::ui::detail::gesture_handler<Tag, FunctionType>> : std::true_type {
+};
 
 template <class HandlerType>
 inline constexpr bool is_gesture_handler_v =
@@ -53,25 +39,25 @@ template <usagi::concepts::ui::viewable ViewType, class HandlerType>
 consteval bool gesture_handler_requirement_impl() {
   using gesture_traits =
       typename usagi::type::gesture_traits<typename ViewType::gesture_parameter_type>;
-  return tagged_gesture_func_requirement_impl<HandlerType, on_down_tag, bool,
+  return tagged_gesture_func_requirement_impl<HandlerType, usagi::ui::detail::on_down_tag, bool,
                                               typename gesture_traits::on_down_type,
                                               typename gesture_traits::offset_type, ViewType &>() ||
-         tagged_gesture_func_requirement_impl<HandlerType, on_drag_tag, void,
+         tagged_gesture_func_requirement_impl<HandlerType, usagi::ui::detail::on_drag_tag, void,
                                               typename gesture_traits::on_drag_type,
                                               typename gesture_traits::offset_type, ViewType &>() ||
-         tagged_gesture_func_requirement_impl<HandlerType, on_up_tag, void,
+         tagged_gesture_func_requirement_impl<HandlerType, usagi::ui::detail::on_up_tag, void,
                                               typename gesture_traits::on_up_type,
                                               typename gesture_traits::offset_type, ViewType &>() ||
-         tagged_gesture_func_requirement_impl<HandlerType, on_over_tag, bool,
+         tagged_gesture_func_requirement_impl<HandlerType, usagi::ui::detail::on_over_tag, bool,
                                               typename gesture_traits::on_over_type,
                                               typename gesture_traits::offset_type, ViewType &>() ||
-         tagged_gesture_func_requirement_impl<HandlerType, on_out_tag, void,
+         tagged_gesture_func_requirement_impl<HandlerType, usagi::ui::detail::on_out_tag, void,
                                               typename gesture_traits::on_out_type,
                                               typename gesture_traits::offset_type, ViewType &>() ||
-         tagged_gesture_func_requirement_impl<HandlerType, on_double_tag, bool,
+         tagged_gesture_func_requirement_impl<HandlerType, usagi::ui::detail::on_double_tag, bool,
                                               typename gesture_traits::on_double_type,
                                               typename gesture_traits::offset_type, ViewType &>() ||
-         tagged_gesture_func_requirement_impl<HandlerType, on_wheel_tag, bool,
+         tagged_gesture_func_requirement_impl<HandlerType, usagi::ui::detail::on_wheel_tag, bool,
                                               typename gesture_traits::on_wheel_type,
                                               typename gesture_traits::offset_type, ViewType &>();
 }
@@ -96,4 +82,4 @@ template <class TupleType, class ViewType>
 concept gesture_tuple_requirement = usagi::concepts::ui::viewable<ViewType> &&
                                     apply_tuple_requirement<TupleType, ViewType>(
                                         std::make_index_sequence<std::tuple_size_v<TupleType>>());
-} // namespace usagi::ui::detail
+} // namespace usagi::concepts::ui

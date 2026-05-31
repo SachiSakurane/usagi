@@ -2,12 +2,12 @@
 
 #include <functional>
 #include <tuple>
-#include <type_traits>
 #include <utility>
 
+#include <usagi/concepts/ui/gesture_handler.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
-#include <usagi/ui/detail/gesture_requirements.hpp>
+#include <usagi/ui/gesture_handler.hpp>
 
 namespace usagi::ui {
 namespace detail {
@@ -20,7 +20,7 @@ namespace detail {
         : pick_handler<Tag, Args...>{std::forward<Args>(args)...} {}
   };
 
-  template <class Tag, gesture_handler_for<Tag> Front, class... Args>
+  template <class Tag, usagi::concepts::ui::gesture_handler_for<Tag> Front, class... Args>
   struct pick_handler<Tag, Front, Args...> {
     pick_handler<Tag, Front, Args...>(Front &&handler, Args &&...)
         : elem{std::forward<Front>(handler).func} {}
@@ -179,7 +179,7 @@ private:
 };
 
 template <usagi::concepts::ui::viewable ViewType,
-          detail::gesture_tuple_requirement<ViewType> TupleType>
+          usagi::concepts::ui::gesture_tuple_requirement<ViewType> TupleType>
 inline constexpr decltype(auto) operator|(ViewType &&v, gesture_holder<TupleType> &&wrapped) {
   return gesture<ViewType>{std::forward<ViewType>(v),
                            std::forward<gesture_holder<TupleType>>(wrapped).elem};
@@ -188,47 +188,5 @@ inline constexpr decltype(auto) operator|(ViewType &&v, gesture_holder<TupleType
 template <class... FunctionTypes>
 inline constexpr decltype(auto) gestured(FunctionTypes &&...funcs) {
   return gesture_holder{std::make_tuple(std::forward<FunctionTypes>(funcs)...)};
-}
-
-template <class FunctionType>
-inline constexpr decltype(auto) on_down(FunctionType &&func) {
-  return detail::gesture_handler<detail::on_down_tag, std::decay_t<FunctionType>>{
-      std::forward<FunctionType>(func)};
-}
-
-template <class FunctionType>
-inline constexpr decltype(auto) on_drag(FunctionType &&func) {
-  return detail::gesture_handler<detail::on_drag_tag, std::decay_t<FunctionType>>{
-      std::forward<FunctionType>(func)};
-}
-
-template <class FunctionType>
-inline constexpr decltype(auto) on_up(FunctionType &&func) {
-  return detail::gesture_handler<detail::on_up_tag, std::decay_t<FunctionType>>{
-      std::forward<FunctionType>(func)};
-}
-
-template <class FunctionType>
-inline constexpr decltype(auto) on_over(FunctionType &&func) {
-  return detail::gesture_handler<detail::on_over_tag, std::decay_t<FunctionType>>{
-      std::forward<FunctionType>(func)};
-}
-
-template <class FunctionType>
-inline constexpr decltype(auto) on_out(FunctionType &&func) {
-  return detail::gesture_handler<detail::on_out_tag, std::decay_t<FunctionType>>{
-      std::forward<FunctionType>(func)};
-}
-
-template <class FunctionType>
-inline constexpr decltype(auto) on_double(FunctionType &&func) {
-  return detail::gesture_handler<detail::on_double_tag, std::decay_t<FunctionType>>{
-      std::forward<FunctionType>(func)};
-}
-
-template <class FunctionType>
-inline constexpr decltype(auto) on_wheel(FunctionType &&func) {
-  return detail::gesture_handler<detail::on_wheel_tag, std::decay_t<FunctionType>>{
-      std::forward<FunctionType>(func)};
 }
 } // namespace usagi::ui

@@ -40,11 +40,12 @@ using local_view_type = SpecificView<int, DrawContext>;
 TEST(SurfaceTest, SequentialCase) {
   std::vector<int> stamp;
   auto s = usagi::ui::surface{local_view_type{stamp},
-                              [&stamp](auto &context, auto offset, const auto &) {
-                                // 0
-                                stamp.emplace_back(0);
-                                context.tick();
-                              }};
+                              usagi::ui::on_draw(
+                                  [&stamp](auto &context, auto offset, const auto &) {
+                                    // 0
+                                    stamp.emplace_back(0);
+                                    context.tick();
+                                  })};
   auto context = DrawContext{stamp};
   s.draw(context, typename local_view_type::offset_type{});
 

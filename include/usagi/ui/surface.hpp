@@ -10,8 +10,9 @@
 #include <usagi/ui/draw_handler.hpp>
 
 namespace usagi::ui {
-template <usagi::concepts::ui::viewable ViewType, class FunctionType>
-requires usagi::concepts::invocable<FunctionType, typename ViewType::draw_context_type &,
+template <usagi::concepts::ui::viewable ViewType, usagi::concepts::ui::draw_handler HandlerType>
+requires usagi::concepts::invocable<typename HandlerType::function_type,
+                                    typename ViewType::draw_context_type &,
                                     typename ViewType::offset_type, const ViewType &>
 struct surface {
   using value_type = typename ViewType::value_type;
@@ -23,10 +24,11 @@ struct surface {
   using gesture_parameter_type = typename ViewType::gesture_parameter_type;
   using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
 
-  constexpr surface(ViewType &&v, FunctionType f) : holder{std::move(v)}, drawer{std::move(f)} {}
+  constexpr surface(ViewType &&v, HandlerType handler)
+      : holder{std::move(v)}, drawer{std::move(handler)} {}
 
   constexpr void draw(draw_context_type &context, offset_type offset) {
-    drawer(context, offset, holder);
+    drawer.func(context, offset, holder);
     holder.draw(context, offset);
   }
 
@@ -51,11 +53,11 @@ struct surface {
 
 private:
   ViewType holder;
-  FunctionType drawer;
+  HandlerType drawer;
 };
 
-template <usagi::concepts::ui::viewable ViewType, class FunctionType>
-surface(ViewType &&, FunctionType) -> surface<ViewType, FunctionType>;
+template <usagi::concepts::ui::viewable ViewType, usagi::concepts::ui::draw_handler HandlerType>
+surface(ViewType &&, HandlerType) -> surface<ViewType, HandlerType>;
 
 namespace detail {
   template <class FunctionType>
@@ -70,7 +72,7 @@ namespace detail {
 template <usagi::concepts::ui::viewable ViewType, usagi::concepts::ui::draw_handler HandlerType>
 inline constexpr decltype(auto) operator|(ViewType &&v,
                                           detail::surface_holder<HandlerType> &&holder) {
-  return surface{std::forward<ViewType>(v), std::move(holder).func.func};
+  return surface{std::forward<ViewType>(v), std::move(holder).func};
 }
 
 /**

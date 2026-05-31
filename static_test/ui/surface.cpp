@@ -36,16 +36,17 @@ struct MoveOnlyFunctor final {
   }
 };
 
-static_assert(usagi::concepts::ui::viewable<usagi::ui::surface<base_view, ContextFunctor>>);
+static_assert(usagi::concepts::ui::viewable<
+              usagi::ui::surface<base_view, decltype(usagi::ui::on_draw(ContextFunctor{}))>>);
 static_assert([]() consteval {
-  usagi::ui::surface<base_view, ContextFunctor> s{base_view{}, ContextFunctor{}};
+  usagi::ui::surface s{base_view{}, usagi::ui::on_draw(ContextFunctor{})};
   int x{0};
   DrawContext context{x};
   s.draw(context, typename base_view::offset_type{});
   return x == 42;
 }());
 static_assert([]() consteval {
-  auto s = usagi::ui::surface{base_view{}, MoveOnlyFunctor{}};
+  auto s = usagi::ui::surface{base_view{}, usagi::ui::on_draw(MoveOnlyFunctor{})};
   int x{0};
   DrawContext context{x};
   s.draw(context, typename base_view::offset_type{});

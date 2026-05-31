@@ -4,8 +4,10 @@
 #include <utility>
 
 #include <usagi/concepts/invocable.hpp>
+#include <usagi/concepts/ui/draw_handler.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
+#include <usagi/ui/draw_handler.hpp>
 
 namespace usagi::ui {
 template <usagi::concepts::ui::viewable ViewType, class FunctionType>
@@ -65,10 +67,10 @@ namespace detail {
   surface_holder(FunctionType) -> surface_holder<FunctionType>;
 } // namespace detail
 
-template <usagi::concepts::ui::viewable ViewType, class FunctionType>
+template <usagi::concepts::ui::viewable ViewType, usagi::concepts::ui::draw_handler HandlerType>
 inline constexpr decltype(auto) operator|(ViewType &&v,
-                                          detail::surface_holder<FunctionType> &&holder) {
-  return surface{std::forward<ViewType>(v), std::move(holder).func};
+                                          detail::surface_holder<HandlerType> &&holder) {
+  return surface{std::forward<ViewType>(v), std::move(holder).func.func};
 }
 
 /**
@@ -83,9 +85,9 @@ inline constexpr decltype(auto) operator|(ViewType &&v,
  * @param func to be wrapped by surface
  * @return surface_wrapper
  */
-template <class FunctionType>
-inline constexpr decltype(auto) surfaced(FunctionType &&func) {
-  return detail::surface_holder<std::decay_t<FunctionType>>{std::forward<FunctionType>(func)};
+template <usagi::concepts::ui::draw_handler HandlerType>
+inline constexpr decltype(auto) surfaced(HandlerType &&handler) {
+  return detail::surface_holder<std::decay_t<HandlerType>>{std::forward<HandlerType>(handler)};
 }
 
 } // namespace usagi::ui

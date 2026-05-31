@@ -63,4 +63,5 @@ inline constexpr decltype(auto) on_wheel(FunctionType &&func) {
   return detail::gesture_handler<detail::on_wheel_tag, std::decay_t<FunctionType>>{
       std::forward<FunctionType>(func)};
 }
+
 } // namespace usagi::ui

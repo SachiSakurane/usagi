@@ -1,4 +1,5 @@
 #include <usagi/ui/base_view.hpp>
+#include <usagi/ui/draw_handler.hpp>
 #include <usagi/concepts/ui/gesture_handler.hpp>
 #include <usagi/ui/gesture.hpp>
 
@@ -30,11 +31,9 @@ static_assert(!usagi::concepts::ui::gesture_tuple_requirement<
                   [](View::gesture_traits::on_drag_type, View::offset_type, View &) {}))),
               View>);
 
-static_assert(std::is_same_v<decltype(usagi::ui::detail::pick_handler_wrapper<
-                                      usagi::ui::detail::on_drag_tag>(
-                                  usagi::ui::on_down(
-                                      [](View::gesture_traits::on_down_type, View::offset_type,
-                                         View &) { return true; }))),
-                             std::nullptr_t>);
+static_assert(!usagi::concepts::ui::gesture_tuple_requirement<
+              decltype(std::make_tuple(usagi::ui::on_draw(
+                  [](View::draw_context_type &, View::offset_type, const View &) {}))),
+              View>);
 
 } // namespace

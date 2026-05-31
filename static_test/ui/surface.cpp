@@ -52,7 +52,7 @@ static_assert([]() consteval {
   return x == 42;
 }());
 static_assert([]() consteval {
-  auto s = base_view{} | usagi::ui::surfaced(MoveOnlyFunctor{});
+  auto s = base_view{} | usagi::ui::surfaced(usagi::ui::on_draw(MoveOnlyFunctor{}));
   int x{0};
   DrawContext context{x};
   s.draw(context, typename base_view::offset_type{});

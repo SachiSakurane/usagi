@@ -12,7 +12,8 @@ base_view に描画とクリックイベントを追加する例
 auto &view = local_view.add_sub_view(
   usagi::wrapper::icontrol::iplug_traits::base_view_type{usagi::geometry::padding(local_view.frame(), 16.f)} |
   usagi::ui::surfaced(
-      [](auto &context, auto offset, const auto &v)
+      usagi::ui::on_draw(
+        [](auto &context, auto offset, const auto &v)
       {
         // draw
         SkAutoCanvasRestore restore{&context, true};
@@ -21,7 +22,7 @@ auto &view = local_view.add_sub_view(
         SkPaint paint;
         paint.setColor(SK_ColorCYAN);
         context.drawRect(usagi::wrapper::skia::to_rect(v.frame()), paint);
-      }) |
+      })) |
   usagi::ui::gestured(
       usagi::ui::on_down(
         [](usagi::wrapper::icontrol::iplug_traits::gesture_traits::on_down_type gesture, auto offset,

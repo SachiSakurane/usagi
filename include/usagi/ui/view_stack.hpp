@@ -46,6 +46,10 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
   }
 
   bool event(typename gesture_traits::on_down_type parameter, offset_type offset) override {
+    if (is_event_position_clipped(parameter)) {
+      return false;
+    }
+
     this->set_down(true);
     for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
@@ -83,15 +87,16 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
   bool event(typename gesture_traits::on_over_type parameter, offset_type offset) override {
     this->set_over(true);
     auto is_resolved = false;
+    const auto can_hit_new_child = !is_event_position_clipped(parameter);
     for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
-      if (!is_resolved && child.is_enabled() &&
+      if (can_hit_new_child && !is_resolved && child.is_enabled() &&
           usagi::geometry::contain(child.frame(), parameter.position)) {
         child.set_over(true);
         is_resolved = child.event(local_parameter(parameter, child), offset + child_origin(child));
       } else if (child.is_overed() == true) {
         child.set_over(false);
-        child.event(local_parameter(parameter, child), offset + child_origin(child));
+        child.event(local_parameter(out_parameter(parameter), child), offset + child_origin(child));
       }
     }
     return is_resolved;
@@ -106,6 +111,10 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
   }
 
   bool event(typename gesture_traits::on_double_type parameter, offset_type offset) override {
+    if (is_event_position_clipped(parameter)) {
+      return false;
+    }
+
     for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
@@ -118,6 +127,10 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
   }
 
   bool event(typename gesture_traits::on_wheel_type parameter, offset_type offset) override {
+    if (is_event_position_clipped(parameter)) {
+      return false;
+    }
+
     for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
@@ -151,7 +164,15 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
 
   [[nodiscard]] size_t child_view_size() const { return child_views.size(); }
 
+  void set_event_clipping(bool flag) { event_clipping = flag; }
+  [[nodiscard]] bool is_event_clipping() const { return event_clipping; }
+
 private:
+  template <class ParameterType>
+  bool is_event_position_clipped(const ParameterType &parameter) const {
+    return event_clipping && !usagi::geometry::contain(rect_type{this->bounds()}, parameter.position);
+  }
+
   static offset_type child_origin(const child_view_type &child) {
     return offset_type{child.frame().l(), child.frame().t()};
   }
@@ -162,8 +183,15 @@ private:
     return parameter;
   }
 
+  template <class ParameterType>
+  static typename gesture_traits::on_out_type out_parameter(const ParameterType &parameter) {
+    return typename gesture_traits::on_out_type{static_cast<const gesture_parameter_type &>(
+        parameter)};
+  }
+
   size_t children_next_index{0};
   child_view_map_type child_views;
+  bool event_clipping{true};
 };
 
 } // namespace usagi::ui

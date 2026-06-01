@@ -45,6 +45,35 @@ private:
   std::vector<offset_type> &positions;
   std::vector<offset_type> &offsets;
 };
+
+class CountingView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
+public:
+  using base_view_type = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
+  using gesture_traits = typename base_view_type::gesture_traits;
+  using offset_type = typename base_view_type::offset_type;
+
+  CountingView(int &d, int &o, int &out, const rect_type &frame)
+      : base_view_type{frame}, downs{d}, overs{o}, outs{out} {}
+
+  bool event(typename gesture_traits::on_down_type, offset_type) override {
+    downs += 1;
+    return true;
+  }
+
+  bool event(typename gesture_traits::on_over_type, offset_type) override {
+    overs += 1;
+    return true;
+  }
+
+  void event(typename gesture_traits::on_out_type, offset_type) override { outs += 1; }
+
+  using base_view_type::event;
+
+private:
+  int &downs;
+  int &overs;
+  int &outs;
+};
 } // namespace
 
 TEST(ViewStackTest, DrawsOnlyChildren) {
@@ -112,4 +141,75 @@ TEST(ViewStackTest, BaseViewHitTestUsesLocalGesturePosition) {
                   typename EventView::offset_type{});
 
   ASSERT_TRUE(consumed);
+}
+
+TEST(ViewStackTest, ClipsNewHitEventsToOwnBoundsByDefault) {
+  auto downs = 0;
+  auto overs = 0;
+  auto outs = 0;
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
+  stack.add_child_view(usagi::ui::make_view<CountingView>(
+      downs, overs, outs, usagi::geometry::rect<float>{20.f, 20.f, 40.f, 40.f}));
+
+  const auto consumed =
+      stack.event(usagi::type::gesture_traits<GestureParameterType>::on_down_type{
+                      usagi::geometry::point<float>{25.f, 25.f}, 0.f, true, false, false, false,
+                      false},
+                  typename CountingView::offset_type{});
+
+  ASSERT_FALSE(consumed);
+  ASSERT_EQ(downs, 0);
+  ASSERT_TRUE(stack.is_event_clipping());
+}
+
+TEST(ViewStackTest, CanDispatchNewHitEventsOutsideOwnBounds) {
+  auto downs = 0;
+  auto overs = 0;
+  auto outs = 0;
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
+  stack.set_event_clipping(false);
+  stack.add_child_view(usagi::ui::make_view<CountingView>(
+      downs, overs, outs, usagi::geometry::rect<float>{20.f, 20.f, 40.f, 40.f}));
+
+  const auto consumed =
+      stack.event(usagi::type::gesture_traits<GestureParameterType>::on_down_type{
+                      usagi::geometry::point<float>{25.f, 25.f}, 0.f, true, false, false, false,
+                      false},
+                  typename CountingView::offset_type{});
+
+  ASSERT_TRUE(consumed);
+  ASSERT_EQ(downs, 1);
+  ASSERT_FALSE(stack.is_event_clipping());
+}
+
+TEST(ViewStackTest, ClearsOveredChildWhenOverEventIsClipped) {
+  auto downs = 0;
+  auto overs = 0;
+  auto outs = 0;
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
+  auto &entry = stack.add_child_view(usagi::ui::make_view<CountingView>(
+      downs, overs, outs, usagi::geometry::rect<float>{2.f, 2.f, 8.f, 8.f}));
+
+  const auto consumed =
+      stack.event(usagi::type::gesture_traits<GestureParameterType>::on_over_type{
+                      usagi::geometry::point<float>{4.f, 4.f}, 0.f, false, false, false, false,
+                      false},
+                  typename CountingView::offset_type{});
+
+  ASSERT_TRUE(consumed);
+  ASSERT_EQ(overs, 1);
+  ASSERT_TRUE(entry.second.is_overed());
+
+  const auto clipped =
+      stack.event(usagi::type::gesture_traits<GestureParameterType>::on_over_type{
+                      usagi::geometry::point<float>{20.f, 20.f}, 0.f, false, false, false, false,
+                      false},
+                  typename CountingView::offset_type{});
+
+  ASSERT_FALSE(clipped);
+  ASSERT_EQ(outs, 1);
+  ASSERT_FALSE(entry.second.is_overed());
 }

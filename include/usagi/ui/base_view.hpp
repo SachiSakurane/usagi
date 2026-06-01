@@ -28,7 +28,7 @@ public:
   constexpr void draw(draw_context_type &context, offset_type offset) override {}
 
   constexpr bool event(typename gesture_traits::on_down_type g, offset_type offset) override {
-    if (!ignore_events && usagi::geometry::contain(frame(), g.position)) {
+    if (!ignore_events && usagi::geometry::contain(rect_type{bounds()}, g.position)) {
       set_down(true);
       return true;
     }
@@ -41,7 +41,7 @@ public:
     }
   }
   constexpr bool event(typename gesture_traits::on_over_type g, offset_type offset) override {
-    if (!ignore_events && usagi::geometry::contain(frame(), g.position)) {
+    if (!ignore_events && usagi::geometry::contain(rect_type{bounds()}, g.position)) {
       set_over(true);
       return true;
     }

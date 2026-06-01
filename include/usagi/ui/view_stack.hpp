@@ -40,7 +40,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
     for (auto &value : child_views) {
       auto &child = value.second;
       if (child.is_enabled()) {
-        child.draw(context, offset + offset_type{child.frame().l(), child.frame().t()});
+        child.draw(context, offset + child_origin(child));
       }
     }
   }
@@ -51,7 +51,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
       auto &child = it->second;
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
         child.set_down(true);
-        if (child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()})) {
+        if (child.event(local_parameter(parameter, child), offset + child_origin(child))) {
           return true;
         }
       }
@@ -63,7 +63,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
     for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
       if (child.is_downed()) {
-        child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()});
+        child.event(local_parameter(parameter, child), offset + child_origin(child));
       }
     }
   }
@@ -74,7 +74,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
       auto &child = it->second;
       if (child.is_downed()) {
         child.set_down(false);
-        child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()});
+        child.event(local_parameter(parameter, child), offset + child_origin(child));
       }
     }
   }
@@ -88,11 +88,10 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
       if (!is_resolved && child.is_enabled() &&
           usagi::geometry::contain(child.frame(), parameter.position)) {
         child.set_over(true);
-        is_resolved =
-            child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()});
+        is_resolved = child.event(local_parameter(parameter, child), offset + child_origin(child));
       } else if (child.is_overed() == true) {
         child.set_over(false);
-        child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()});
+        child.event(local_parameter(parameter, child), offset + child_origin(child));
       }
     }
     return is_resolved;
@@ -102,7 +101,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
     this->set_over(false);
     for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
-      child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()});
+      child.event(local_parameter(parameter, child), offset + child_origin(child));
     }
   }
 
@@ -110,7 +109,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
     for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
-        if (child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()})) {
+        if (child.event(local_parameter(parameter, child), offset + child_origin(child))) {
           return true;
         }
       }
@@ -122,7 +121,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
     for (auto it = std::rbegin(child_views); it != std::rend(child_views); ++it) {
       auto &child = it->second;
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
-        if (child.event(parameter, offset + offset_type{child.frame().l(), child.frame().t()})) {
+        if (child.event(local_parameter(parameter, child), offset + child_origin(child))) {
           return true;
         }
       }
@@ -153,6 +152,16 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
   [[nodiscard]] size_t child_view_size() const { return child_views.size(); }
 
 private:
+  static offset_type child_origin(const child_view_type &child) {
+    return offset_type{child.frame().l(), child.frame().t()};
+  }
+
+  template <class ParameterType>
+  static ParameterType local_parameter(ParameterType parameter, const child_view_type &child) {
+    parameter.position = parameter.position - child_origin(child);
+    return parameter;
+  }
+
   size_t children_next_index{0};
   child_view_map_type child_views;
 };

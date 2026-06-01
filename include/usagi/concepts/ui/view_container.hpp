@@ -6,13 +6,15 @@
 #include <utility>
 
 #include <usagi/concepts/convertible_to.hpp>
+#include <usagi/concepts/ui/viewable.hpp>
 
 namespace usagi::concepts::ui {
 /**
  * child view collection を持っているか
  */
 template <class ContainerType>
-concept view_container = requires(ContainerType &container) {
+concept view_container = usagi::concepts::ui::viewable<ContainerType> &&
+                         requires(ContainerType &container) {
   typename ContainerType::child_view_key_type;
   typename ContainerType::child_view_type;
 

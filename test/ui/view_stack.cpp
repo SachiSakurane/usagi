@@ -75,6 +75,32 @@ private:
   int &outs;
 };
 
+class DragUpView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
+public:
+  using base_view_type = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
+  using gesture_traits = typename base_view_type::gesture_traits;
+  using offset_type = typename base_view_type::offset_type;
+
+  DragUpView(int &d, int &drag, int &u, const rect_type &frame)
+      : base_view_type{frame}, downs{d}, drags{drag}, ups{u} {}
+
+  bool event(typename gesture_traits::on_down_type, offset_type) override {
+    downs += 1;
+    return true;
+  }
+
+  void event(typename gesture_traits::on_drag_type, offset_type) override { drags += 1; }
+
+  void event(typename gesture_traits::on_up_type, offset_type) override { ups += 1; }
+
+  using base_view_type::event;
+
+private:
+  int &downs;
+  int &drags;
+  int &ups;
+};
+
 class OrderedView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
 public:
   using base_view_type = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
@@ -298,4 +324,71 @@ TEST(ViewStackTest, RemovesChildFromZOrder) {
   auto context = DrawContext{};
   stack.draw(context, typename OrderedView::offset_type{});
   ASSERT_EQ(stamp, (std::vector<int>{2}));
+}
+
+TEST(ViewStackTest, DragAndUpAreNotClippedAfterDown) {
+  auto downs = 0;
+  auto drags = 0;
+  auto ups = 0;
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
+  stack.add_child_view(usagi::ui::make_view<DragUpView>(
+      downs, drags, ups, usagi::geometry::rect<float>{2.f, 2.f, 8.f, 8.f}));
+
+  ASSERT_TRUE(stack.event(usagi::type::gesture_traits<GestureParameterType>::on_down_type{
+                              usagi::geometry::point<float>{4.f, 4.f}, 0.f, true, false, false,
+                              false, false},
+                          typename DragUpView::offset_type{}));
+
+  stack.event(usagi::type::gesture_traits<GestureParameterType>::on_drag_type{
+                  usagi::geometry::point<float>{20.f, 20.f}, 0.f, true, false, false, false,
+                  false},
+              typename DragUpView::offset_type{});
+  stack.event(usagi::type::gesture_traits<GestureParameterType>::on_up_type{
+                  usagi::geometry::point<float>{20.f, 20.f}, 0.f, true, false, false, false,
+                  false},
+              typename DragUpView::offset_type{});
+
+  ASSERT_EQ(downs, 1);
+  ASSERT_EQ(drags, 1);
+  ASSERT_EQ(ups, 1);
+}
+
+TEST(ViewStackTest, DisabledChildIsNotDrawnOrHit) {
+  auto stamp = std::vector<int>{};
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
+  const auto key = stack.add_child_view(usagi::ui::make_view<OrderedView>(
+      stamp, 1, usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+  stack.get_child_view(key).set_enabled(false);
+
+  auto context = DrawContext{};
+  stack.draw(context, typename OrderedView::offset_type{});
+  ASSERT_TRUE(stamp.empty());
+
+  ASSERT_FALSE(stack.event(usagi::type::gesture_traits<GestureParameterType>::on_down_type{
+                               usagi::geometry::point<float>{5.f, 5.f}, 0.f, true, false, false,
+                               false, false},
+                           typename OrderedView::offset_type{}));
+  ASSERT_TRUE(stamp.empty());
+}
+
+TEST(ViewStackTest, RemoveChildViewDoesNotDispatchSyntheticEvents) {
+  auto downs = 0;
+  auto overs = 0;
+  auto outs = 0;
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
+  const auto key = stack.add_child_view(usagi::ui::make_view<CountingView>(
+      downs, overs, outs, usagi::geometry::rect<float>{2.f, 2.f, 8.f, 8.f}));
+
+  ASSERT_TRUE(stack.event(usagi::type::gesture_traits<GestureParameterType>::on_over_type{
+                              usagi::geometry::point<float>{4.f, 4.f}, 0.f, false, false, false,
+                              false, false},
+                          typename CountingView::offset_type{}));
+  ASSERT_EQ(overs, 1);
+  ASSERT_TRUE(stack.get_child_view(key).is_overed());
+
+  ASSERT_TRUE(stack.remove_child_view(key));
+  ASSERT_EQ(outs, 0);
 }

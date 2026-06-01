@@ -6,8 +6,8 @@
 #include <usagi/concepts/arithmetic.hpp>
 #include <usagi/type/gesture.hpp>
 #include <usagi/ui/base_view.hpp>
-#include <usagi/ui/layered.hpp>
 #include <usagi/ui/view.hpp>
+#include <usagi/ui/view_stack.hpp>
 
 namespace usagi::wrapper::iplug2 {
 
@@ -41,8 +41,8 @@ struct iplug_traits {
 class view_wrapper : public IControl {
 public:
   explicit view_wrapper(const IRECT &bounds)
-      : IControl{bounds}, local_view{usagi::ui::make_view<iplug_traits::base_view_type>(
-                              iplug_traits::rect_type{bounds.L, bounds.T, bounds.R, bounds.B})} {
+      : IControl{bounds}, local_view{iplug_traits::rect_type{bounds.L, bounds.T, bounds.R,
+                                                             bounds.B}} {
     mMouseIsOver = true;
   }
 
@@ -122,7 +122,9 @@ public:
   }
 
 protected:
-  usagi::ui::layer<iplug_traits::view_type> local_view;
+  usagi::ui::view_stack<iplug_traits::value_type, iplug_traits::draw_context_type,
+                        iplug_traits::gesture_parameter_type>
+      local_view;
 
   std::optional<std::function<void(std::string)>> text_entry_completed{std::nullopt};
 

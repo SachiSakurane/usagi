@@ -15,12 +15,10 @@ template <class ContainerType>
 concept view_container = requires(ContainerType &container) {
   typename ContainerType::child_view_key_type;
   typename ContainerType::child_view_type;
-  typename ContainerType::child_view_value_type;
 
   {
     container.add_child_view(std::declval<typename ContainerType::child_view_type>())
-    } -> usagi::concepts::convertible_to<
-        std::add_lvalue_reference_t<typename ContainerType::child_view_value_type>>;
+    } -> std::same_as<typename ContainerType::child_view_key_type>;
 
   {
     container.get_child_view(std::declval<typename ContainerType::child_view_key_type>())

@@ -28,8 +28,6 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
 
   using child_view_type = usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;
   using child_view_key_type = size_t;
-  using child_view_map_type = std::map<child_view_key_type, child_view_type>;
-  using child_view_value_type = typename child_view_map_type::value_type;
 
   view_stack() = default;
 
@@ -142,14 +140,15 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
     return false;
   }
 
-  child_view_value_type &add_child_view(child_view_type &&child_view) {
+  child_view_key_type add_child_view(child_view_type &&child_view) {
     const auto current_index = children_next_index;
     children_next_index += 1;
-    return *child_views.try_emplace(std::end(child_views), current_index,
-                                    std::forward<child_view_type>(child_view));
+    child_views.try_emplace(std::end(child_views), current_index,
+                            std::forward<child_view_type>(child_view));
+    return current_index;
   }
 
-  typename child_view_map_type::mapped_type &get_child_view(child_view_key_type index) {
+  child_view_type &get_child_view(child_view_key_type index) {
     assert(child_views.find(index) != std::end(child_views));
     return child_views.at(index);
   }
@@ -190,6 +189,7 @@ private:
   }
 
   size_t children_next_index{0};
+  using child_view_map_type = std::map<child_view_key_type, child_view_type>;
   child_view_map_type child_views;
   bool event_clipping{true};
 };

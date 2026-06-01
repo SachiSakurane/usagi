@@ -34,7 +34,7 @@ struct UnViewable : Gestural<ValueType>, Drawable<ValueType, DrawContext> {
   using view_type = usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;
   size_type bounds() const;
   rect_type frame() const;
-  view_type &add_child_view(view_type &&);
+  size_t add_child_view(view_type &&);
   // bool remove_child_view(size_t);
   size_t child_view_size() const;
 };

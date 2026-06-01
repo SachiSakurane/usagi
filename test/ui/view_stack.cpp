@@ -190,7 +190,7 @@ TEST(ViewStackTest, ClearsOveredChildWhenOverEventIsClipped) {
   auto outs = 0;
   auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
       usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
-  auto &entry = stack.add_child_view(usagi::ui::make_view<CountingView>(
+  const auto key = stack.add_child_view(usagi::ui::make_view<CountingView>(
       downs, overs, outs, usagi::geometry::rect<float>{2.f, 2.f, 8.f, 8.f}));
 
   const auto consumed =
@@ -201,7 +201,7 @@ TEST(ViewStackTest, ClearsOveredChildWhenOverEventIsClipped) {
 
   ASSERT_TRUE(consumed);
   ASSERT_EQ(overs, 1);
-  ASSERT_TRUE(entry.second.is_overed());
+  ASSERT_TRUE(stack.get_child_view(key).is_overed());
 
   const auto clipped =
       stack.event(usagi::type::gesture_traits<GestureParameterType>::on_over_type{
@@ -211,5 +211,5 @@ TEST(ViewStackTest, ClearsOveredChildWhenOverEventIsClipped) {
 
   ASSERT_FALSE(clipped);
   ASSERT_EQ(outs, 1);
-  ASSERT_FALSE(entry.second.is_overed());
+  ASSERT_FALSE(stack.get_child_view(key).is_overed());
 }

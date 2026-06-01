@@ -74,6 +74,29 @@ private:
   int &overs;
   int &outs;
 };
+
+class OrderedView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
+public:
+  using base_view_type = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
+  using gesture_traits = typename base_view_type::gesture_traits;
+  using offset_type = typename base_view_type::offset_type;
+
+  OrderedView(std::vector<int> &s, int id, const rect_type &frame)
+      : base_view_type{frame}, stamp{s}, value{id} {}
+
+  void draw(draw_context_type &, offset_type) override { stamp.emplace_back(value); }
+
+  bool event(typename gesture_traits::on_down_type, offset_type) override {
+    stamp.emplace_back(value);
+    return true;
+  }
+
+  using base_view_type::event;
+
+private:
+  std::vector<int> &stamp;
+  int value;
+};
 } // namespace
 
 TEST(ViewStackTest, DrawsOnlyChildren) {
@@ -212,4 +235,67 @@ TEST(ViewStackTest, ClearsOveredChildWhenOverEventIsClipped) {
   ASSERT_FALSE(clipped);
   ASSERT_EQ(outs, 1);
   ASSERT_FALSE(stack.get_child_view(key).is_overed());
+}
+
+TEST(ViewStackTest, DrawsChildrenInZOrder) {
+  auto stamp = std::vector<int>{};
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
+  const auto back = stack.add_child_view(usagi::ui::make_view<OrderedView>(
+      stamp, 1, usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+  const auto front = stack.add_child_view(usagi::ui::make_view<OrderedView>(
+      stamp, 2, usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+
+  auto context = DrawContext{};
+  stack.draw(context, typename OrderedView::offset_type{});
+  ASSERT_EQ(stamp, (std::vector<int>{1, 2}));
+
+  stamp.clear();
+  ASSERT_TRUE(stack.bring_child_to_front(back));
+  stack.draw(context, typename OrderedView::offset_type{});
+  ASSERT_EQ(stamp, (std::vector<int>{2, 1}));
+
+  stamp.clear();
+  ASSERT_TRUE(stack.send_child_to_back(front));
+  stack.draw(context, typename OrderedView::offset_type{});
+  ASSERT_EQ(stamp, (std::vector<int>{2, 1}));
+}
+
+TEST(ViewStackTest, SendsEventsFromFrontToBack) {
+  auto stamp = std::vector<int>{};
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
+  const auto back = stack.add_child_view(usagi::ui::make_view<OrderedView>(
+      stamp, 1, usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+  const auto front = stack.add_child_view(usagi::ui::make_view<OrderedView>(
+      stamp, 2, usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+
+  const auto event = usagi::type::gesture_traits<GestureParameterType>::on_down_type{
+      usagi::geometry::point<float>{5.f, 5.f}, 0.f, true, false, false, false, false};
+
+  ASSERT_TRUE(stack.event(event, typename OrderedView::offset_type{}));
+  ASSERT_EQ(stamp, (std::vector<int>{2}));
+
+  stamp.clear();
+  ASSERT_TRUE(stack.bring_child_to_front(back));
+  ASSERT_TRUE(stack.event(event, typename OrderedView::offset_type{}));
+  ASSERT_EQ(stamp, (std::vector<int>{1}));
+
+  ASSERT_FALSE(stack.bring_child_to_front(999));
+  ASSERT_FALSE(stack.send_child_to_back(999));
+}
+
+TEST(ViewStackTest, RemovesChildFromZOrder) {
+  auto stamp = std::vector<int>{};
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
+  const auto first = stack.add_child_view(usagi::ui::make_view<OrderedView>(
+      stamp, 1, usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+  stack.add_child_view(usagi::ui::make_view<OrderedView>(
+      stamp, 2, usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+
+  ASSERT_TRUE(stack.remove_child_view(first));
+  auto context = DrawContext{};
+  stack.draw(context, typename OrderedView::offset_type{});
+  ASSERT_EQ(stamp, (std::vector<int>{2}));
 }

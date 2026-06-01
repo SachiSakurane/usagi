@@ -6,4 +6,5 @@
 #include <usagi/concepts/invocable.hpp>
 #include <usagi/concepts/geometry.hpp>
 #include <usagi/concepts/graphics.hpp>
+#include <usagi/concepts/type.hpp>
 #include <usagi/concepts/ui.hpp>

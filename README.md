@@ -2,37 +2,49 @@
 
 # usagi
 
-usagi は ui を concepts で表現したりする header-only なライブラリ
+usagi は UI を concepts で表現する header-only なライブラリです。
 
 # usagi no usage
 
-base_view に描画とクリックイベントを追加する例
+`view_stack` に child view を追加し、描画とクリックイベントを付ける例です。
 
-```C++
-auto view = local_view.add_child_view(
-  usagi::wrapper::icontrol::iplug_traits::base_view_type{usagi::geometry::padding(local_view.frame(), 16.f)} |
-  usagi::ui::surfaced(
-      usagi::ui::on_draw(
-        [](auto &context, auto offset, const auto &v)
-      {
-        // draw
-        SkAutoCanvasRestore restore{&context, true};
-        context.saveLayer(nullptr, nullptr);
+```cpp
+using value_type = float;
+using gesture_parameter_type = usagi::type::gesture_parameter<value_type>;
+using base_view_type = usagi::ui::base_view<value_type, DrawContext, gesture_parameter_type>;
+using view_stack_type = usagi::ui::view_stack<value_type, DrawContext, gesture_parameter_type>;
 
-        SkPaint paint;
-        paint.setColor(SK_ColorCYAN);
-        context.drawRect(usagi::wrapper::skia::to_rect(v.frame()), paint);
-      })) |
-  usagi::ui::gestured(
-      usagi::ui::on_down(
-        [](usagi::wrapper::icontrol::iplug_traits::gesture_traits::on_down_type gesture, auto offset,
-           auto &v)
-      {
-        // click
-        if (usagi::geometry::contain(v.frame(), gesture.position)) {
+auto local_view = view_stack_type{
+    usagi::geometry::rect<value_type>{0.f, 0.f, 320.f, 240.f}};
+
+auto decorated_child =
+    base_view_type{usagi::geometry::rect<value_type>{16.f, 16.f, 120.f, 48.f}} |
+    usagi::ui::surfaced(usagi::ui::on_draw(
+        [](auto &context, auto offset, const auto &view) {
+          // draw
+          // `offset` is the accumulated position from the root.
+          // `view.frame()` is in the parent coordinate system.
+        })) |
+    usagi::ui::gestured(usagi::ui::on_down(
+        [](auto gesture, auto offset, auto &view) {
+          // gesture.position is local to `view`.
+          // view_stack already performs child hit testing before dispatch.
           std::cout << "tapped" << std::endl;
           return true;
-        }
-        return false;
-      })));
+        }));
+
+auto child_key =
+    local_view.add_child_view(usagi::ui::make_view<decltype(decorated_child)>(
+        std::move(decorated_child)));
+
+local_view.bring_child_to_front(child_key);
+```
+
+`add_child_view` は child の key を返します。あとから child を参照・削除・
+z-order 変更する場合は、その key を使います。
+
+```cpp
+auto &child = local_view.get_child_view(child_key);
+local_view.send_child_to_back(child_key);
+local_view.remove_child_view(child_key);
 ```

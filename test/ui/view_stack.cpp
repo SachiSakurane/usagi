@@ -473,6 +473,34 @@ TEST(ViewStackTest, NonConsumingOverChildDoesNotReceiveOut) {
   ASSERT_EQ(back_outs, 1);
 }
 
+TEST(ViewStackTest, OutDispatchesOnlyToOveredChildren) {
+  auto front_overs = 0;
+  auto front_outs = 0;
+  auto back_overs = 0;
+  auto back_outs = 0;
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
+  stack.add_child_view(usagi::ui::make_view<OptionalOverView>(
+      back_overs, back_outs, false, usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+  stack.add_child_view(usagi::ui::make_view<OptionalOverView>(
+      front_overs, front_outs, true, usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+
+  ASSERT_TRUE(stack.event(usagi::type::gesture_traits<GestureParameterType>::on_over_type{
+                              usagi::geometry::point<float>{5.f, 5.f}, 0.f, false, false, false,
+                              false, false},
+                          typename OptionalOverView::offset_type{}));
+
+  stack.event(usagi::type::gesture_traits<GestureParameterType>::on_out_type{
+                  usagi::geometry::point<float>{20.f, 20.f}, 0.f, false, false, false, false,
+                  false},
+              typename OptionalOverView::offset_type{});
+
+  ASSERT_EQ(front_overs, 1);
+  ASSERT_EQ(back_overs, 0);
+  ASSERT_EQ(front_outs, 1);
+  ASSERT_EQ(back_outs, 0);
+}
+
 TEST(ViewStackTest, DisabledChildIsNotDrawnOrHit) {
   auto stamp = std::vector<int>{};
   auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{

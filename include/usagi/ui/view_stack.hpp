@@ -107,7 +107,10 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
     this->set_over(false);
     for (auto it = child_order.rbegin(); it != child_order.rend(); ++it) {
       auto &child = child_views.at(*it);
-      child.event(local_parameter(parameter, child), offset + child_origin(child));
+      if (child.is_overed()) {
+        child.set_over(false);
+        child.event(local_parameter(parameter, child), offset + child_origin(child));
+      }
     }
   }
 

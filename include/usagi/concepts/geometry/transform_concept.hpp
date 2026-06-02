@@ -4,9 +4,9 @@
 #include <usagi/concepts/geometry/point_concept.hpp>
 
 namespace usagi::concepts::geometry {
-/**
- * transformが表現可能
- */
+/// Matches transform-like types with translation, rotation, and origin accessors.
+///
+/// @tparam TransformType Type to test.
 template <class TransformType>
 concept transform_concept = requires(TransformType &t) {
   typename TransformType::point_type;

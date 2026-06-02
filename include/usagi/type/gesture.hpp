@@ -15,8 +15,16 @@ struct gesture_parameter {
   usagi::geometry::point<ValueType> position;
   /// Wheel delta for wheel gestures.
   ValueType wheel_delta;
-  /// Mouse and modifier button states.
-  bool l, r, shift, ctrl, alt;
+  /// Left mouse button state.
+  bool l;
+  /// Right mouse button state.
+  bool r;
+  /// Shift key state.
+  bool shift;
+  /// Control key state.
+  bool ctrl;
+  /// Alt key state.
+  bool alt;
 };
 
 /// Gesture event types derived from a shared parameter payload.

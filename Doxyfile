@@ -7,6 +7,13 @@ OUTPUT_DIRECTORY       = build/docs/doxygen
 INPUT                  = include/usagi
 FILE_PATTERNS          = *.hpp
 RECURSIVE              = YES
+EXCLUDE_SYMBOLS        = *::detail::* \
+                         usagi::ui::detail::* \
+                         usagi::tuple::detail::* \
+                         usagi::concepts::tuple::detail::* \
+                         usagi::concepts::ui::detail::* \
+                         usagi::type_traits::detail::* \
+                         usagi::geometry::detail::*
 
 EXTRACT_ALL            = NO
 EXTRACT_PRIVATE        = NO
@@ -36,4 +43,3 @@ MACRO_EXPANSION        = NO
 SKIP_FUNCTION_MACROS   = YES
 
 HAVE_DOT               = NO
-

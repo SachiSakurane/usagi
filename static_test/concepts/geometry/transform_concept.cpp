@@ -9,6 +9,7 @@ struct Transformed {
 
   point_type translation() const;
   value_type rotation() const;
+  point_type scale() const;
   point_type origin() const;
 };
 
@@ -19,6 +20,7 @@ struct UnTransformed {
 
   point_type translation() const;
   value_type rotation() const;
+  point_type scale() const;
   // point_type origin() const;
 };
 

@@ -4,7 +4,7 @@
 #include <usagi/concepts/geometry/point_concept.hpp>
 
 namespace usagi::concepts::geometry {
-/// Matches transform-like types with translation, rotation, and origin accessors.
+/// Matches transform-like types with translation, rotation, scale, and origin accessors.
 ///
 /// @tparam TransformType Type to test.
 template <class TransformType>
@@ -16,6 +16,7 @@ concept transform_concept = requires(TransformType &t) {
 
   { t.translation() } -> usagi::concepts::geometry::point_concept;
   { t.rotation() } -> usagi::concepts::arithmetic;
+  { t.scale() } -> usagi::concepts::geometry::point_concept;
   { t.origin() } -> usagi::concepts::geometry::point_concept;
 };
 } // namespace usagi::concepts::geometry

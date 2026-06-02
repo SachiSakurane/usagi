@@ -23,6 +23,9 @@ static_assert([] {
   if (t.rotation() != 0) {
     return false;
   }
+  if (t.scale().x() != 1 || t.scale().y() != 1) {
+    return false;
+  }
   if (t.origin().x() != 0 || t.origin().y() != 0) {
     return false;
   }
@@ -32,12 +35,14 @@ static_assert([] {
 static_assert([] {
   constexpr auto t =
       usagi::geometry::transform<int>{usagi::geometry::point<int>{1, 2}, 3,
-                                      usagi::geometry::point<int>{4, 5}};
+                                      usagi::geometry::point<int>{4, 5},
+                                      usagi::geometry::point<int>{6, 7}};
   constexpr auto tuple = t();
   constexpr auto copy = t.duplicate();
 
   if (std::get<0>(tuple) != 1 || std::get<1>(tuple) != 2 || std::get<2>(tuple) != 3 ||
-      std::get<3>(tuple) != 4 || std::get<4>(tuple) != 5) {
+      std::get<3>(tuple) != 4 || std::get<4>(tuple) != 5 || std::get<5>(tuple) != 6 ||
+      std::get<6>(tuple) != 7) {
     return false;
   }
   if (copy.translation().x() != 1 || copy.translation().y() != 2) {
@@ -46,19 +51,26 @@ static_assert([] {
   if (copy.rotation() != 3) {
     return false;
   }
-  if (copy.origin().x() != 4 || copy.origin().y() != 5) {
+  if (copy.scale().x() != 4 || copy.scale().y() != 5) {
+    return false;
+  }
+  if (copy.origin().x() != 6 || copy.origin().y() != 7) {
     return false;
   }
   return true;
 }());
 
 static_assert([] {
-  constexpr auto t = usagi::geometry::transform<int>{PointLike<int>{}, 3, PointLike<int>{}};
+  constexpr auto t =
+      usagi::geometry::transform<int>{PointLike<int>{}, 3, PointLike<int>{}, PointLike<int>{}};
 
   if (t.translation().x() != 1 || t.translation().y() != 2) {
     return false;
   }
   if (t.rotation() != 3) {
+    return false;
+  }
+  if (t.scale().x() != 1 || t.scale().y() != 2) {
     return false;
   }
   if (t.origin().x() != 1 || t.origin().y() != 2) {

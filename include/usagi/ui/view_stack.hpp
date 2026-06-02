@@ -91,8 +91,10 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
       auto &child = child_views.at(*it);
       if (can_hit_new_child && !is_resolved && child.is_enabled() &&
           usagi::geometry::contain(child.frame(), parameter.position)) {
-        child.set_over(true);
         is_resolved = child.event(local_parameter(parameter, child), offset + child_origin(child));
+        if (is_resolved) {
+          child.set_over(true);
+        }
       } else if (child.is_overed() == true) {
         child.set_over(false);
         child.event(local_parameter(out_parameter(parameter), child), offset + child_origin(child));

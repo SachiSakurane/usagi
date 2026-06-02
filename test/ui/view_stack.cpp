@@ -129,6 +129,31 @@ private:
   bool consumes_down;
 };
 
+class OptionalOverView final
+    : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
+public:
+  using base_view_type = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
+  using gesture_traits = typename base_view_type::gesture_traits;
+  using offset_type = typename base_view_type::offset_type;
+
+  OptionalOverView(int &o, int &out, bool consume, const rect_type &frame)
+      : base_view_type{frame}, overs{o}, outs{out}, consumes_over{consume} {}
+
+  bool event(typename gesture_traits::on_over_type, offset_type) override {
+    overs += 1;
+    return consumes_over;
+  }
+
+  void event(typename gesture_traits::on_out_type, offset_type) override { outs += 1; }
+
+  using base_view_type::event;
+
+private:
+  int &overs;
+  int &outs;
+  bool consumes_over;
+};
+
 class OrderedView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
 public:
   using base_view_type = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
@@ -418,6 +443,34 @@ TEST(ViewStackTest, NonConsumingDownChildDoesNotReceiveDragOrUp) {
   ASSERT_EQ(front_ups, 0);
   ASSERT_EQ(back_drags, 1);
   ASSERT_EQ(back_ups, 1);
+}
+
+TEST(ViewStackTest, NonConsumingOverChildDoesNotReceiveOut) {
+  auto front_overs = 0;
+  auto front_outs = 0;
+  auto back_overs = 0;
+  auto back_outs = 0;
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
+  stack.add_child_view(usagi::ui::make_view<OptionalOverView>(
+      back_overs, back_outs, true, usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+  stack.add_child_view(usagi::ui::make_view<OptionalOverView>(
+      front_overs, front_outs, false, usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+
+  ASSERT_TRUE(stack.event(usagi::type::gesture_traits<GestureParameterType>::on_over_type{
+                              usagi::geometry::point<float>{5.f, 5.f}, 0.f, false, false, false,
+                              false, false},
+                          typename OptionalOverView::offset_type{}));
+
+  ASSERT_FALSE(stack.event(usagi::type::gesture_traits<GestureParameterType>::on_over_type{
+                               usagi::geometry::point<float>{20.f, 20.f}, 0.f, false, false,
+                               false, false, false},
+                           typename OptionalOverView::offset_type{}));
+
+  ASSERT_EQ(front_overs, 1);
+  ASSERT_EQ(back_overs, 1);
+  ASSERT_EQ(front_outs, 0);
+  ASSERT_EQ(back_outs, 1);
 }
 
 TEST(ViewStackTest, DisabledChildIsNotDrawnOrHit) {

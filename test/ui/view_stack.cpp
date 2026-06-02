@@ -101,6 +101,34 @@ private:
   int &ups;
 };
 
+class OptionalDragUpView final
+    : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
+public:
+  using base_view_type = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
+  using gesture_traits = typename base_view_type::gesture_traits;
+  using offset_type = typename base_view_type::offset_type;
+
+  OptionalDragUpView(int &d, int &drag, int &u, bool consume, const rect_type &frame)
+      : base_view_type{frame}, downs{d}, drags{drag}, ups{u}, consumes_down{consume} {}
+
+  bool event(typename gesture_traits::on_down_type, offset_type) override {
+    downs += 1;
+    return consumes_down;
+  }
+
+  void event(typename gesture_traits::on_drag_type, offset_type) override { drags += 1; }
+
+  void event(typename gesture_traits::on_up_type, offset_type) override { ups += 1; }
+
+  using base_view_type::event;
+
+private:
+  int &downs;
+  int &drags;
+  int &ups;
+  bool consumes_down;
+};
+
 class OrderedView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
 public:
   using base_view_type = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
@@ -352,6 +380,44 @@ TEST(ViewStackTest, DragAndUpAreNotClippedAfterDown) {
   ASSERT_EQ(downs, 1);
   ASSERT_EQ(drags, 1);
   ASSERT_EQ(ups, 1);
+}
+
+TEST(ViewStackTest, NonConsumingDownChildDoesNotReceiveDragOrUp) {
+  auto front_downs = 0;
+  auto front_drags = 0;
+  auto front_ups = 0;
+  auto back_downs = 0;
+  auto back_drags = 0;
+  auto back_ups = 0;
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}};
+  stack.add_child_view(usagi::ui::make_view<OptionalDragUpView>(
+      back_downs, back_drags, back_ups, true,
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+  stack.add_child_view(usagi::ui::make_view<OptionalDragUpView>(
+      front_downs, front_drags, front_ups, false,
+      usagi::geometry::rect<float>{0.f, 0.f, 10.f, 10.f}));
+
+  ASSERT_TRUE(stack.event(usagi::type::gesture_traits<GestureParameterType>::on_down_type{
+                              usagi::geometry::point<float>{5.f, 5.f}, 0.f, true, false, false,
+                              false, false},
+                          typename OptionalDragUpView::offset_type{}));
+
+  stack.event(usagi::type::gesture_traits<GestureParameterType>::on_drag_type{
+                  usagi::geometry::point<float>{6.f, 6.f}, 0.f, true, false, false, false,
+                  false},
+              typename OptionalDragUpView::offset_type{});
+  stack.event(usagi::type::gesture_traits<GestureParameterType>::on_up_type{
+                  usagi::geometry::point<float>{6.f, 6.f}, 0.f, true, false, false, false,
+                  false},
+              typename OptionalDragUpView::offset_type{});
+
+  ASSERT_EQ(front_downs, 1);
+  ASSERT_EQ(back_downs, 1);
+  ASSERT_EQ(front_drags, 0);
+  ASSERT_EQ(front_ups, 0);
+  ASSERT_EQ(back_drags, 1);
+  ASSERT_EQ(back_ups, 1);
 }
 
 TEST(ViewStackTest, DisabledChildIsNotDrawnOrHit) {

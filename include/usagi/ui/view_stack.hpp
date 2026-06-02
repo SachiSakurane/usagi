@@ -53,8 +53,8 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
     for (auto it = child_order.rbegin(); it != child_order.rend(); ++it) {
       auto &child = child_views.at(*it);
       if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
-        child.set_down(true);
         if (child.event(local_parameter(parameter, child), offset + child_origin(child))) {
+          child.set_down(true);
           return true;
         }
       }

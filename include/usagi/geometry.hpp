@@ -8,3 +8,4 @@
 #include <usagi/geometry/point.hpp>
 #include <usagi/geometry/rect.hpp>
 #include <usagi/geometry/size.hpp>
+#include <usagi/geometry/transform.hpp>

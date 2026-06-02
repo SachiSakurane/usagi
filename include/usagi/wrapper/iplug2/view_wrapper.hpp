@@ -11,44 +11,73 @@
 
 namespace usagi::wrapper::iplug2 {
 
+/// IPlug2 control helpers exposed through gesture parameters.
 struct igraphic_control {
+  /// Sets the mouse cursor shown by the host UI.
   const std::function<void(iplug::igraphics::ECursor)> set_mouse_cursor;
+  /// Shows or hides the mouse cursor.
   const std::function<void(bool)> set_mouse_cursor_hidden;
+  /// Attempts to create a text entry session.
   const std::function<bool(const iplug::igraphics::IText &, const iplug::igraphics::IRECT &,
                            std::string str, std::function<void(std::string)> completed)>
       try_create_text_entry;
 };
 
+/// IPlug2-specific gesture parameter payload.
+///
+/// @tparam ValueType Arithmetic coordinate and wheel delta value type.
 template <usagi::concepts::arithmetic ValueType>
 struct iplug_gesture_parameter : type::gesture_parameter<ValueType> {
+  /// Host control helpers available to gesture handlers.
   igraphic_control control;
 };
 
+/// Shared type aliases for the IPlug2 wrapper integration.
 struct iplug_traits {
+  /// Geometry value type used by IPlug2 integration.
   using value_type = float;
+  /// Point type using `value_type`.
   using point_type = typename usagi::geometry::geometry_traits<value_type>::point_type;
+  /// Size type using `value_type`.
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
+  /// Rectangle type using `value_type`.
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
+  /// Skia canvas draw context type used by IPlug2.
   using draw_context_type = SkCanvas;
+  /// Draw and event offset type.
   using offset_type = point_type;
+  /// Gesture parameter payload type with IPlug2 helpers.
   using gesture_parameter_type = iplug_gesture_parameter<value_type>;
+  /// Gesture event type bundle.
   using gesture_traits = typename usagi::type::gesture_traits<gesture_parameter_type>;
+  /// Type-erased UI view handle type.
   using view_type = typename usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;
+  /// Base view type for IPlug2-backed views.
   using base_view_type =
       typename usagi::ui::base_view<value_type, draw_context_type, gesture_parameter_type>;
 };
 
+/// IPlug2 `IControl` that hosts a usagi view stack.
 class view_wrapper : public IControl {
 public:
+  /// Creates a wrapper with a local view stack sized to `bounds`.
+  ///
+  /// @param bounds IPlug2 control bounds.
   explicit view_wrapper(const IRECT &bounds)
       : IControl{bounds}, local_view{iplug_traits::rect_type{bounds.L, bounds.T, bounds.R,
                                                              bounds.B}} {
     mMouseIsOver = true;
   }
 
+  /// Enables or disables double-click event dispatch.
+  ///
+  /// @param flag `true` to dispatch double-click separately from single clicks.
   void set_double_click_enabled(bool flag) { mDblAsSingleClick = !flag; }
 
   // IControl
+  /// Draws the hosted local view stack.
+  ///
+  /// @param g IPlug2 graphics context.
   void Draw(IGraphics &g) override {
     SkCanvas *canvas = static_cast<SkCanvas *>(g.GetDrawContext());
     if (canvas) {
@@ -56,6 +85,11 @@ public:
     }
   }
 
+  /// Converts an IPlug2 mouse-down event to a usagi down event.
+  ///
+  /// @param x Mouse x coordinate.
+  /// @param y Mouse y coordinate.
+  /// @param mod Mouse and modifier button state.
   void OnMouseDown(float x, float y, const IMouseMod &mod) override {
     local_view.event(iplug_traits::gesture_traits::on_down_type{usagi::geometry::point<float>{x, y},
                                                                 0.f, mod.L, mod.R, mod.S, mod.C,
@@ -64,6 +98,13 @@ public:
     IControl::OnMouseDown(x, y, mod);
   }
 
+  /// Converts an IPlug2 mouse-drag event to a usagi drag event.
+  ///
+  /// @param x Mouse x coordinate.
+  /// @param y Mouse y coordinate.
+  /// @param dX Horizontal drag delta supplied by IPlug2.
+  /// @param dY Vertical drag delta supplied by IPlug2.
+  /// @param mod Mouse and modifier button state.
   void OnMouseDrag(float x, float y, float dX, float dY, const IMouseMod &mod) override {
     local_view.event(iplug_traits::gesture_traits::on_drag_type{usagi::geometry::point<float>{x, y},
                                                                 0.f, mod.L, mod.R, mod.S, mod.C,
@@ -72,6 +113,11 @@ public:
     IControl::OnMouseDrag(x, y, dX, dY, mod);
   }
 
+  /// Converts an IPlug2 mouse-up event to a usagi up event.
+  ///
+  /// @param x Mouse x coordinate.
+  /// @param y Mouse y coordinate.
+  /// @param mod Mouse and modifier button state.
   void OnMouseUp(float x, float y, const IMouseMod &mod) override {
     local_view.event(iplug_traits::gesture_traits::on_up_type{usagi::geometry::point<float>{x, y},
                                                               0.f, mod.L, mod.R, mod.S, mod.C,
@@ -80,6 +126,11 @@ public:
     IControl::OnMouseUp(x, y, mod);
   }
 
+  /// Converts an IPlug2 mouse-over event to a usagi over event.
+  ///
+  /// @param x Mouse x coordinate.
+  /// @param y Mouse y coordinate.
+  /// @param mod Mouse and modifier button state.
   void OnMouseOver(float x, float y, const IMouseMod &mod) override {
     local_view.event(iplug_traits::gesture_traits::on_over_type{usagi::geometry::point<float>{x, y},
                                                                 0.f, mod.L, mod.R, mod.S, mod.C,
@@ -88,6 +139,7 @@ public:
     IControl::OnMouseOver(x, y, mod);
   }
 
+  /// Converts an IPlug2 mouse-out event to a usagi out event.
   void OnMouseOut() override {
     local_view.event(iplug_traits::gesture_traits::on_out_type{usagi::geometry::point<float>{}, 0.f,
                                                                false, false, false, false, false,
@@ -96,6 +148,11 @@ public:
     IControl::OnMouseOut();
   }
 
+  /// Converts an IPlug2 double-click event to a usagi double event.
+  ///
+  /// @param x Mouse x coordinate.
+  /// @param y Mouse y coordinate.
+  /// @param mod Mouse and modifier button state.
   void OnMouseDblClick(float x, float y, const IMouseMod &mod) override {
     local_view.event(
         iplug_traits::gesture_traits::on_double_type{usagi::geometry::point<float>{x, y}, 0.f,
@@ -105,6 +162,12 @@ public:
     IControl::OnMouseDblClick(x, y, mod);
   }
 
+  /// Converts an IPlug2 mouse-wheel event to a usagi wheel event.
+  ///
+  /// @param x Mouse x coordinate.
+  /// @param y Mouse y coordinate.
+  /// @param mod Mouse and modifier button state.
+  /// @param d Wheel delta supplied by IPlug2.
   void OnMouseWheel(float x, float y, const IMouseMod &mod, float d) override {
     local_view.event(
         iplug_traits::gesture_traits::on_wheel_type{usagi::geometry::point<float>{x, y}, d, mod.L,
@@ -114,6 +177,9 @@ public:
     IControl::OnMouseWheel(x, y, mod, d);
   }
 
+  /// Completes the pending text entry callback, if one exists.
+  ///
+  /// @param str Text entered by the user.
   void OnTextEntryCompletion(const char *str, int) override {
     if (text_entry_completed && text_entry_completed.value()) {
       text_entry_completed.value()(str);
@@ -122,12 +188,17 @@ public:
   }
 
 protected:
+  /// Hosted usagi view stack.
   usagi::ui::view_stack<iplug_traits::value_type, iplug_traits::draw_context_type,
                         iplug_traits::gesture_parameter_type>
       local_view;
 
+  /// Pending text-entry completion callback.
   std::optional<std::function<void(std::string)>> text_entry_completed{std::nullopt};
 
+  /// Creates an `igraphic_control` facade bound to this wrapper.
+  ///
+  /// @return Host control helper callbacks.
   igraphic_control make_igraphic_control() {
     return igraphic_control{
         .set_mouse_cursor = [this](iplug::igraphics::ECursor c) { GetUI()->SetMouseCursor(c); },

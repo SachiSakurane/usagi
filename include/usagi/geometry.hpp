@@ -1,5 +1,8 @@
 #pragma once
 
+/// @file
+/// Convenience header for geometry types, traits, and algorithms.
+
 #include <usagi/geometry/algorithm.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
 #include <usagi/geometry/point.hpp>

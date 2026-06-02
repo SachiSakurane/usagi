@@ -1,5 +1,8 @@
 #pragma once
 
+/// @file
+/// Main convenience header for the usagi library.
+
 #include <usagi/concepts.hpp>
 #include <usagi/geometry.hpp>
 #include <usagi/graphics.hpp>

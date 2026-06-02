@@ -1,5 +1,8 @@
 #pragma once
 
+/// @file
+/// Convenience header for tuple type utilities.
+
 #include <usagi/tuple/back.hpp>
 #include <usagi/tuple/erase.hpp>
 #include <usagi/tuple/front.hpp>

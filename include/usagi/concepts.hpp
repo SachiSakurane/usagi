@@ -1,5 +1,8 @@
 #pragma once
 
+/// @file
+/// Convenience header for all usagi concepts.
+
 #include <usagi/concepts/arithmetic.hpp>
 #include <usagi/concepts/convertible_to.hpp>
 #include <usagi/concepts/floating_point.hpp>

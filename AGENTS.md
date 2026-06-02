@@ -23,3 +23,19 @@ behavior can be checked with `static_assert`, `constexpr`, or `consteval`.
 - Include only the headers needed by the compile-time check.
 - Keep runtime behavior checks in `test/`; keep concept, type trait, and
   constant-expression checks in `static_test/`.
+
+## Doxygen Comment Style
+
+When adding or changing public API in `include/`, add or update Doxygen comments
+at the same time.
+
+- Use `///` comments for concise API descriptions.
+- Document template parameters with `@tparam` when the constraint is part of the
+  API contract.
+- Document function inputs and outputs with `@param` and `@return`; omit them
+  only for trivial default constructors or aliases where there is no meaningful
+  input or output to describe.
+- Prefer documenting externally visible behavior, invariants, and preconditions
+  over implementation details.
+- Keep comments synchronized with `static_test/` examples when compile-time
+  behavior is part of the contract.

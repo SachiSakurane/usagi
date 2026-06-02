@@ -33,13 +33,22 @@ namespace detail {
 
 } // namespace detail
 
+/// Reports whether a tuple-like type contains `TargetType`.
+///
+/// @tparam TargetType Type to search for.
+/// @tparam TupleType Tuple-like input type.
 template <class TargetType, class TupleType>
 struct has {
+  /// `true` when `TargetType` appears in `TupleType`; otherwise `false`.
   static constexpr bool value =
       detail::has_impl<TargetType, TupleType,
                        std::make_index_sequence<std::tuple_size_v<TupleType>>>::value;
 };
 
+/// Convenience value for `has<TargetType, TupleType>::value`.
+///
+/// @tparam TargetType Type to search for.
+/// @tparam TupleType Tuple-like input type.
 template <class TargetType, class TupleType>
 inline constexpr bool has_v = has<TargetType, TupleType>::value;
 } // namespace usagi::tuple

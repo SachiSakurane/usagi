@@ -4,11 +4,9 @@
 #include <utility>
 
 namespace usagi::concepts::ui {
-/**
- * 描画可能か
- *
- * draw(DrawableType::draw_context_type& ) を持つ
- */
+/// Matches types that can draw with a draw context and offset.
+///
+/// @tparam DrawableType Type to test.
 template <class DrawableType>
 concept drawable = requires(DrawableType &d) {
   typename DrawableType::draw_context_type;

@@ -19,12 +19,21 @@ namespace detail {
   };
 } // namespace detail
 
+/// Finds the index of `TargetType` in a tuple-like type.
+///
+/// @tparam TargetType Type to search for.
+/// @tparam TupleType Tuple-like input type that contains `TargetType`.
 template <class TargetType, class TupleType>
 requires usagi::tuple::has_v<TargetType, TupleType>
 struct get_index {
+  /// Zero-based index of `TargetType` in `TupleType`.
   static constexpr size_t value = detail::get_index_impl<TargetType, TupleType, 0>::value;
 };
 
+/// Convenience value for `get_index<TargetType, TupleType>::value`.
+///
+/// @tparam TargetType Type to search for.
+/// @tparam TupleType Tuple-like input type that contains `TargetType`.
 template <class TargetType, class TupleType>
 inline constexpr size_t get_index_v = get_index<TargetType, TupleType>::value;
 } // namespace usagi::tuple

@@ -9,9 +9,9 @@
 #include <usagi/concepts/ui/viewable.hpp>
 
 namespace usagi::concepts::ui {
-/**
- * child view collection を持っているか
- */
+/// Matches view-like types that own and manage child views.
+///
+/// @tparam ContainerType Type to test.
 template <class ContainerType>
 concept view_container = usagi::concepts::ui::viewable<ContainerType> &&
                          requires(ContainerType &container) {

@@ -3,9 +3,9 @@
 #include <usagi/concepts/arithmetic.hpp>
 
 namespace usagi::concepts::geometry {
-/**
- * pointが表現可能
- */
+/// Matches point-like types with arithmetic x and y accessors.
+///
+/// @tparam PointType Type to test.
 template <class PointType>
 concept point_concept = requires(PointType &p) {
   requires usagi::concepts::arithmetic<typename PointType::value_type>;

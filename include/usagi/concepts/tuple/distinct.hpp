@@ -25,6 +25,9 @@ namespace detail {
   };
 } // namespace detail
 
+/// Matches tuple-like types whose element types are all distinct.
+///
+/// @tparam TupleType Tuple-like type to test.
 template <class TupleType>
 concept distinct = detail::distinct_impl<TupleType>::value;
 } // namespace usagi::concepts::tuple

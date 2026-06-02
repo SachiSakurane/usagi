@@ -5,9 +5,9 @@
 #include <usagi/concepts/geometry/size_concept.hpp>
 
 namespace usagi::concepts::geometry {
-/**
- * rectが表現可能
- */
+/// Matches rectangle-like types with arithmetic edges, size, and center accessors.
+///
+/// @tparam RectType Type to test.
 template <class RectType>
 concept rect_concept = requires(RectType &r) {
   requires usagi::concepts::arithmetic<typename RectType::value_type>;

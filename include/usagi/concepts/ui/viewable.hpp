@@ -10,14 +10,15 @@
 #include <usagi/concepts/ui/gestural.hpp>
 
 namespace usagi::ui {
+/// Forward declaration for the owning UI view handle.
 template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
 class view;
 }
 
 namespace usagi::concepts::ui {
-/**
- * view を表現可能かどうか
- */
+/// Matches enabled view-like types that are both drawable and gestural.
+///
+/// @tparam ViewType Type to test.
 template <class ViewType>
 concept viewable = requires(ViewType &v) {
   requires usagi::concepts::ui::gestural<ViewType>;

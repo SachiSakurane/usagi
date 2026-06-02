@@ -6,11 +6,9 @@
 #include <usagi/type/gesture.hpp>
 
 namespace usagi::concepts::ui {
-/**
- * gesture できるやつ
- *
- * 終点は基本的に resolve(true を返して以降のレイヤーを無視すること) ができない
- */
+/// Matches types that can receive all UI gesture event variants.
+///
+/// @tparam GesturalType Type to test.
 template <class GesturalType>
 concept gestural = requires(GesturalType &g) {
   typename GesturalType::offset_type;

@@ -7,6 +7,9 @@
 #include <usagi/concepts/geometry/point_concept.hpp>
 
 namespace usagi::concepts::type {
+/// Matches gesture parameter payloads used by UI gesture events.
+///
+/// @tparam GesturalParameterType Type to test.
 template <class GesturalParameterType>
 concept gestural_parameter = requires(GesturalParameterType g) {
   requires usagi::concepts::arithmetic<typename GesturalParameterType::value_type>;

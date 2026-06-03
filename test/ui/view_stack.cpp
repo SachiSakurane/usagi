@@ -1,3 +1,4 @@
+#include <type_traits>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -14,7 +15,7 @@ struct DrawContext {};
 using GestureParameterType = usagi::type::gesture_parameter<float>;
 
 struct DrawTransformCall {
-  enum class type { save, restore, translate, rotate, scale, draw };
+  enum class type { save, restore, clip, translate, rotate, scale, draw };
 
   type value;
   float x{};
@@ -222,18 +223,41 @@ private:
 
 namespace usagi::ui {
 template <>
+struct draw_clip_traits<TransformDrawContext> {
+  static void draw(TransformDrawContext &context,
+                   const usagi::concepts::geometry::rect_concept auto &rect, auto &&draw) {
+    context.calls.emplace_back(DrawTransformCall{DrawTransformCall::type::save});
+    context.calls.emplace_back(
+        DrawTransformCall{DrawTransformCall::type::clip, rect.l(), rect.t()});
+    context.calls.emplace_back(
+        DrawTransformCall{DrawTransformCall::type::clip, rect.r(), rect.b()});
+    std::forward<decltype(draw)>(draw)();
+    context.calls.emplace_back(DrawTransformCall{DrawTransformCall::type::restore});
+  }
+};
+
+template <>
 struct draw_transform_traits<TransformDrawContext> {
   static void draw(TransformDrawContext &context,
                    const usagi::concepts::geometry::transform_concept auto &transform,
                    const usagi::concepts::geometry::point_concept auto &offset, auto &&draw) {
+    using value_type = typename std::remove_cvref_t<decltype(transform)>::value_type;
+    const auto scale = transform.scale();
+    const auto rotation = transform.rotation();
+    if (scale.x() == static_cast<value_type>(1) &&
+        scale.y() == static_cast<value_type>(1) && rotation == static_cast<value_type>(0)) {
+      std::forward<decltype(draw)>(draw)();
+      return;
+    }
+
     const auto origin = offset + transform.origin();
     context.calls.emplace_back(DrawTransformCall{DrawTransformCall::type::save});
     context.calls.emplace_back(
         DrawTransformCall{DrawTransformCall::type::translate, origin.x(), origin.y()});
     context.calls.emplace_back(
-        DrawTransformCall{DrawTransformCall::type::rotate, transform.rotation() * 180.f / pi});
-    context.calls.emplace_back(DrawTransformCall{DrawTransformCall::type::scale,
-                                                transform.scale().x(), transform.scale().y()});
+        DrawTransformCall{DrawTransformCall::type::rotate, rotation * 180.f / pi});
+    context.calls.emplace_back(
+        DrawTransformCall{DrawTransformCall::type::scale, scale.x(), scale.y()});
     context.calls.emplace_back(
         DrawTransformCall{DrawTransformCall::type::translate, -origin.x(), -origin.y()});
     std::forward<decltype(draw)>(draw)();
@@ -268,6 +292,7 @@ TEST(ViewStackTest, OwnsViewState) {
   ASSERT_TRUE(stack.is_enabled());
   stack.set_enabled(false);
   ASSERT_FALSE(stack.is_enabled());
+  ASSERT_FALSE(stack.is_draw_clipping());
 }
 
 TEST(ViewStackTest, SendsLocalGesturePositionToChild) {
@@ -475,6 +500,33 @@ TEST(ViewStackTest, AppliesChildTransformToDrawContext) {
   EXPECT_NEAR(context.calls[5].x, 130.f, 0.0001f);
   EXPECT_NEAR(context.calls[5].y, 250.f, 0.0001f);
   ASSERT_EQ(context.calls[6].value, DrawTransformCall::type::restore);
+}
+
+TEST(ViewStackTest, DrawClippingClipsToStackBoundsWhenEnabled) {
+  using point_type = usagi::geometry::point<float>;
+
+  auto stack = usagi::ui::view_stack<float, TransformDrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{10.f, 20.f, 40.f, 60.f}};
+  stack.set_draw_clipping(true);
+  ASSERT_TRUE(stack.is_draw_clipping());
+  stack.add_child_view(usagi::ui::make_view<TransformDrawView>(
+      usagi::geometry::rect<float>{20.f, 30.f, 50.f, 60.f}));
+
+  auto context = TransformDrawContext{};
+  stack.draw(context, point_type{100.f, 200.f});
+
+  ASSERT_EQ(context.calls.size(), 5u);
+  ASSERT_EQ(context.calls[0].value, DrawTransformCall::type::save);
+  ASSERT_EQ(context.calls[1].value, DrawTransformCall::type::clip);
+  EXPECT_NEAR(context.calls[1].x, 100.f, 0.0001f);
+  EXPECT_NEAR(context.calls[1].y, 200.f, 0.0001f);
+  ASSERT_EQ(context.calls[2].value, DrawTransformCall::type::clip);
+  EXPECT_NEAR(context.calls[2].x, 130.f, 0.0001f);
+  EXPECT_NEAR(context.calls[2].y, 240.f, 0.0001f);
+  ASSERT_EQ(context.calls[3].value, DrawTransformCall::type::draw);
+  EXPECT_NEAR(context.calls[3].x, 120.f, 0.0001f);
+  EXPECT_NEAR(context.calls[3].y, 230.f, 0.0001f);
+  ASSERT_EQ(context.calls[4].value, DrawTransformCall::type::restore);
 }
 
 TEST(ViewStackTest, BaseViewHitTestUsesLocalGesturePosition) {

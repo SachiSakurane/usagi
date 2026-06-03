@@ -8,6 +8,7 @@
 #include <usagi/ui/base_view.hpp>
 #include <usagi/ui/view.hpp>
 #include <usagi/ui/view_stack.hpp>
+#include <usagi/wrapper/skia/draw_clip.hpp>
 #include <usagi/wrapper/skia/draw_transform.hpp>
 
 namespace usagi::wrapper::iplug2 {

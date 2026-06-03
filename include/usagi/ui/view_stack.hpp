@@ -12,6 +12,7 @@
 #include <usagi/geometry.hpp>
 #include <usagi/geometry/transform/function.hpp>
 #include <usagi/ui/base_view.hpp>
+#include <usagi/ui/draw_clip.hpp>
 #include <usagi/ui/draw_transform.hpp>
 #include <usagi/ui/view.hpp>
 
@@ -65,14 +66,16 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
   /// @param context Mutable drawing context.
   /// @param offset Accumulated offset from the root view.
   void draw(draw_context_type &context, offset_type offset) override {
-    for (auto key : child_order) {
-      auto &child = child_views.at(key);
-      if (child.is_enabled()) {
-        const auto child_offset = offset + child_origin(child);
-        usagi::ui::draw_with_transform(context, child.transform(), child_offset,
-                                       [&] { child.draw(context, child_offset); });
-      }
+    const auto draw_children = [&] {
+      draw_children_unclipped(context, offset);
+    };
+
+    if (draw_clipping) {
+      usagi::ui::draw_with_clip(context, draw_clip_rect(offset), draw_children);
+      return;
     }
+
+    draw_children();
   }
 
   /// Dispatches a down event to the frontmost enabled child under the position.
@@ -261,6 +264,15 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
   /// @return Current event-clipping value.
   [[nodiscard]] bool is_event_clipping() const { return event_clipping; }
 
+  /// Updates whether drawing is clipped to stack bounds.
+  ///
+  /// @param flag New draw-clipping value.
+  void set_draw_clipping(bool flag) { draw_clipping = flag; }
+  /// Returns whether drawing is clipped to stack bounds.
+  ///
+  /// @return Current draw-clipping value.
+  [[nodiscard]] bool is_draw_clipping() const { return draw_clipping; }
+
   /// Moves a child to the front of the z-order.
   ///
   /// @param index Child key returned by `add_child_view`.
@@ -292,6 +304,26 @@ private:
   template <class ParameterType>
   bool is_event_position_clipped(const ParameterType &parameter) const {
     return event_clipping && !usagi::geometry::contain(rect_type{this->bounds()}, parameter.position);
+  }
+
+  /// Returns this stack's draw clipping rectangle in root coordinates.
+  rect_type draw_clip_rect(offset_type offset) const {
+    return rect_type{offset, this->bounds()};
+  }
+
+  /// Draws enabled children without applying stack-level clipping.
+  ///
+  /// @param context Mutable drawing context.
+  /// @param offset Accumulated offset from the root view.
+  void draw_children_unclipped(draw_context_type &context, offset_type offset) {
+    for (auto key : child_order) {
+      auto &child = child_views.at(key);
+      if (child.is_enabled()) {
+        const auto child_offset = offset + child_origin(child);
+        usagi::ui::draw_with_transform(context, child.transform(), child_offset,
+                                       [&] { child.draw(context, child_offset); });
+      }
+    }
   }
 
   /// Returns a child origin in stack-local coordinates.
@@ -336,6 +368,7 @@ private:
   child_view_map_type child_views;
   std::vector<child_view_key_type> child_order;
   bool event_clipping{true};
+  bool draw_clipping{false};
 };
 
 } // namespace usagi::ui

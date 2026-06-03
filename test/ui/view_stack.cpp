@@ -46,6 +46,20 @@ private:
   std::vector<offset_type> &offsets;
 };
 
+class OffsetDrawView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
+public:
+  using base_view_type = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
+  using offset_type = typename base_view_type::offset_type;
+
+  OffsetDrawView(std::vector<offset_type> &o, const rect_type &frame)
+      : base_view_type{frame}, offsets{o} {}
+
+  void draw(draw_context_type &, offset_type offset) override { offsets.emplace_back(offset); }
+
+private:
+  std::vector<offset_type> &offsets;
+};
+
 class CountingView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
 public:
   using base_view_type = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
@@ -226,6 +240,56 @@ TEST(ViewStackTest, SendsLocalGesturePositionToChild) {
   const auto expected_positions = std::vector<point_type>{{5.f, 5.f}};
   const auto expected_offsets = std::vector<point_type>{{120.f, 230.f}};
   ASSERT_EQ(positions, expected_positions);
+  ASSERT_EQ(offsets, expected_offsets);
+}
+
+TEST(ViewStackTest, SendsTranslatedLocalGesturePositionToChild) {
+  using point_type = usagi::geometry::point<float>;
+
+  auto positions = std::vector<point_type>{};
+  auto offsets = std::vector<point_type>{};
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 100.f, 100.f}};
+  const auto key = stack.add_child_view(
+      usagi::ui::make_view<EventView>(positions, offsets,
+                                      usagi::geometry::rect<float>{20.f, 30.f, 50.f, 60.f}));
+  stack.get_child_view(key).set_translation(point_type{10.f, 20.f});
+
+  const auto misses_layout_position =
+      stack.event(usagi::type::gesture_traits<GestureParameterType>::on_down_type{
+                      point_type{25.f, 35.f}, 0.f, true, false, false, false, false},
+                  point_type{100.f, 200.f});
+
+  ASSERT_FALSE(misses_layout_position);
+  ASSERT_TRUE(positions.empty());
+  ASSERT_TRUE(offsets.empty());
+
+  const auto consumed =
+      stack.event(usagi::type::gesture_traits<GestureParameterType>::on_down_type{
+                      point_type{35.f, 55.f}, 0.f, true, false, false, false, false},
+                  point_type{100.f, 200.f});
+
+  ASSERT_TRUE(consumed);
+  const auto expected_positions = std::vector<point_type>{{5.f, 5.f}};
+  const auto expected_offsets = std::vector<point_type>{{130.f, 250.f}};
+  ASSERT_EQ(positions, expected_positions);
+  ASSERT_EQ(offsets, expected_offsets);
+}
+
+TEST(ViewStackTest, DrawOffsetIncludesChildTranslation) {
+  using point_type = usagi::geometry::point<float>;
+
+  auto offsets = std::vector<point_type>{};
+  auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 100.f, 100.f}};
+  const auto key = stack.add_child_view(usagi::ui::make_view<OffsetDrawView>(
+      offsets, usagi::geometry::rect<float>{20.f, 30.f, 50.f, 60.f}));
+  stack.get_child_view(key).set_translation(point_type{10.f, 20.f});
+
+  auto context = DrawContext{};
+  stack.draw(context, point_type{100.f, 200.f});
+
+  const auto expected_offsets = std::vector<point_type>{{130.f, 250.f}};
   ASSERT_EQ(offsets, expected_offsets);
 }
 

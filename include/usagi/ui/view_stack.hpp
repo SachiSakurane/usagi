@@ -83,7 +83,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
     this->set_down(true);
     for (auto it = child_order.rbegin(); it != child_order.rend(); ++it) {
       auto &child = child_views.at(*it);
-      if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
+      if (child.is_enabled() && contains_child_position(child, parameter.position)) {
         if (child.event(local_parameter(parameter, child), offset + child_origin(child))) {
           child.set_down(true);
           return true;
@@ -137,7 +137,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
     for (auto it = child_order.rbegin(); it != child_order.rend(); ++it) {
       auto &child = child_views.at(*it);
       if (can_hit_new_child && !is_resolved && child.is_enabled() &&
-          usagi::geometry::contain(child.frame(), parameter.position)) {
+          contains_child_position(child, parameter.position)) {
         is_resolved = child.event(local_parameter(parameter, child), offset + child_origin(child));
         if (is_resolved) {
           child.set_over(true);
@@ -177,7 +177,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
 
     for (auto it = child_order.rbegin(); it != child_order.rend(); ++it) {
       auto &child = child_views.at(*it);
-      if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
+      if (child.is_enabled() && contains_child_position(child, parameter.position)) {
         if (child.event(local_parameter(parameter, child), offset + child_origin(child))) {
           return true;
         }
@@ -198,7 +198,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
 
     for (auto it = child_order.rbegin(); it != child_order.rend(); ++it) {
       auto &child = child_views.at(*it);
-      if (child.is_enabled() && usagi::geometry::contain(child.frame(), parameter.position)) {
+      if (child.is_enabled() && contains_child_position(child, parameter.position)) {
         if (child.event(local_parameter(parameter, child), offset + child_origin(child))) {
           return true;
         }
@@ -291,7 +291,11 @@ private:
 
   /// Returns a child origin in stack-local coordinates.
   static offset_type child_origin(const child_view_type &child) {
-    return offset_type{child.frame().l(), child.frame().t()};
+    return offset_type{child.frame().l(), child.frame().t()} + child.translation();
+  }
+
+  static bool contains_child_position(const child_view_type &child, point_type position) {
+    return usagi::geometry::contain(rect_type{child.bounds()}, position - child_origin(child));
   }
 
   /// Converts a stack-local gesture parameter to child-local coordinates.

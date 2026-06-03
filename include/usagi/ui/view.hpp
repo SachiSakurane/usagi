@@ -4,6 +4,7 @@
 #include <memory>
 #include <utility>
 
+#include <usagi/concepts/ui/transformable.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/ui/view_interface.hpp>
 
@@ -13,6 +14,7 @@ namespace detail {
   ///
   /// @tparam ViewType Concrete viewable type stored by value.
   template <usagi::concepts::ui::viewable ViewType>
+  requires usagi::concepts::ui::transformable<ViewType>
   class view_holder final
       : public usagi::ui::view_interface<typename ViewType::value_type,
                                          typename ViewType::draw_context_type,
@@ -23,10 +25,14 @@ namespace detail {
                                            typename ViewType::gesture_parameter_type>;
 
   public:
+    /// Point type exposed by the interface.
+    using point_type = typename view_interface_type::point_type;
     /// Rectangle type exposed by the interface.
     using rect_type = typename view_interface_type::rect_type;
     /// Size type exposed by the interface.
     using size_type = typename view_interface_type::size_type;
+    /// Transform type exposed by the interface.
+    using transform_type = typename view_interface_type::transform_type;
     /// Mutable drawing context type.
     using draw_context_type = typename view_interface_type::draw_context_type;
     /// Draw and event offset type.
@@ -92,6 +98,16 @@ namespace detail {
     void set_enabled(bool flag) override { holder.set_enabled(flag); }
     [[nodiscard]] bool is_enabled() const override { return holder.is_enabled(); }
 
+    transform_type transform() const override { return holder.transform(); }
+    void set_transform(transform_type t) override { holder.set_transform(t); }
+
+    point_type translation() const override { return holder.translation(); }
+    void set_translation(point_type p) override { holder.set_translation(p); }
+
+    point_type scale() const override { return holder.scale(); }
+    void set_scale(point_type s) override { holder.set_scale(s); }
+    void set_scale(point_type s, point_type origin) override { holder.set_scale(s, origin); }
+
   private:
     ViewType holder{};
   };
@@ -116,6 +132,8 @@ public:
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   /// Size type using `value_type`.
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
+  /// Transform type using `value_type`.
+  using transform_type = typename usagi::geometry::geometry_traits<value_type>::transform_type;
   /// Mutable drawing context type.
   using draw_context_type = DrawContextType;
   /// Draw and event offset type.
@@ -268,6 +286,59 @@ public:
     return holder->is_enabled();
   }
 
+  /// Returns the contained view's layout-after transform.
+  ///
+  /// @return Transform reported by the contained view.
+  [[nodiscard]] transform_type transform() const {
+    assert(holder);
+    return holder->transform();
+  }
+  /// Replaces the contained view's layout-after transform.
+  ///
+  /// @param t New transform value.
+  void set_transform(transform_type t) {
+    assert(holder);
+    holder->set_transform(t);
+  }
+
+  /// Returns the contained view's transform translation.
+  ///
+  /// @return Translation applied after frame placement.
+  [[nodiscard]] point_type translation() const {
+    assert(holder);
+    return holder->translation();
+  }
+  /// Updates the contained view's transform translation.
+  ///
+  /// @param p New translation value.
+  void set_translation(point_type p) {
+    assert(holder);
+    holder->set_translation(p);
+  }
+
+  /// Returns the contained view's transform scale.
+  ///
+  /// @return Current x and y scale factors.
+  [[nodiscard]] point_type scale() const {
+    assert(holder);
+    return holder->scale();
+  }
+  /// Updates the contained view's transform scale without changing the current origin.
+  ///
+  /// @param s New x and y scale factors.
+  void set_scale(point_type s) {
+    assert(holder);
+    holder->set_scale(s);
+  }
+  /// Updates the contained view's transform scale and transform origin together.
+  ///
+  /// @param s New x and y scale factors.
+  /// @param origin Origin used by the scale operation.
+  void set_scale(point_type s, point_type origin) {
+    assert(holder);
+    holder->set_scale(s, origin);
+  }
+
   /// Returns whether this handle currently owns a view implementation.
   ///
   /// @return `true` when a view implementation is present; otherwise `false`.
@@ -288,6 +359,7 @@ private:
 /// @param args Arguments forwarded to `ViewType`.
 /// @return Owning `view` handle containing a `ViewType` instance.
 template <usagi::concepts::ui::viewable ViewType, class... Args>
+requires usagi::concepts::ui::transformable<ViewType>
 inline decltype(auto) make_view(Args &&...args) {
   return usagi::ui::view<typename ViewType::value_type, typename ViewType::draw_context_type,
                          typename ViewType::gesture_parameter_type>{

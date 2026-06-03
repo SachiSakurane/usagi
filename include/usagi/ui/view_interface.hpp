@@ -21,6 +21,8 @@ public:
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   /// Size type using `value_type`.
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
+  /// Transform type using `value_type`.
+  using transform_type = typename usagi::geometry::geometry_traits<value_type>::transform_type;
   /// Mutable drawing context type.
   using draw_context_type = DrawContextType;
   /// Draw and event offset type.
@@ -113,5 +115,37 @@ public:
   ///
   /// @return Current enabled-state value.
   [[nodiscard]] virtual constexpr bool is_enabled() const = 0;
+
+  /// Returns the layout-after transform.
+  ///
+  /// @return Transform applied after frame placement.
+  [[nodiscard]] virtual constexpr transform_type transform() const = 0;
+  /// Replaces the layout-after transform.
+  ///
+  /// @param t New transform value.
+  virtual constexpr void set_transform(transform_type t) = 0;
+
+  /// Returns the transform translation.
+  ///
+  /// @return Translation applied after frame placement.
+  [[nodiscard]] virtual constexpr point_type translation() const = 0;
+  /// Updates the transform translation.
+  ///
+  /// @param p New translation value.
+  virtual constexpr void set_translation(point_type p) = 0;
+
+  /// Returns the transform scale.
+  ///
+  /// @return Current x and y scale factors.
+  [[nodiscard]] virtual constexpr point_type scale() const = 0;
+  /// Updates the transform scale without changing the current origin.
+  ///
+  /// @param s New x and y scale factors.
+  virtual constexpr void set_scale(point_type s) = 0;
+  /// Updates the transform scale and transform origin together.
+  ///
+  /// @param s New x and y scale factors.
+  /// @param origin Origin used by the scale operation.
+  virtual constexpr void set_scale(point_type s, point_type origin) = 0;
 };
 } // namespace usagi::ui

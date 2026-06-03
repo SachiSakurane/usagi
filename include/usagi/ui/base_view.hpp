@@ -170,22 +170,22 @@ public:
   /// Returns the layout-after transform.
   ///
   /// @return Stored transform value.
-  [[nodiscard]] constexpr transform_type transform() const { return content_transform; }
+  [[nodiscard]] constexpr transform_type transform() const override { return content_transform; }
   /// Replaces the layout-after transform.
   ///
   /// @param t New transform value.
-  constexpr void set_transform(transform_type t) { content_transform = t; }
+  constexpr void set_transform(transform_type t) override { content_transform = t; }
 
   /// Returns the transform translation.
   ///
   /// @return Translation applied after frame placement.
-  [[nodiscard]] constexpr point_type translation() const {
+  [[nodiscard]] constexpr point_type translation() const override {
     return content_transform.translation();
   }
   /// Updates the transform translation.
   ///
   /// @param p New translation value.
-  constexpr void set_translation(point_type p) {
+  constexpr void set_translation(point_type p) override {
     content_transform =
         transform_type{p, content_transform.rotation(), content_transform.scale(),
                        content_transform.origin()};
@@ -194,11 +194,11 @@ public:
   /// Returns the transform scale.
   ///
   /// @return Current x and y scale factors.
-  [[nodiscard]] constexpr point_type scale() const { return content_transform.scale(); }
+  [[nodiscard]] constexpr point_type scale() const override { return content_transform.scale(); }
   /// Updates the transform scale without changing the current origin.
   ///
   /// @param s New x and y scale factors.
-  constexpr void set_scale(point_type s) {
+  constexpr void set_scale(point_type s) override {
     content_transform =
         transform_type{content_transform.translation(), content_transform.rotation(), s,
                        content_transform.origin()};
@@ -207,7 +207,7 @@ public:
   ///
   /// @param s New x and y scale factors.
   /// @param origin Origin used by the scale operation.
-  constexpr void set_scale(point_type s, point_type origin) {
+  constexpr void set_scale(point_type s, point_type origin) override {
     content_transform =
         transform_type{content_transform.translation(), content_transform.rotation(), s, origin};
   }

@@ -45,6 +45,25 @@ TEST(ViewCommonTest, CommonCase) {
   ASSERT_FALSE(v.is_enabled());
 }
 
+TEST(ViewCommonTest, TransformCase) {
+  auto v = usagi::ui::make_view<SpecificView>();
+
+  v.set_transform(decltype(v)::transform_type{decltype(v)::point_type{1.f, 2.f}, 3.f,
+                                              decltype(v)::point_type{4.f, 5.f},
+                                              decltype(v)::point_type{6.f, 7.f}});
+  ASSERT_EQ(v.transform().translation(), (decltype(v)::point_type{1.f, 2.f}));
+  ASSERT_EQ(v.transform().rotation(), 3.f);
+  ASSERT_EQ(v.transform().scale(), (decltype(v)::point_type{4.f, 5.f}));
+  ASSERT_EQ(v.transform().origin(), (decltype(v)::point_type{6.f, 7.f}));
+
+  v.set_translation(decltype(v)::point_type{8.f, 9.f});
+  v.set_scale(decltype(v)::point_type{10.f, 11.f}, decltype(v)::point_type{12.f, 13.f});
+
+  ASSERT_EQ(v.translation(), (decltype(v)::point_type{8.f, 9.f}));
+  ASSERT_EQ(v.scale(), (decltype(v)::point_type{10.f, 11.f}));
+  ASSERT_EQ(v.transform().origin(), (decltype(v)::point_type{12.f, 13.f}));
+}
+
 TEST(ViewCommonTest, BoundsCase) {
   auto v = usagi::ui::make_view<SpecificView>(usagi::geometry::rect<float>{10.f, 10.f, 40.f, 40.f});
   ASSERT_EQ(v.bounds(), (usagi::geometry::size<float>{30.f, 30.f}));

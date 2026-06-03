@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include <usagi/concepts/arithmetic.hpp>
 #include <usagi/concepts/floating_point.hpp>
 
@@ -9,7 +11,7 @@ namespace usagi::concepts::geometry {
 /// @tparam SizeType Type to test.
 template <class SizeType>
 concept size_concept = requires(SizeType &s) {
-  requires usagi::concepts::arithmetic<typename SizeType::value_type>;
+  requires usagi::concepts::arithmetic<typename std::remove_cvref_t<SizeType>::value_type>;
 
   { s.width() } -> usagi::concepts::arithmetic;
   { s.height() } -> usagi::concepts::arithmetic;
@@ -19,6 +21,7 @@ concept size_concept = requires(SizeType &s) {
 ///
 /// @tparam FloatSizeType Type to test.
 template <class FloatSizeType>
-concept float_size_concept = usagi::concepts::floating_point<typename FloatSizeType::value_type> &&
+concept float_size_concept =
+    usagi::concepts::floating_point<typename std::remove_cvref_t<FloatSizeType>::value_type> &&
     size_concept<FloatSizeType>;
 } // namespace usagi::concepts::geometry

@@ -26,5 +26,7 @@ struct UnRected {
 };
 
 static_assert(usagi::concepts::geometry::rect_concept<Rected<int>>);
+static_assert(usagi::concepts::geometry::rect_concept<Rected<int> &>);
+static_assert(usagi::concepts::geometry::rect_concept<const Rected<int> &>);
 static_assert(!usagi::concepts::geometry::rect_concept<UnRected<int>>);
 } // namespace

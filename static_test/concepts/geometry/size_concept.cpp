@@ -16,5 +16,9 @@ struct UnSized {
 };
 
 static_assert(usagi::concepts::geometry::size_concept<Sized<int>>);
+static_assert(usagi::concepts::geometry::size_concept<Sized<int> &>);
+static_assert(usagi::concepts::geometry::size_concept<const Sized<int> &>);
+static_assert(usagi::concepts::geometry::float_size_concept<Sized<float> &>);
+static_assert(usagi::concepts::geometry::float_size_concept<const Sized<float> &>);
 static_assert(!usagi::concepts::geometry::size_concept<UnSized<int>>);
 } // namespace

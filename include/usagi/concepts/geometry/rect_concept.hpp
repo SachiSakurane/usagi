@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include <usagi/concepts/arithmetic.hpp>
 #include <usagi/concepts/geometry/point_concept.hpp>
 #include <usagi/concepts/geometry/size_concept.hpp>
@@ -10,7 +12,7 @@ namespace usagi::concepts::geometry {
 /// @tparam RectType Type to test.
 template <class RectType>
 concept rect_concept = requires(RectType &r) {
-  requires usagi::concepts::arithmetic<typename RectType::value_type>;
+  requires usagi::concepts::arithmetic<typename std::remove_cvref_t<RectType>::value_type>;
 
   { r.l() } -> usagi::concepts::arithmetic;
   { r.t() } -> usagi::concepts::arithmetic;

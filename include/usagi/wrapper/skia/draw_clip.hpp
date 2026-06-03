@@ -11,8 +11,8 @@
 namespace usagi::ui {
 /// Skia draw clipping adapter.
 ///
-/// Applies a rectangle clip using Skia's `save`, `clipRect`, and `restore`
-/// calls, then invokes `draw`.
+/// Applies an intersecting rectangle clip using Skia's `save`, `clipRect`, and
+/// `restore` calls, then invokes `draw`.
 template <>
 struct draw_clip_traits<SkCanvas> {
   /// Draws with a clipping rectangle applied to a Skia canvas.

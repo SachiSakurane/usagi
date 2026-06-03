@@ -264,11 +264,14 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
   /// @return Current event-clipping value.
   [[nodiscard]] bool is_event_clipping() const { return event_clipping; }
 
-  /// Updates whether drawing is clipped to stack bounds.
+  /// Updates whether child drawing is clipped to stack bounds.
+  ///
+  /// Draw clipping is opt-in. When enabled, the stack clips all children to its
+  /// own placed bounds before applying each child transform.
   ///
   /// @param flag New draw-clipping value.
   void set_draw_clipping(bool flag) { draw_clipping = flag; }
-  /// Returns whether drawing is clipped to stack bounds.
+  /// Returns whether child drawing is clipped to stack bounds.
   ///
   /// @return Current draw-clipping value.
   [[nodiscard]] bool is_draw_clipping() const { return draw_clipping; }

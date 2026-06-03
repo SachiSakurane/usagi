@@ -529,6 +529,48 @@ TEST(ViewStackTest, DrawClippingClipsToStackBoundsWhenEnabled) {
   ASSERT_EQ(context.calls[4].value, DrawTransformCall::type::restore);
 }
 
+TEST(ViewStackTest, DrawClippingAppliesOutsideChildTransform) {
+  using point_type = usagi::geometry::point<float>;
+
+  auto stack = usagi::ui::view_stack<float, TransformDrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{10.f, 20.f, 40.f, 60.f}};
+  stack.set_draw_clipping(true);
+  const auto key = stack.add_child_view(usagi::ui::make_view<TransformDrawView>(
+      usagi::geometry::rect<float>{20.f, 30.f, 50.f, 60.f}));
+  auto &child = stack.get_child_view(key);
+  child.set_rotation(pi / 2.f, point_type{5.f, 7.f});
+  child.set_scale(point_type{2.f, 3.f});
+
+  auto context = TransformDrawContext{};
+  stack.draw(context, point_type{100.f, 200.f});
+
+  ASSERT_EQ(context.calls.size(), 11u);
+  ASSERT_EQ(context.calls[0].value, DrawTransformCall::type::save);
+  ASSERT_EQ(context.calls[1].value, DrawTransformCall::type::clip);
+  EXPECT_NEAR(context.calls[1].x, 100.f, 0.0001f);
+  EXPECT_NEAR(context.calls[1].y, 200.f, 0.0001f);
+  ASSERT_EQ(context.calls[2].value, DrawTransformCall::type::clip);
+  EXPECT_NEAR(context.calls[2].x, 130.f, 0.0001f);
+  EXPECT_NEAR(context.calls[2].y, 240.f, 0.0001f);
+  ASSERT_EQ(context.calls[3].value, DrawTransformCall::type::save);
+  ASSERT_EQ(context.calls[4].value, DrawTransformCall::type::translate);
+  EXPECT_NEAR(context.calls[4].x, 125.f, 0.0001f);
+  EXPECT_NEAR(context.calls[4].y, 237.f, 0.0001f);
+  ASSERT_EQ(context.calls[5].value, DrawTransformCall::type::rotate);
+  EXPECT_NEAR(context.calls[5].x, 90.f, 0.0001f);
+  ASSERT_EQ(context.calls[6].value, DrawTransformCall::type::scale);
+  EXPECT_NEAR(context.calls[6].x, 2.f, 0.0001f);
+  EXPECT_NEAR(context.calls[6].y, 3.f, 0.0001f);
+  ASSERT_EQ(context.calls[7].value, DrawTransformCall::type::translate);
+  EXPECT_NEAR(context.calls[7].x, -125.f, 0.0001f);
+  EXPECT_NEAR(context.calls[7].y, -237.f, 0.0001f);
+  ASSERT_EQ(context.calls[8].value, DrawTransformCall::type::draw);
+  EXPECT_NEAR(context.calls[8].x, 120.f, 0.0001f);
+  EXPECT_NEAR(context.calls[8].y, 230.f, 0.0001f);
+  ASSERT_EQ(context.calls[9].value, DrawTransformCall::type::restore);
+  ASSERT_EQ(context.calls[10].value, DrawTransformCall::type::restore);
+}
+
 TEST(ViewStackTest, BaseViewHitTestUsesLocalGesturePosition) {
   auto stack = usagi::ui::view_stack<float, DrawContext, GestureParameterType>{
       usagi::geometry::rect<float>{0.f, 0.f, 100.f, 100.f}};

@@ -62,6 +62,17 @@ to reach children. Clipping affects `on_down`, `on_over`, `on_double`, and
 `on_wheel` hit testing. `on_drag`, `on_up`, and `on_out` continue to dispatch to
 already tracked children so down/over state can be cleaned up.
 
+## View Stack Draw Clipping
+
+`view_stack` draw clipping is opt-in and disabled by default.
+
+When `set_draw_clipping(true)` is enabled, `view_stack` clips child drawing to
+its own placed bounds. The clip is applied outside child transforms: child
+translation, scale, and rotation happen inside the stack bounds clip. Treat this
+as container `overflow: hidden` behavior.
+
+Skia uses an intersecting rectangular clip through `SkCanvas::clipRect`.
+
 ## View Stack Z-Order
 
 `view_stack` child keys identify children; they are not z-order values.

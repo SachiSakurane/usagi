@@ -18,7 +18,10 @@
 
 namespace {
 constexpr auto pi = 3.14159265358979323846f;
+using usagi::test::skia::background_color;
 using usagi::test::skia::fill_rect;
+using usagi::test::skia::guide_color;
+using usagi::test::skia::result_color;
 
 TEST(SkiaDrawTransformTest, ScalesAroundOffsetOrigin) {
   auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(50, 50));
@@ -133,5 +136,51 @@ TEST(SkiaDrawTransformTest, RotatesFortyFiveDegreesAroundOffsetOrigin) {
   usagi::test::skia::expect_color(pixmap, 25, 55, SK_ColorRED);
   usagi::test::skia::expect_color(pixmap, 40, 10, SK_ColorWHITE);
   usagi::test::skia::expect_color(pixmap, 40, 70, SK_ColorWHITE);
+}
+
+TEST(SkiaDrawTransformTest, AppliesOffsetScaleAndRotationAroundOrigin) {
+  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(60, 60));
+
+  ASSERT_NE(surface, nullptr);
+
+  SkCanvas *canvas = surface->getCanvas();
+  canvas->clear(background_color);
+  fill_rect(*canvas, 25.f, 20.f, 10.f, 10.f, guide_color);
+
+  const auto transform = usagi::geometry::transform<float>{
+      usagi::geometry::point<float>{}, pi / 4.f, usagi::geometry::point<float>{2.f, 1.f},
+      usagi::geometry::point<float>{10.f, 10.f}};
+  const auto offset = usagi::geometry::point<float>{20.f, 5.f};
+
+  usagi::ui::draw_with_transform(*canvas, transform, offset, [&] {
+    SkPaint paint;
+    paint.setColor(result_color);
+    canvas->drawRect(SkRect::MakeXYWH(25.f, 20.f, 10.f, 10.f), paint);
+  });
+
+  SkPixmap pixmap;
+  ASSERT_TRUE(surface->peekPixels(&pixmap));
+
+  usagi::test::skia::write_actual_image(pixmap);
+  usagi::test::skia::write_expected_and_diff_image(
+      pixmap, 60, 60, [](SkCanvas &expected) {
+        expected.clear(background_color);
+        fill_rect(expected, 25.f, 20.f, 10.f, 10.f, guide_color);
+
+        SkPaint paint;
+        paint.setColor(result_color);
+        expected.save();
+        expected.translate(30.f, 15.f);
+        expected.rotate(45.f);
+        expected.scale(2.f, 1.f);
+        expected.translate(-30.f, -15.f);
+        expected.drawRect(SkRect::MakeXYWH(25.f, 20.f, 10.f, 10.f), paint);
+        expected.restore();
+      });
+
+  usagi::test::skia::expect_color(pixmap, 20, 18, result_color);
+  usagi::test::skia::expect_color(pixmap, 26, 30, result_color);
+  usagi::test::skia::expect_color(pixmap, 33, 20, guide_color);
+  usagi::test::skia::expect_color(pixmap, 35, 35, background_color);
 }
 } // namespace

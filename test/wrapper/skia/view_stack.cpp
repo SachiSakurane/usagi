@@ -220,4 +220,63 @@ TEST(SkiaViewStackTest, SkipsDisabledChildrenWhenDrawing) {
   usagi::test::skia::expect_color(pixmap, 25, 25, guide_color);
   usagi::test::skia::expect_color(pixmap, 45, 45, background_color);
 }
+
+TEST(SkiaViewStackTest, DrawsTransformedChildrenInZOrder) {
+  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(120, 70));
+
+  ASSERT_NE(surface, nullptr);
+
+  SkCanvas *canvas = surface->getCanvas();
+  canvas->clear(background_color);
+  fill_rect(*canvas, 20.f, 15.f, 30.f, 10.f, attempted_color);
+  fill_rect(*canvas, 80.f, 15.f, 30.f, 10.f, attempted_color);
+
+  auto stack = usagi::ui::view_stack<float, SkCanvas, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 60.f, 60.f}};
+  const auto transformed = stack.add_child_view(usagi::ui::make_view<PaintView>(
+      usagi::geometry::rect<float>{20.f, 15.f, 50.f, 25.f}, result_color));
+  stack.get_child_view(transformed).set_rotation(3.14159265358979323846f / 4.f,
+                                                 usagi::geometry::point<float>{15.f, 5.f});
+  stack.add_child_view(usagi::ui::make_view<PaintView>(
+      usagi::geometry::rect<float>{32.f, 18.f, 52.f, 38.f}, guide_color));
+
+  stack.draw(*canvas, usagi::geometry::point<float>{});
+  ASSERT_TRUE(stack.bring_child_to_front(transformed));
+  stack.draw(*canvas, usagi::geometry::point<float>{60.f, 0.f});
+
+  SkPixmap pixmap;
+  ASSERT_TRUE(surface->peekPixels(&pixmap));
+
+  usagi::test::skia::write_actual_image(pixmap);
+  usagi::test::skia::write_expected_and_diff_image(
+      pixmap, 120, 70, [](SkCanvas &expected) {
+        expected.clear(background_color);
+        fill_rect(expected, 20.f, 15.f, 30.f, 10.f, attempted_color);
+        fill_rect(expected, 80.f, 15.f, 30.f, 10.f, attempted_color);
+
+        SkPaint paint;
+        paint.setColor(result_color);
+        expected.save();
+        expected.translate(35.f, 20.f);
+        expected.rotate(45.f);
+        expected.translate(-35.f, -20.f);
+        expected.drawRect(SkRect::MakeXYWH(20.f, 15.f, 30.f, 10.f), paint);
+        expected.restore();
+        fill_rect(expected, 32.f, 18.f, 20.f, 20.f, guide_color);
+
+        fill_rect(expected, 92.f, 18.f, 20.f, 20.f, guide_color);
+        expected.save();
+        expected.translate(95.f, 20.f);
+        expected.rotate(45.f);
+        expected.translate(-95.f, -20.f);
+        expected.drawRect(SkRect::MakeXYWH(80.f, 15.f, 30.f, 10.f), paint);
+        expected.restore();
+      });
+
+  usagi::test::skia::expect_color(pixmap, 33, 13, result_color);
+  usagi::test::skia::expect_color(pixmap, 37, 22, guide_color);
+  usagi::test::skia::expect_color(pixmap, 97, 22, result_color);
+  usagi::test::skia::expect_color(pixmap, 111, 35, guide_color);
+  usagi::test::skia::expect_color(pixmap, 85, 20, attempted_color);
+}
 } // namespace

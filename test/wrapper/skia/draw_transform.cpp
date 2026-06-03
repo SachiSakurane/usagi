@@ -47,8 +47,9 @@ TEST(SkiaDrawTransformTest, ScalesAroundOffsetOrigin) {
 
   usagi::test::skia::write_actual_image(pixmap,
                                         "SkiaDrawTransformTest.ScalesAroundOffsetOrigin.actual.ppm");
-  usagi::test::skia::write_expected_image(
-      50, 50, "SkiaDrawTransformTest.ScalesAroundOffsetOrigin.expected.ppm", [](SkCanvas &expected) {
+  usagi::test::skia::write_expected_and_diff_image(
+      pixmap, 50, 50, "SkiaDrawTransformTest.ScalesAroundOffsetOrigin.expected.ppm",
+      "SkiaDrawTransformTest.ScalesAroundOffsetOrigin.diff.ppm", [](SkCanvas &expected) {
         expected.clear(SK_ColorWHITE);
         fill_rect(expected, 20.f, 20.f, 20.f, 20.f, SK_ColorRED);
       });
@@ -86,8 +87,9 @@ TEST(SkiaDrawTransformTest, RotatesAroundOffsetOrigin) {
 
   usagi::test::skia::write_actual_image(
       pixmap, "SkiaDrawTransformTest.RotatesAroundOffsetOrigin.actual.ppm");
-  usagi::test::skia::write_expected_image(
-      60, 60, "SkiaDrawTransformTest.RotatesAroundOffsetOrigin.expected.ppm",
+  usagi::test::skia::write_expected_and_diff_image(
+      pixmap, 60, 60, "SkiaDrawTransformTest.RotatesAroundOffsetOrigin.expected.ppm",
+      "SkiaDrawTransformTest.RotatesAroundOffsetOrigin.diff.ppm",
       [](SkCanvas &expected) {
         expected.clear(SK_ColorWHITE);
         fill_rect(expected, 30.f, 15.f, 20.f, 10.f, SK_ColorBLUE);
@@ -123,8 +125,9 @@ TEST(SkiaDrawTransformTest, RotatesFortyFiveDegreesAroundOffsetOrigin) {
 
   usagi::test::skia::write_actual_image(
       pixmap, "SkiaDrawTransformTest.RotatesFortyFiveDegreesAroundOffsetOrigin.actual.ppm");
-  usagi::test::skia::write_expected_image(
-      90, 90, "SkiaDrawTransformTest.RotatesFortyFiveDegreesAroundOffsetOrigin.expected.ppm",
+  usagi::test::skia::write_expected_and_diff_image(
+      pixmap, 90, 90, "SkiaDrawTransformTest.RotatesFortyFiveDegreesAroundOffsetOrigin.expected.ppm",
+      "SkiaDrawTransformTest.RotatesFortyFiveDegreesAroundOffsetOrigin.diff.ppm",
       [](SkCanvas &expected) {
         expected.clear(SK_ColorWHITE);
         SkPaint paint;

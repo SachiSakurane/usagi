@@ -10,7 +10,9 @@
 #include "include/core/SkColor.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkImageInfo.h"
+#include "include/core/SkPaint.h"
 #include "include/core/SkPixmap.h"
+#include "include/core/SkRect.h"
 #include "include/core/SkSurface.h"
 
 namespace usagi::test::skia {
@@ -60,6 +62,42 @@ inline void write_expected_image(const SkPixmap &pixmap, std::string_view name) 
 #endif
 }
 
+inline void draw_diff_image(const SkPixmap &actual, const SkPixmap &expected, SkCanvas &canvas) {
+  ASSERT_EQ(actual.width(), expected.width());
+  ASSERT_EQ(actual.height(), expected.height());
+
+  canvas.clear(SK_ColorWHITE);
+
+  SkPaint paint;
+  paint.setColor(SkColorSetRGB(255, 0, 255));
+  for (int y = 0; y < actual.height(); ++y) {
+    for (int x = 0; x < actual.width(); ++x) {
+      if (actual.getColor(x, y) != expected.getColor(x, y)) {
+        canvas.drawRect(SkRect::MakeXYWH(static_cast<float>(x), static_cast<float>(y), 1.f, 1.f),
+                        paint);
+      }
+    }
+  }
+}
+
+inline void write_diff_image(const SkPixmap &actual, const SkPixmap &expected,
+                             std::string_view name) {
+#if defined(USAGI_SKIA_WRITE_IMAGES)
+  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(actual.width(), actual.height()));
+  ASSERT_NE(surface, nullptr);
+
+  draw_diff_image(actual, expected, *surface->getCanvas());
+
+  SkPixmap diff;
+  ASSERT_TRUE(surface->peekPixels(&diff));
+  write_ppm(diff, std::filesystem::path{std::string{image_output_dir()}} / name);
+#else
+  (void) actual;
+  (void) expected;
+  (void) name;
+#endif
+}
+
 template <class DrawFunction>
 inline void write_expected_image(int width, int height, std::string_view name, DrawFunction &&draw) {
 #if defined(USAGI_SKIA_WRITE_IMAGES)
@@ -75,6 +113,30 @@ inline void write_expected_image(int width, int height, std::string_view name, D
   (void) width;
   (void) height;
   (void) name;
+  (void) draw;
+#endif
+}
+
+template <class DrawFunction>
+inline void write_expected_and_diff_image(const SkPixmap &actual, int width, int height,
+                                          std::string_view expected_name,
+                                          std::string_view diff_name, DrawFunction &&draw) {
+#if defined(USAGI_SKIA_WRITE_IMAGES)
+  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(width, height));
+  ASSERT_NE(surface, nullptr);
+
+  draw(*surface->getCanvas());
+
+  SkPixmap expected;
+  ASSERT_TRUE(surface->peekPixels(&expected));
+  write_expected_image(expected, expected_name);
+  write_diff_image(actual, expected, diff_name);
+#else
+  (void) actual;
+  (void) width;
+  (void) height;
+  (void) expected_name;
+  (void) diff_name;
   (void) draw;
 #endif
 }

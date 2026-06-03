@@ -73,8 +73,9 @@ TEST(SkiaViewStackTest, DrawOffsetIncludesChildTranslation) {
 
   usagi::test::skia::write_actual_image(
       pixmap, "SkiaViewStackTest.DrawOffsetIncludesChildTranslation.actual.ppm");
-  usagi::test::skia::write_expected_image(
-      70, 70, "SkiaViewStackTest.DrawOffsetIncludesChildTranslation.expected.ppm",
+  usagi::test::skia::write_expected_and_diff_image(
+      pixmap, 70, 70, "SkiaViewStackTest.DrawOffsetIncludesChildTranslation.expected.ppm",
+      "SkiaViewStackTest.DrawOffsetIncludesChildTranslation.diff.ppm",
       [](SkCanvas &expected) {
         expected.clear(background_color);
         fill_rect(expected, 10.f, 10.f, 20.f, 20.f, guide_color);
@@ -109,8 +110,9 @@ TEST(SkiaViewStackTest, DrawClippingClipsToStackBoundsWhenEnabled) {
 
   usagi::test::skia::write_actual_image(
       pixmap, "SkiaViewStackTest.DrawClippingClipsToStackBoundsWhenEnabled.actual.ppm");
-  usagi::test::skia::write_expected_image(
-      70, 70, "SkiaViewStackTest.DrawClippingClipsToStackBoundsWhenEnabled.expected.ppm",
+  usagi::test::skia::write_expected_and_diff_image(
+      pixmap, 70, 70, "SkiaViewStackTest.DrawClippingClipsToStackBoundsWhenEnabled.expected.ppm",
+      "SkiaViewStackTest.DrawClippingClipsToStackBoundsWhenEnabled.diff.ppm",
       [](SkCanvas &expected) {
         expected.clear(background_color);
         fill_rect(expected, 10.f, 10.f, 60.f, 60.f, attempted_color);
@@ -147,8 +149,9 @@ TEST(SkiaViewStackTest, DrawClippingAppliesOutsideChildTransform) {
 
   usagi::test::skia::write_actual_image(
       pixmap, "SkiaViewStackTest.DrawClippingAppliesOutsideChildTransform.actual.ppm");
-  usagi::test::skia::write_expected_image(
-      80, 80, "SkiaViewStackTest.DrawClippingAppliesOutsideChildTransform.expected.ppm",
+  usagi::test::skia::write_expected_and_diff_image(
+      pixmap, 80, 80, "SkiaViewStackTest.DrawClippingAppliesOutsideChildTransform.expected.ppm",
+      "SkiaViewStackTest.DrawClippingAppliesOutsideChildTransform.diff.ppm",
       [](SkCanvas &expected) {
         expected.clear(background_color);
         fill_rect(expected, 10.f, 10.f, 70.f, 70.f, attempted_color);

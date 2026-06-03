@@ -4,6 +4,7 @@
 #include <utility>
 
 #include <usagi/concepts/ui/gesture_handler.hpp>
+#include <usagi/concepts/ui/transformable.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
 #include <usagi/ui/gesture_handler.hpp>
@@ -96,6 +97,7 @@ namespace detail {
 /// @tparam ViewType Wrapped viewable type.
 /// @tparam TupleType Tuple of gesture handler wrappers.
 template <usagi::concepts::ui::viewable ViewType, class TupleType>
+requires usagi::concepts::ui::transformable<ViewType>
 struct gesture {
   /// Shared geometry value type.
   using value_type = typename ViewType::value_type;
@@ -105,6 +107,8 @@ struct gesture {
   using rect_type = typename usagi::geometry::geometry_traits<value_type>::rect_type;
   /// Size type using `value_type`.
   using size_type = typename usagi::geometry::geometry_traits<value_type>::size_type;
+  /// Transform type using `value_type`.
+  using transform_type = typename usagi::geometry::geometry_traits<value_type>::transform_type;
   /// Mutable drawing context type.
   using draw_context_type = typename ViewType::draw_context_type;
   /// Draw and event offset type.
@@ -118,7 +122,7 @@ struct gesture {
   ///
   /// @param v View to decorate.
   /// @param t Tuple of gesture handler wrappers.
-  gesture(ViewType &&v, TupleType &&t)
+  constexpr gesture(ViewType &&v, TupleType &&t)
       : holder{std::move(v)}, handlers{std::forward<TupleType>(t)} {}
 
   /// Draws the wrapped view.
@@ -243,6 +247,38 @@ struct gesture {
   /// @return Current enabled-state value.
   [[nodiscard]] bool is_enabled() const { return holder.is_enabled(); }
 
+  /// Returns the wrapped view's layout-after transform.
+  ///
+  /// @return Transform reported by the wrapped view.
+  [[nodiscard]] constexpr transform_type transform() const { return holder.transform(); }
+  /// Replaces the wrapped view's layout-after transform.
+  ///
+  /// @param t New transform value.
+  constexpr void set_transform(transform_type t) { holder.set_transform(t); }
+
+  /// Returns the wrapped view's transform translation.
+  ///
+  /// @return Translation applied after frame placement.
+  [[nodiscard]] constexpr point_type translation() const { return holder.translation(); }
+  /// Updates the wrapped view's transform translation.
+  ///
+  /// @param p New translation value.
+  constexpr void set_translation(point_type p) { holder.set_translation(p); }
+
+  /// Returns the wrapped view's transform scale.
+  ///
+  /// @return Current x and y scale factors.
+  [[nodiscard]] constexpr point_type scale() const { return holder.scale(); }
+  /// Updates the wrapped view's transform scale without changing the current origin.
+  ///
+  /// @param s New x and y scale factors.
+  constexpr void set_scale(point_type s) { holder.set_scale(s); }
+  /// Updates the wrapped view's transform scale and transform origin together.
+  ///
+  /// @param s New x and y scale factors.
+  /// @param origin Origin used by the scale operation.
+  constexpr void set_scale(point_type s, point_type origin) { holder.set_scale(s, origin); }
+
 private:
   ViewType holder;
   TupleType handlers;
@@ -255,6 +291,7 @@ private:
 /// @return Gesture-decorated view.
 template <usagi::concepts::ui::viewable ViewType,
           usagi::concepts::ui::gesture_tuple_requirement<ViewType> TupleType>
+requires usagi::concepts::ui::transformable<ViewType>
 inline constexpr decltype(auto) operator|(ViewType &&v,
                                           detail::gesture_holder<TupleType> &&wrapped) {
   return gesture<ViewType, TupleType>{std::forward<ViewType>(v),

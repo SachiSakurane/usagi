@@ -13,6 +13,34 @@ constexpr auto pi = 3.14159265358979323846f;
 struct DrawContext {};
 using GestureParameterType = usagi::type::gesture_parameter<float>;
 
+struct DrawTransformCall {
+  enum class type { save, restore, translate, rotate, scale, draw };
+
+  type value;
+  float x{};
+  float y{};
+};
+
+struct TransformDrawContext {
+  std::vector<DrawTransformCall> calls;
+
+  void save() { calls.emplace_back(DrawTransformCall{DrawTransformCall::type::save}); }
+
+  void restore() { calls.emplace_back(DrawTransformCall{DrawTransformCall::type::restore}); }
+
+  void translate(float x, float y) {
+    calls.emplace_back(DrawTransformCall{DrawTransformCall::type::translate, x, y});
+  }
+
+  void rotate(float degrees) {
+    calls.emplace_back(DrawTransformCall{DrawTransformCall::type::rotate, degrees});
+  }
+
+  void scale(float x, float y) {
+    calls.emplace_back(DrawTransformCall{DrawTransformCall::type::scale, x, y});
+  }
+};
+
 class DrawnView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
 public:
   using base_view_type = usagi::ui::base_view<float, DrawContext, GestureParameterType>;
@@ -60,6 +88,20 @@ public:
 
 private:
   std::vector<offset_type> &offsets;
+};
+
+class TransformDrawView final
+    : public usagi::ui::base_view<float, TransformDrawContext, GestureParameterType> {
+public:
+  using base_view_type = usagi::ui::base_view<float, TransformDrawContext, GestureParameterType>;
+  using offset_type = typename base_view_type::offset_type;
+
+  explicit TransformDrawView(const rect_type &frame) : base_view_type{frame} {}
+
+  void draw(draw_context_type &context, offset_type offset) override {
+    context.calls.emplace_back(DrawTransformCall{DrawTransformCall::type::draw, offset.x(),
+                                                offset.y()});
+  }
 };
 
 class CountingView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
@@ -393,6 +435,40 @@ TEST(ViewStackTest, DrawOffsetIncludesChildTranslation) {
 
   const auto expected_offsets = std::vector<point_type>{{130.f, 250.f}};
   ASSERT_EQ(offsets, expected_offsets);
+}
+
+TEST(ViewStackTest, AppliesChildTransformToDrawContext) {
+  using point_type = usagi::geometry::point<float>;
+
+  auto stack = usagi::ui::view_stack<float, TransformDrawContext, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 100.f, 100.f}};
+  const auto key = stack.add_child_view(usagi::ui::make_view<TransformDrawView>(
+      usagi::geometry::rect<float>{20.f, 30.f, 50.f, 60.f}));
+  auto &child = stack.get_child_view(key);
+  child.set_translation(point_type{10.f, 20.f});
+  child.set_rotation(pi / 2.f, point_type{5.f, 7.f});
+  child.set_scale(point_type{2.f, 3.f});
+
+  auto context = TransformDrawContext{};
+  stack.draw(context, point_type{100.f, 200.f});
+
+  ASSERT_EQ(context.calls.size(), 7u);
+  ASSERT_EQ(context.calls[0].value, DrawTransformCall::type::save);
+  ASSERT_EQ(context.calls[1].value, DrawTransformCall::type::translate);
+  EXPECT_NEAR(context.calls[1].x, 135.f, 0.0001f);
+  EXPECT_NEAR(context.calls[1].y, 257.f, 0.0001f);
+  ASSERT_EQ(context.calls[2].value, DrawTransformCall::type::rotate);
+  EXPECT_NEAR(context.calls[2].x, 90.f, 0.0001f);
+  ASSERT_EQ(context.calls[3].value, DrawTransformCall::type::scale);
+  EXPECT_NEAR(context.calls[3].x, 2.f, 0.0001f);
+  EXPECT_NEAR(context.calls[3].y, 3.f, 0.0001f);
+  ASSERT_EQ(context.calls[4].value, DrawTransformCall::type::translate);
+  EXPECT_NEAR(context.calls[4].x, -135.f, 0.0001f);
+  EXPECT_NEAR(context.calls[4].y, -257.f, 0.0001f);
+  ASSERT_EQ(context.calls[5].value, DrawTransformCall::type::draw);
+  EXPECT_NEAR(context.calls[5].x, 130.f, 0.0001f);
+  EXPECT_NEAR(context.calls[5].y, 250.f, 0.0001f);
+  ASSERT_EQ(context.calls[6].value, DrawTransformCall::type::restore);
 }
 
 TEST(ViewStackTest, BaseViewHitTestUsesLocalGesturePosition) {

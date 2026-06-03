@@ -12,6 +12,7 @@
 #include <usagi/geometry.hpp>
 #include <usagi/geometry/transform/function.hpp>
 #include <usagi/ui/base_view.hpp>
+#include <usagi/ui/draw_transform.hpp>
 #include <usagi/ui/view.hpp>
 
 namespace usagi::ui {
@@ -67,7 +68,9 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
     for (auto key : child_order) {
       auto &child = child_views.at(key);
       if (child.is_enabled()) {
-        child.draw(context, offset + child_origin(child));
+        const auto child_offset = offset + child_origin(child);
+        usagi::ui::draw_with_transform(context, child.transform(), child_offset,
+                                       [&] { child.draw(context, child_offset); });
       }
     }
   }

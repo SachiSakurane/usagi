@@ -1,53 +1,241 @@
 name: Test CI
 
-on: [push]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ ubuntu-18.04, ubuntu-20.04, macos-11, windows-latest ]
-        build_type: [ Debug, Release ]
-    env:
-      REPOSITORY_NAME: usagi
-      BUILD_DIRECTORY: cmake-build
+  skia-changes:
+    name: Detect Skia changes
+    runs-on: ubuntu-22.04
+    outputs:
+      skia: ${{ steps.filter.outputs.skia }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
-          submodules: recursive
+          fetch-depth: 0
 
-      - name: Build Linux
+      - name: Check changed paths
+        id: filter
+        shell: bash
+        run: |
+          default_branch="${{ github.event.repository.default_branch }}"
+          git fetch --no-tags origin "$default_branch"
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "skia=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git fetch --no-tags origin "${{ github.base_ref }}"
+            base="origin/${{ github.base_ref }}"
+          else
+            base="${{ github.event.before }}"
+            if [[ "$base" =~ ^0+$ ]] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+              base="$(git merge-base "origin/$default_branch" HEAD || git rev-list --max-parents=0 HEAD)"
+            fi
+          fi
+
+          changed_paths="$(git diff --name-only "$base" HEAD || true)"
+          echo "$changed_paths"
+
+          if echo "$changed_paths" | grep -E '^(cmake/UsagiSkia\.cmake|include/usagi/wrapper/skia/|test/wrapper/skia/|\.github/workflows/test\.yml)' >/dev/null; then
+            echo "skia=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skia=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  test:
+    name: ${{ matrix.os }} / ${{ matrix.build_type }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, macos-latest, windows-latest]
+        build_type: [Debug, Release]
+    env:
+      BUILD_DIR: build/ci-${{ matrix.os }}-${{ matrix.build_type }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install build tools (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          if (-not (Get-Command ninja -ErrorAction SilentlyContinue)) {
+            choco install ninja -y
+          }
+
+      - name: Install compiler (Linux)
         if: runner.os == 'Linux'
         run: |
-          cmake -B ${BUILD_DIRECTORY}_${{matrix.build_type}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DCMAKE_CXX_COMPILER=g++-10
-          cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_StaticTest -j 4
-          cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_Test -j 4
-      - name: Build macOS
+          sudo apt-get update
+          sudo apt-get install -y g++-10
+
+      - name: Configure (Linux)
+        if: runner.os == 'Linux'
+        run: >
+          cmake -S . -B "${{ env.BUILD_DIR }}"
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DCMAKE_CXX_COMPILER=g++-10
+
+      - name: Configure (Windows)
+        if: runner.os == 'Windows'
+        run: >
+          cmake -S . -B "${{ env.BUILD_DIR }}"
+          -G Ninja
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DCMAKE_C_COMPILER=clang
+          -DCMAKE_CXX_COMPILER=clang++
+
+      - name: Configure
+        if: runner.os != 'Linux' && runner.os != 'Windows'
+        run: >
+          cmake -S . -B "${{ env.BUILD_DIR }}"
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Build
+        run: |
+          cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --target usagi_StaticTest --parallel
+          cmake --build "${{ env.BUILD_DIR }}" --config ${{ matrix.build_type }} --target usagi_Test --parallel
+
+      - name: Test
+        run: >
+          ctest --test-dir "${{ env.BUILD_DIR }}"
+          --build-config ${{ matrix.build_type }}
+          --output-on-failure
+
+  skia-test:
+    name: Skia tests / ${{ matrix.os }}
+    needs: skia-changes
+    if: needs.skia-changes.outputs.skia == 'true'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            skia_library: libskia.a
+          - os: macos-latest
+            skia_library: libskia.a
+          - os: windows-latest
+            skia_library: skia.lib
+    env:
+      BUILD_DIR: build/skia-${{ matrix.os }}
+      BUILD_TYPE: Release
+      SKIA_ROOT: ${{ github.workspace }}/build/skia-${{ matrix.os }}/_deps/skia-src
+      SKIA_BUILD_DIR: ${{ github.workspace }}/build/skia-${{ matrix.os }}/_deps/skia-src/out/usagi-cpu
+      SKIA_LIBRARY: ${{ github.workspace }}/build/skia-${{ matrix.os }}/_deps/skia-src/out/usagi-cpu/${{ matrix.skia_library }}
+      SKIA_IMAGE_OUTPUT_DIR: ${{ github.workspace }}/build/skia-${{ matrix.os }}/skia-images
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Restore Skia cache
+        id: skia-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.SKIA_ROOT }}/include
+            ${{ env.SKIA_ROOT }}/modules
+            ${{ env.SKIA_LIBRARY }}
+          key: ${{ runner.os }}-${{ runner.arch }}-skia-${{ hashFiles('cmake/UsagiSkia.cmake') }}
+
+      - name: Install build tools (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++-10 ninja-build
+
+      - name: Install build tools (macOS)
         if: runner.os == 'macOS'
         run: |
-          cmake -B ${BUILD_DIRECTORY}_${{matrix.build_type}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
-          cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_StaticTest -j 4
-          cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_Test -j 4
+          command -v ninja >/dev/null || brew install ninja
+
+      - name: Install build tools (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          if (-not (Get-Command ninja -ErrorAction SilentlyContinue)) {
+            choco install ninja -y
+          }
+
+      - name: Configure (Linux)
+        if: runner.os == 'Linux'
+        run: >
+          cmake -S . -B "${{ env.BUILD_DIR }}"
+          -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          -DCMAKE_CXX_COMPILER=g++-10
+          -DUSAGI_ENABLE_SKIA_TESTS=ON
+          -DUSAGI_FETCH_SKIA=${{ steps.skia-cache.outputs.cache-hit != 'true' }}
+          -DUSAGI_BUILD_SKIA=${{ steps.skia-cache.outputs.cache-hit != 'true' }}
+          -DUSAGI_SKIA_ROOT="${{ env.SKIA_ROOT }}"
+          -DUSAGI_SKIA_BUILD_DIR="${{ env.SKIA_BUILD_DIR }}"
+          -DUSAGI_SKIA_LIBRARY="${{ env.SKIA_LIBRARY }}"
+          -DUSAGI_SKIA_WRITE_IMAGES=ON
+          -DUSAGI_SKIA_IMAGE_OUTPUT_DIR="${{ env.SKIA_IMAGE_OUTPUT_DIR }}"
+
+      - name: Configure (Windows)
+        if: runner.os == 'Windows'
+        run: >
+          cmake -S . -B "${{ env.BUILD_DIR }}"
+          -G Ninja
+          -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
+          -DCMAKE_C_COMPILER=clang
+          -DCMAKE_CXX_COMPILER=clang++
+          -DUSAGI_ENABLE_SKIA_TESTS=ON
+          -DUSAGI_FETCH_SKIA=${{ steps.skia-cache.outputs.cache-hit != 'true' }}
+          -DUSAGI_BUILD_SKIA=${{ steps.skia-cache.outputs.cache-hit != 'true' }}
+          -DUSAGI_SKIA_ROOT="${{ env.SKIA_ROOT }}"
+          -DUSAGI_SKIA_BUILD_DIR="${{ env.SKIA_BUILD_DIR }}"
+          -DUSAGI_SKIA_LIBRARY="${{ env.SKIA_LIBRARY }}"
+          -DUSAGI_SKIA_WRITE_IMAGES=ON
+          -DUSAGI_SKIA_IMAGE_OUTPUT_DIR="${{ env.SKIA_IMAGE_OUTPUT_DIR }}"
+
+      - name: Configure
+        if: runner.os != 'Linux' && runner.os != 'Windows'
+        run: >
+          cmake -S . -B "${{ env.BUILD_DIR }}"
+          -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          -DUSAGI_ENABLE_SKIA_TESTS=ON
+          -DUSAGI_FETCH_SKIA=${{ steps.skia-cache.outputs.cache-hit != 'true' }}
+          -DUSAGI_BUILD_SKIA=${{ steps.skia-cache.outputs.cache-hit != 'true' }}
+          -DUSAGI_SKIA_ROOT="${{ env.SKIA_ROOT }}"
+          -DUSAGI_SKIA_BUILD_DIR="${{ env.SKIA_BUILD_DIR }}"
+          -DUSAGI_SKIA_LIBRARY="${{ env.SKIA_LIBRARY }}"
+          -DUSAGI_SKIA_WRITE_IMAGES=ON
+          -DUSAGI_SKIA_IMAGE_OUTPUT_DIR="${{ env.SKIA_IMAGE_OUTPUT_DIR }}"
+
       - name: Build
-        if: runner.os == 'Windows'
-        id: build_win
-        shell: bash
-        run: |
-          cmake -B ${BUILD_DIRECTORY}_${{matrix.build_type}} -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
-          cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_StaticTest -j 4 --config ${{matrix.build_type}}
-          cmake --build ${BUILD_DIRECTORY}_${{matrix.build_type}} --target ${REPOSITORY_NAME}_Test -j 4 --config ${{matrix.build_type}}
+        run: >
+          cmake --build "${{ env.BUILD_DIR }}"
+          --config ${{ env.BUILD_TYPE }}
+          --parallel
+
       - name: Test
-        if: runner.os == 'Linux' || runner.os == 'macOS'
-        run: |
-          ./${BUILD_DIRECTORY}_${{matrix.build_type}}/test/${REPOSITORY_NAME}_Test
-      - name: Test Windows
-        if: runner.os == 'Windows'
-        shell: bash
-        run: |
-          ./${BUILD_DIRECTORY}_${{matrix.build_type}}/test/${{matrix.build_type}}/${REPOSITORY_NAME}_Test.exe
-      - name: Fail Dump
-        if: failure() && steps.build_win.outcome == 'failure'
-        run: |
-          tree /f
+        run: >
+          ctest --test-dir "${{ env.BUILD_DIR }}"
+          --build-config ${{ env.BUILD_TYPE }}
+          --output-on-failure
+
+      - name: Upload Skia result images
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skia-result-images-${{ matrix.os }}
+          path: ${{ env.SKIA_IMAGE_OUTPUT_DIR }}
+          if-no-files-found: ignore

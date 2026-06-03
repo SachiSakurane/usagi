@@ -1,14 +1,15 @@
 #pragma once
 
+#include <cstddef>
 #include <tuple>
 #include <utility>
 
 namespace usagi::tuple {
 namespace detail {
-  template <class TupleType, size_t Target, class Indexes>
+  template <class TupleType, std::size_t Target, class Indexes>
   struct erase_impl {};
 
-  template <class TupleType, size_t Target, size_t... Indexes>
+  template <class TupleType, std::size_t Target, std::size_t... Indexes>
   struct erase_impl<TupleType, Target, std::index_sequence<Indexes...>> {
     using type =
         std::tuple<std::tuple_element_t<(Indexes < Target ? Indexes : Indexes + 1), TupleType>...>;
@@ -19,7 +20,7 @@ namespace detail {
 ///
 /// @tparam TupleType Tuple-like input type.
 /// @tparam Index Element index to remove.
-template <class TupleType, size_t Index>
+template <class TupleType, std::size_t Index>
 struct erase {
   /// Tuple type with the selected element removed.
   using type =
@@ -49,7 +50,7 @@ struct erase_back {
 ///
 /// @tparam TupleType Tuple-like input type.
 /// @tparam Index Element index to remove.
-template <class TupleType, size_t Index>
+template <class TupleType, std::size_t Index>
 using erase_t = typename erase<TupleType, Index>::type;
 
 /// Alias for a tuple-like type without its first element.

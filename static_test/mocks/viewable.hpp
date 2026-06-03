@@ -14,6 +14,7 @@ struct Viewable : Gestural<ValueType>, Drawable<ValueType, DrawContext> {
   using value_type = ValueType;
   using size_type = typename usagi::geometry::size<value_type>;
   using rect_type = typename usagi::geometry::rect<value_type>;
+  using offset_type = typename Gestural<ValueType>::offset_type;
   using draw_context_type = typename Drawable<ValueType, DrawContext>::draw_context_type;
   using gesture_parameter_type = typename Gestural<ValueType>::gesture_parameter_type;
   using view_type = usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;
@@ -29,6 +30,7 @@ struct UnViewable : Gestural<ValueType>, Drawable<ValueType, DrawContext> {
   using value_type = ValueType;
   using size_type = typename usagi::geometry::size<value_type>;
   using rect_type = typename usagi::geometry::rect<value_type>;
+  using offset_type = typename Gestural<ValueType>::offset_type;
   using draw_context_type = typename Drawable<ValueType, DrawContext>::draw_context_type;
   using gesture_parameter_type = typename Gestural<ValueType>::gesture_parameter_type;
   using view_type = usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;

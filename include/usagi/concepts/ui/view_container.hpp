@@ -31,6 +31,6 @@ concept view_container = usagi::concepts::ui::viewable<ContainerType> &&
     container.remove_child_view(std::declval<typename ContainerType::child_view_key_type>())
     } -> std::same_as<bool>;
 
-  { container.child_view_size() } -> std::same_as<size_t>;
+  { container.child_view_size() } -> std::same_as<std::size_t>;
 };
 } // namespace usagi::concepts::ui

@@ -18,7 +18,7 @@ set(USAGI_SKIA_LIBRARY "${USAGI_SKIA_BUILD_DIR}/libskia.a"
 set(USAGI_SKIA_IMAGE_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/skia-images"
     CACHE PATH "Directory for Skia test result images")
 set(USAGI_SKIA_GN_ARGS
-    "is_debug=false is_official_build=true skia_enable_gpu=false skia_enable_pdf=false skia_use_gl=false skia_use_metal=false skia_use_vulkan=false skia_use_dng_sdk=false skia_use_expat=false skia_use_fontconfig=false skia_use_freetype=false skia_use_icu=false skia_use_jpeg_gainmaps=false skia_use_libjpeg_turbo_decode=false skia_use_libjpeg_turbo_encode=false skia_use_no_jpeg_encode=true skia_use_libpng_decode=false skia_use_libpng_encode=false skia_use_no_png_encode=true skia_use_libwebp_decode=false skia_use_libwebp_encode=false skia_use_no_webp_encode=true"
+    "is_debug=false is_official_build=true skia_enable_gpu=false skia_enable_pdf=false skia_enable_fontmgr_empty=true skia_enable_fontmgr_fontconfig=false skia_enable_fontmgr_win=false skia_use_fonthost_mac=false skia_use_gl=false skia_use_metal=false skia_use_vulkan=false skia_use_dng_sdk=false skia_use_expat=false skia_use_fontconfig=false skia_use_freetype=false skia_use_icu=false skia_use_jpeg_gainmaps=false skia_use_libjpeg_turbo_decode=false skia_use_libjpeg_turbo_encode=false skia_use_no_jpeg_encode=true skia_use_libpng_decode=false skia_use_libpng_encode=false skia_use_no_png_encode=true skia_use_libwebp_decode=false skia_use_libwebp_encode=false skia_use_no_webp_encode=true"
     CACHE STRING "GN args used when USAGI_BUILD_SKIA is ON")
 
 function(usagi_fetch_skia)
@@ -58,13 +58,15 @@ function(usagi_fetch_skia)
 endfunction()
 
 function(usagi_build_skia)
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+
     if (NOT EXISTS "${USAGI_SKIA_ROOT}/tools/git-sync-deps")
         message(FATAL_ERROR
             "Skia checkout is missing tools/git-sync-deps. Enable USAGI_FETCH_SKIA or set USAGI_SKIA_ROOT.")
     endif ()
 
     execute_process(
-        COMMAND python3 tools/git-sync-deps
+        COMMAND "${Python3_EXECUTABLE}" tools/git-sync-deps
         WORKING_DIRECTORY "${USAGI_SKIA_ROOT}"
         RESULT_VARIABLE USAGI_SKIA_SYNC_DEPS_RESULT
     )

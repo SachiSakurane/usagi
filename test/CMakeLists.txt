@@ -32,8 +32,6 @@ if (USAGI_ENABLE_SKIA_TESTS)
     usagi_configure_skia_target(${TEST_PROJECT_NAME})
 endif ()
 
-add_dependencies(${TEST_PROJECT_NAME} googletest)
-
 # ✅ discover tests dynamically at ctest runtime
 gtest_discover_tests(
     ${TEST_PROJECT_NAME}

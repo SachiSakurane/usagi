@@ -5,6 +5,8 @@
 #include <usagi/geometry/point.hpp>
 #include <usagi/geometry/size.hpp>
 
+#include <type_traits>
+
 namespace usagi::geometry {
 /// Axis-aligned rectangle represented by left, top, right, and bottom edges.
 ///

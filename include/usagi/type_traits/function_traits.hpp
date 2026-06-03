@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <tuple>
 
 namespace usagi::type_traits {
@@ -13,14 +14,14 @@ namespace detail {
     /// Function return type.
     using result_type = R;
     /// Number of function arguments.
-    static constexpr size_t arity = sizeof...(Args);
+    static constexpr std::size_t arity = sizeof...(Args);
     /// Tuple containing all function argument types.
     using arguments_tuple = std::tuple<Args...>;
 
     /// Argument type at `Index`.
     ///
     /// @tparam Index Zero-based argument index.
-    template <size_t Index>
+    template <std::size_t Index>
     using argument_type = std::tuple_element_t<Index, arguments_tuple>;
   };
 } // namespace detail

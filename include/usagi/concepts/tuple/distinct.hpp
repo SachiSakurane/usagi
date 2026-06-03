@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <tuple>
 #include <utility>
 
@@ -9,7 +10,7 @@
 
 namespace usagi::concepts::tuple {
 namespace detail {
-  template <class TupleType, size_t Size = std::tuple_size_v<TupleType>>
+  template <class TupleType, std::size_t Size = std::tuple_size_v<TupleType>>
   class distinct_impl {
     using target = usagi::tuple::front_t<TupleType>;
     using sub_tuple = usagi::tuple::erase_front_t<TupleType>;

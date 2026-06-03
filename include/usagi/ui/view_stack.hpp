@@ -50,7 +50,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
   /// Owned child view handle type.
   using child_view_type = usagi::ui::view<value_type, draw_context_type, gesture_parameter_type>;
   /// Stable key type used to identify a child view.
-  using child_view_key_type = size_t;
+  using child_view_key_type = std::size_t;
 
   /// Creates a view stack with a default frame.
   view_stack() = default;
@@ -253,7 +253,7 @@ struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, Gest
   /// Returns the number of owned child views.
   ///
   /// @return Current child view count.
-  [[nodiscard]] size_t child_view_size() const { return child_views.size(); }
+  [[nodiscard]] std::size_t child_view_size() const { return child_views.size(); }
 
   /// Updates whether new hit-test events are clipped to stack bounds.
   ///
@@ -366,7 +366,7 @@ private:
     }
   }
 
-  size_t children_next_index{0};
+  std::size_t children_next_index{0};
   using child_view_map_type = std::unordered_map<child_view_key_type, child_view_type>;
   child_view_map_type child_views;
   std::vector<child_view_key_type> child_order;

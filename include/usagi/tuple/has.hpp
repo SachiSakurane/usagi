@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -20,7 +21,7 @@ namespace detail {
   template <class TargetType, class TupleType, class Indexes>
   struct has_impl {};
 
-  template <class TargetType, class TupleType, size_t... Indexes>
+  template <class TargetType, class TupleType, std::size_t... Indexes>
   struct has_impl<TargetType, TupleType, std::index_sequence<Indexes...>> {
     static constexpr bool value =
         has_impl_impl<TargetType, std::tuple_element_t<Indexes, TupleType>...>::value;

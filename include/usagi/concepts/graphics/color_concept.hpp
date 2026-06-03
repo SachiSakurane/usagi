@@ -3,6 +3,9 @@
 #include <usagi/concepts/arithmetic.hpp>
 #include <usagi/concepts/floating_point.hpp>
 
+#include <cstdint>
+#include <type_traits>
+
 namespace usagi::concepts::graphics {
 /// Matches color-like types with arithmetic alpha, red, green, and blue channels.
 ///

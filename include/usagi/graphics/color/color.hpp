@@ -5,6 +5,8 @@
 #include <usagi/tuple/mono.hpp>
 #include <usagi/variable/variable_traits.hpp>
 
+#include <cstdint>
+
 namespace usagi::graphics {
 /// ARGB color value.
 ///

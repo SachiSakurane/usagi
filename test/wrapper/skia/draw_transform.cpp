@@ -45,11 +45,9 @@ TEST(SkiaDrawTransformTest, ScalesAroundOffsetOrigin) {
   SkPixmap pixmap;
   ASSERT_TRUE(surface->peekPixels(&pixmap));
 
-  usagi::test::skia::write_actual_image(pixmap,
-                                        "SkiaDrawTransformTest.ScalesAroundOffsetOrigin.actual.ppm");
+  usagi::test::skia::write_actual_image(pixmap);
   usagi::test::skia::write_expected_and_diff_image(
-      pixmap, 50, 50, "SkiaDrawTransformTest.ScalesAroundOffsetOrigin.expected.ppm",
-      "SkiaDrawTransformTest.ScalesAroundOffsetOrigin.diff.ppm", [](SkCanvas &expected) {
+      pixmap, 50, 50, [](SkCanvas &expected) {
         expected.clear(SK_ColorWHITE);
         fill_rect(expected, 20.f, 20.f, 20.f, 20.f, SK_ColorRED);
       });
@@ -85,12 +83,9 @@ TEST(SkiaDrawTransformTest, RotatesAroundOffsetOrigin) {
   SkPixmap pixmap;
   ASSERT_TRUE(surface->peekPixels(&pixmap));
 
-  usagi::test::skia::write_actual_image(
-      pixmap, "SkiaDrawTransformTest.RotatesAroundOffsetOrigin.actual.ppm");
+  usagi::test::skia::write_actual_image(pixmap);
   usagi::test::skia::write_expected_and_diff_image(
-      pixmap, 60, 60, "SkiaDrawTransformTest.RotatesAroundOffsetOrigin.expected.ppm",
-      "SkiaDrawTransformTest.RotatesAroundOffsetOrigin.diff.ppm",
-      [](SkCanvas &expected) {
+      pixmap, 60, 60, [](SkCanvas &expected) {
         expected.clear(SK_ColorWHITE);
         fill_rect(expected, 30.f, 15.f, 20.f, 10.f, SK_ColorBLUE);
         fill_rect(expected, 15.f, 30.f, 10.f, 20.f, SK_ColorRED);
@@ -123,12 +118,9 @@ TEST(SkiaDrawTransformTest, RotatesFortyFiveDegreesAroundOffsetOrigin) {
   SkPixmap pixmap;
   ASSERT_TRUE(surface->peekPixels(&pixmap));
 
-  usagi::test::skia::write_actual_image(
-      pixmap, "SkiaDrawTransformTest.RotatesFortyFiveDegreesAroundOffsetOrigin.actual.ppm");
+  usagi::test::skia::write_actual_image(pixmap);
   usagi::test::skia::write_expected_and_diff_image(
-      pixmap, 90, 90, "SkiaDrawTransformTest.RotatesFortyFiveDegreesAroundOffsetOrigin.expected.ppm",
-      "SkiaDrawTransformTest.RotatesFortyFiveDegreesAroundOffsetOrigin.diff.ppm",
-      [](SkCanvas &expected) {
+      pixmap, 90, 90, [](SkCanvas &expected) {
         expected.clear(SK_ColorWHITE);
         SkPaint paint;
         paint.setColor(SK_ColorRED);

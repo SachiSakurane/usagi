@@ -38,11 +38,9 @@ TEST(SkiaDrawClipTest, ClipsPixelsOutsideRect) {
   SkPixmap pixmap;
   ASSERT_TRUE(surface->peekPixels(&pixmap));
 
-  usagi::test::skia::write_actual_image(pixmap,
-                                        "SkiaDrawClipTest.ClipsPixelsOutsideRect.actual.ppm");
+  usagi::test::skia::write_actual_image(pixmap);
   usagi::test::skia::write_expected_and_diff_image(
-      pixmap, 40, 40, "SkiaDrawClipTest.ClipsPixelsOutsideRect.expected.ppm",
-      "SkiaDrawClipTest.ClipsPixelsOutsideRect.diff.ppm", [](SkCanvas &expected) {
+      pixmap, 40, 40, [](SkCanvas &expected) {
         expected.clear(SK_ColorWHITE);
         fill_rect(expected, 10.f, 10.f, 20.f, 20.f, SK_ColorRED);
       });
@@ -74,11 +72,9 @@ TEST(SkiaDrawClipTest, RestoresClipAfterDraw) {
   SkPixmap pixmap;
   ASSERT_TRUE(surface->peekPixels(&pixmap));
 
-  usagi::test::skia::write_actual_image(pixmap,
-                                        "SkiaDrawClipTest.RestoresClipAfterDraw.actual.ppm");
+  usagi::test::skia::write_actual_image(pixmap);
   usagi::test::skia::write_expected_and_diff_image(
-      pixmap, 50, 50, "SkiaDrawClipTest.RestoresClipAfterDraw.expected.ppm",
-      "SkiaDrawClipTest.RestoresClipAfterDraw.diff.ppm", [](SkCanvas &expected) {
+      pixmap, 50, 50, [](SkCanvas &expected) {
         expected.clear(SK_ColorWHITE);
         fill_rect(expected, 10.f, 10.f, 30.f, 30.f, SK_ColorRED);
         fill_rect(expected, 0.f, 0.f, 10.f, 10.f, SK_ColorBLUE);

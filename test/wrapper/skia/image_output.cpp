@@ -43,8 +43,7 @@ TEST(SkiaImageOutputTest, DrawDiffImageMarksOnlyMismatchedPixels) {
   usagi::test::skia::draw_diff_image(actual, expected, *diff_surface->getCanvas());
 
   ASSERT_TRUE(diff_surface->peekPixels(&diff));
-  usagi::test::skia::write_diff_image(
-      actual, expected, "SkiaImageOutputTest.DrawDiffImageMarksOnlyMismatchedPixels.diff.ppm");
+  usagi::test::skia::write_diff_image(actual, expected);
 
   usagi::test::skia::expect_color(diff, 0, 0, SK_ColorWHITE);
   usagi::test::skia::expect_color(diff, 1, 0, diff_color);

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <string_view>
+#include <utility>
 
 #include <gtest/gtest.h>
 
@@ -22,6 +23,19 @@ inline constexpr std::string_view image_output_dir() {
 #else
   return {};
 #endif
+}
+
+inline std::string current_test_name() {
+  const auto *info = testing::UnitTest::GetInstance()->current_test_info();
+  if (info == nullptr) {
+    return "UnknownTest.UnknownCase";
+  }
+
+  return std::string{info->test_suite_name()} + "." + info->name();
+}
+
+inline std::string image_file_name(std::string_view kind) {
+  return current_test_name() + "." + std::string{kind} + ".ppm";
 }
 
 inline void write_ppm(const SkPixmap &pixmap, const std::filesystem::path &path) {
@@ -53,6 +67,10 @@ inline void write_actual_image(const SkPixmap &pixmap, std::string_view name) {
 #endif
 }
 
+inline void write_actual_image(const SkPixmap &pixmap) {
+  write_actual_image(pixmap, image_file_name("actual"));
+}
+
 inline void write_expected_image(const SkPixmap &pixmap, std::string_view name) {
 #if defined(USAGI_SKIA_WRITE_IMAGES)
   write_ppm(pixmap, std::filesystem::path{std::string{image_output_dir()}} / name);
@@ -60,6 +78,10 @@ inline void write_expected_image(const SkPixmap &pixmap, std::string_view name) 
   (void) pixmap;
   (void) name;
 #endif
+}
+
+inline void write_expected_image(const SkPixmap &pixmap) {
+  write_expected_image(pixmap, image_file_name("expected"));
 }
 
 inline void draw_diff_image(const SkPixmap &actual, const SkPixmap &expected, SkCanvas &canvas) {
@@ -98,6 +120,10 @@ inline void write_diff_image(const SkPixmap &actual, const SkPixmap &expected,
 #endif
 }
 
+inline void write_diff_image(const SkPixmap &actual, const SkPixmap &expected) {
+  write_diff_image(actual, expected, image_file_name("diff"));
+}
+
 template <class DrawFunction>
 inline void write_expected_image(int width, int height, std::string_view name, DrawFunction &&draw) {
 #if defined(USAGI_SKIA_WRITE_IMAGES)
@@ -115,6 +141,11 @@ inline void write_expected_image(int width, int height, std::string_view name, D
   (void) name;
   (void) draw;
 #endif
+}
+
+template <class DrawFunction>
+inline void write_expected_image(int width, int height, DrawFunction &&draw) {
+  write_expected_image(width, height, image_file_name("expected"), std::forward<DrawFunction>(draw));
 }
 
 template <class DrawFunction>
@@ -139,6 +170,13 @@ inline void write_expected_and_diff_image(const SkPixmap &actual, int width, int
   (void) diff_name;
   (void) draw;
 #endif
+}
+
+template <class DrawFunction>
+inline void write_expected_and_diff_image(const SkPixmap &actual, int width, int height,
+                                          DrawFunction &&draw) {
+  write_expected_and_diff_image(actual, width, height, image_file_name("expected"),
+                                image_file_name("diff"), std::forward<DrawFunction>(draw));
 }
 
 inline void expect_color(const SkPixmap &pixmap, int x, int y, SkColor expected) {

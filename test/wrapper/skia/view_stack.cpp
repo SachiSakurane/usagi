@@ -71,12 +71,9 @@ TEST(SkiaViewStackTest, DrawOffsetIncludesChildTranslation) {
   SkPixmap pixmap;
   ASSERT_TRUE(surface->peekPixels(&pixmap));
 
-  usagi::test::skia::write_actual_image(
-      pixmap, "SkiaViewStackTest.DrawOffsetIncludesChildTranslation.actual.ppm");
+  usagi::test::skia::write_actual_image(pixmap);
   usagi::test::skia::write_expected_and_diff_image(
-      pixmap, 70, 70, "SkiaViewStackTest.DrawOffsetIncludesChildTranslation.expected.ppm",
-      "SkiaViewStackTest.DrawOffsetIncludesChildTranslation.diff.ppm",
-      [](SkCanvas &expected) {
+      pixmap, 70, 70, [](SkCanvas &expected) {
         expected.clear(background_color);
         fill_rect(expected, 10.f, 10.f, 20.f, 20.f, guide_color);
         fill_rect(expected, 30.f, 20.f, 20.f, 20.f, result_color);
@@ -108,12 +105,9 @@ TEST(SkiaViewStackTest, DrawClippingClipsToStackBoundsWhenEnabled) {
   SkPixmap pixmap;
   ASSERT_TRUE(surface->peekPixels(&pixmap));
 
-  usagi::test::skia::write_actual_image(
-      pixmap, "SkiaViewStackTest.DrawClippingClipsToStackBoundsWhenEnabled.actual.ppm");
+  usagi::test::skia::write_actual_image(pixmap);
   usagi::test::skia::write_expected_and_diff_image(
-      pixmap, 70, 70, "SkiaViewStackTest.DrawClippingClipsToStackBoundsWhenEnabled.expected.ppm",
-      "SkiaViewStackTest.DrawClippingClipsToStackBoundsWhenEnabled.diff.ppm",
-      [](SkCanvas &expected) {
+      pixmap, 70, 70, [](SkCanvas &expected) {
         expected.clear(background_color);
         fill_rect(expected, 10.f, 10.f, 60.f, 60.f, attempted_color);
         fill_rect(expected, 10.f, 10.f, 40.f, 40.f, result_color);
@@ -147,12 +141,9 @@ TEST(SkiaViewStackTest, DrawClippingAppliesOutsideChildTransform) {
   SkPixmap pixmap;
   ASSERT_TRUE(surface->peekPixels(&pixmap));
 
-  usagi::test::skia::write_actual_image(
-      pixmap, "SkiaViewStackTest.DrawClippingAppliesOutsideChildTransform.actual.ppm");
+  usagi::test::skia::write_actual_image(pixmap);
   usagi::test::skia::write_expected_and_diff_image(
-      pixmap, 80, 80, "SkiaViewStackTest.DrawClippingAppliesOutsideChildTransform.expected.ppm",
-      "SkiaViewStackTest.DrawClippingAppliesOutsideChildTransform.diff.ppm",
-      [](SkCanvas &expected) {
+      pixmap, 80, 80, [](SkCanvas &expected) {
         expected.clear(background_color);
         fill_rect(expected, 10.f, 10.f, 70.f, 70.f, attempted_color);
         fill_rect(expected, 10.f, 10.f, 40.f, 40.f, result_color);

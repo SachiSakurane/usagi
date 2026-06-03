@@ -4,6 +4,7 @@
 #include <usagi/ui/draw_clip.hpp>
 #include <usagi/wrapper/skia/draw_clip.hpp>
 
+#include "drawing_helpers.hpp"
 #include "image_output.hpp"
 
 #include "include/core/SkCanvas.h"
@@ -15,11 +16,7 @@
 #include "include/core/SkSurface.h"
 
 namespace {
-void fill_rect(SkCanvas &canvas, float x, float y, float width, float height, SkColor color) {
-  SkPaint paint;
-  paint.setColor(color);
-  canvas.drawRect(SkRect::MakeXYWH(x, y, width, height), paint);
-}
+using usagi::test::skia::fill_rect;
 
 TEST(SkiaDrawClipTest, ClipsPixelsOutsideRect) {
   auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(40, 40));

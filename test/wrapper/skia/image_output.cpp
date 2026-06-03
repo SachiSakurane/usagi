@@ -1,23 +1,17 @@
 #include <gtest/gtest.h>
 
+#include "drawing_helpers.hpp"
 #include "image_output.hpp"
 
 #include "include/core/SkCanvas.h"
 #include "include/core/SkColor.h"
 #include "include/core/SkImageInfo.h"
-#include "include/core/SkPaint.h"
 #include "include/core/SkPixmap.h"
-#include "include/core/SkRect.h"
 #include "include/core/SkSurface.h"
 
 namespace {
-constexpr SkColor diff_color = SkColorSetRGB(255, 0, 255);
-
-void fill_pixel(SkCanvas &canvas, int x, int y, SkColor color) {
-  SkPaint paint;
-  paint.setColor(color);
-  canvas.drawRect(SkRect::MakeXYWH(static_cast<float>(x), static_cast<float>(y), 1.f, 1.f), paint);
-}
+using usagi::test::skia::diff_color;
+using usagi::test::skia::fill_pixel;
 
 TEST(SkiaImageOutputTest, DrawDiffImageMarksOnlyMismatchedPixels) {
   auto actual_surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(3, 2));

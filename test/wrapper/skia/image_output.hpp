@@ -8,12 +8,12 @@
 
 #include <gtest/gtest.h>
 
+#include "drawing_helpers.hpp"
+
 #include "include/core/SkColor.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkImageInfo.h"
-#include "include/core/SkPaint.h"
 #include "include/core/SkPixmap.h"
-#include "include/core/SkRect.h"
 #include "include/core/SkSurface.h"
 
 namespace usagi::test::skia {
@@ -90,13 +90,10 @@ inline void draw_diff_image(const SkPixmap &actual, const SkPixmap &expected, Sk
 
   canvas.clear(SK_ColorWHITE);
 
-  SkPaint paint;
-  paint.setColor(SkColorSetRGB(255, 0, 255));
   for (int y = 0; y < actual.height(); ++y) {
     for (int x = 0; x < actual.width(); ++x) {
       if (actual.getColor(x, y) != expected.getColor(x, y)) {
-        canvas.drawRect(SkRect::MakeXYWH(static_cast<float>(x), static_cast<float>(y), 1.f, 1.f),
-                        paint);
+        fill_pixel(canvas, x, y, diff_color);
       }
     }
   }

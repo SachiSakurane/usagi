@@ -5,6 +5,7 @@
 #include <usagi/ui/draw_transform.hpp>
 #include <usagi/wrapper/skia/draw_transform.hpp>
 
+#include "drawing_helpers.hpp"
 #include "image_output.hpp"
 
 #include "include/core/SkCanvas.h"
@@ -17,12 +18,7 @@
 
 namespace {
 constexpr auto pi = 3.14159265358979323846f;
-
-void fill_rect(SkCanvas &canvas, float x, float y, float width, float height, SkColor color) {
-  SkPaint paint;
-  paint.setColor(color);
-  canvas.drawRect(SkRect::MakeXYWH(x, y, width, height), paint);
-}
+using usagi::test::skia::fill_rect;
 
 TEST(SkiaDrawTransformTest, ScalesAroundOffsetOrigin) {
   auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(50, 50));

@@ -9,6 +9,7 @@
 #include <usagi/wrapper/skia/draw_clip.hpp>
 #include <usagi/wrapper/skia/draw_transform.hpp>
 
+#include "drawing_helpers.hpp"
 #include "image_output.hpp"
 
 #include "include/core/SkCanvas.h"
@@ -21,16 +22,11 @@
 
 namespace {
 using GestureParameterType = usagi::type::gesture_parameter<float>;
-constexpr SkColor background_color = SkColorSetRGB(235, 235, 235);
-constexpr SkColor guide_color = SkColorSetRGB(80, 160, 220);
-constexpr SkColor attempted_color = SkColorSetRGB(150, 230, 230);
-constexpr SkColor result_color = SkColorSetRGB(220, 60, 60);
-
-void fill_rect(SkCanvas &canvas, float x, float y, float width, float height, SkColor color) {
-  SkPaint paint;
-  paint.setColor(color);
-  canvas.drawRect(SkRect::MakeXYWH(x, y, width, height), paint);
-}
+using usagi::test::skia::attempted_color;
+using usagi::test::skia::background_color;
+using usagi::test::skia::fill_rect;
+using usagi::test::skia::guide_color;
+using usagi::test::skia::result_color;
 
 class PaintView final : public usagi::ui::base_view<float, SkCanvas, GestureParameterType> {
 public:

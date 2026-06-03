@@ -8,6 +8,7 @@
 #include <usagi/ui/base_view.hpp>
 #include <usagi/ui/view.hpp>
 #include <usagi/ui/view_stack.hpp>
+#include <usagi/wrapper/skia/draw_transform.hpp>
 
 namespace usagi::wrapper::iplug2 {
 
@@ -81,7 +82,9 @@ public:
   void Draw(IGraphics &g) override {
     SkCanvas *canvas = static_cast<SkCanvas *>(g.GetDrawContext());
     if (canvas) {
-      local_view.draw(*canvas, iplug_traits::offset_type{});
+      usagi::wrapper::skia::draw_with_transform(
+          *canvas, local_view.transform(), iplug_traits::offset_type{},
+          [&] { local_view.draw(*canvas, iplug_traits::offset_type{}); });
     }
   }
 

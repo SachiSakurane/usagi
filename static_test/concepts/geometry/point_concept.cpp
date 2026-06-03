@@ -16,5 +16,7 @@ struct UnPointed {
 };
 
 static_assert(usagi::concepts::geometry::point_concept<Pointed<int>>);
+static_assert(usagi::concepts::geometry::point_concept<Pointed<int> &>);
+static_assert(usagi::concepts::geometry::point_concept<const Pointed<int> &>);
 static_assert(!usagi::concepts::geometry::point_concept<UnPointed<int>>);
 } // namespace

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include <usagi/concepts/arithmetic.hpp>
 
 namespace usagi::concepts::geometry {
@@ -8,7 +10,7 @@ namespace usagi::concepts::geometry {
 /// @tparam PointType Type to test.
 template <class PointType>
 concept point_concept = requires(PointType &p) {
-  requires usagi::concepts::arithmetic<typename PointType::value_type>;
+  requires usagi::concepts::arithmetic<typename std::remove_cvref_t<PointType>::value_type>;
 
   { p.x() } -> usagi::concepts::arithmetic;
   { p.y() } -> usagi::concepts::arithmetic;

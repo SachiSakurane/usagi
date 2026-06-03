@@ -149,4 +149,75 @@ TEST(SkiaViewStackTest, DrawClippingAppliesOutsideChildTransform) {
   usagi::test::skia::expect_color(pixmap, 49, 49, result_color);
   usagi::test::skia::expect_color(pixmap, 60, 60, attempted_color);
 }
+
+TEST(SkiaViewStackTest, DrawsChildrenInZOrder) {
+  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(110, 60));
+
+  ASSERT_NE(surface, nullptr);
+
+  SkCanvas *canvas = surface->getCanvas();
+  canvas->clear(background_color);
+
+  auto stack = usagi::ui::view_stack<float, SkCanvas, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 50.f, 50.f}};
+  const auto back = stack.add_child_view(usagi::ui::make_view<PaintView>(
+      usagi::geometry::rect<float>{10.f, 10.f, 40.f, 40.f}, guide_color));
+  stack.add_child_view(usagi::ui::make_view<PaintView>(
+      usagi::geometry::rect<float>{20.f, 20.f, 45.f, 45.f}, result_color));
+
+  stack.draw(*canvas, usagi::geometry::point<float>{});
+  ASSERT_TRUE(stack.bring_child_to_front(back));
+  stack.draw(*canvas, usagi::geometry::point<float>{60.f, 0.f});
+
+  SkPixmap pixmap;
+  ASSERT_TRUE(surface->peekPixels(&pixmap));
+
+  usagi::test::skia::write_actual_image(pixmap);
+  usagi::test::skia::write_expected_and_diff_image(
+      pixmap, 110, 60, [](SkCanvas &expected) {
+        expected.clear(background_color);
+        fill_rect(expected, 10.f, 10.f, 30.f, 30.f, guide_color);
+        fill_rect(expected, 20.f, 20.f, 25.f, 25.f, result_color);
+        fill_rect(expected, 80.f, 20.f, 25.f, 25.f, result_color);
+        fill_rect(expected, 70.f, 10.f, 30.f, 30.f, guide_color);
+      });
+
+  usagi::test::skia::expect_color(pixmap, 15, 15, guide_color);
+  usagi::test::skia::expect_color(pixmap, 25, 25, result_color);
+  usagi::test::skia::expect_color(pixmap, 85, 25, guide_color);
+  usagi::test::skia::expect_color(pixmap, 104, 44, result_color);
+}
+
+TEST(SkiaViewStackTest, SkipsDisabledChildrenWhenDrawing) {
+  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(60, 60));
+
+  ASSERT_NE(surface, nullptr);
+
+  SkCanvas *canvas = surface->getCanvas();
+  canvas->clear(background_color);
+
+  auto stack = usagi::ui::view_stack<float, SkCanvas, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 60.f, 60.f}};
+  stack.add_child_view(usagi::ui::make_view<PaintView>(
+      usagi::geometry::rect<float>{10.f, 10.f, 40.f, 40.f}, guide_color));
+  const auto disabled = stack.add_child_view(usagi::ui::make_view<PaintView>(
+      usagi::geometry::rect<float>{20.f, 20.f, 50.f, 50.f}, result_color));
+  stack.get_child_view(disabled).set_enabled(false);
+
+  stack.draw(*canvas, usagi::geometry::point<float>{});
+
+  SkPixmap pixmap;
+  ASSERT_TRUE(surface->peekPixels(&pixmap));
+
+  usagi::test::skia::write_actual_image(pixmap);
+  usagi::test::skia::write_expected_and_diff_image(
+      pixmap, 60, 60, [](SkCanvas &expected) {
+        expected.clear(background_color);
+        fill_rect(expected, 10.f, 10.f, 30.f, 30.f, guide_color);
+      });
+
+  usagi::test::skia::expect_color(pixmap, 15, 15, guide_color);
+  usagi::test::skia::expect_color(pixmap, 25, 25, guide_color);
+  usagi::test::skia::expect_color(pixmap, 45, 45, background_color);
+}
 } // namespace

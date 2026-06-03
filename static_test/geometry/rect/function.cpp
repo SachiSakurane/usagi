@@ -10,7 +10,7 @@ static_assert([]() constexpr {
 
 static_assert([]() constexpr {
   constexpr usagi::geometry::rect<float> r{2.f, 4.f, 42.f, 24.f};
-  constexpr auto moved = usagi::geometry::transform(r, 3.f, 5.f);
+  constexpr auto moved = usagi::geometry::translate(r, 3.f, 5.f);
   return moved.l() == 5.f && moved.t() == 9.f && moved.r() == 45.f && moved.b() == 29.f;
 }());
 

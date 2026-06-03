@@ -29,7 +29,7 @@ inline constexpr decltype(auto) make_from_center(const usagi::geometry::point<Va
 /// @param y Vertical offset added to top and bottom edges.
 /// @return Translated rectangle.
 template <usagi::concepts::arithmetic ValueType>
-inline constexpr decltype(auto) transform(const usagi::geometry::rect<ValueType> &rect, ValueType x,
+inline constexpr decltype(auto) translate(const usagi::geometry::rect<ValueType> &rect, ValueType x,
                                           ValueType y) {
   return usagi::geometry::rect<ValueType>{rect.l() + x, rect.t() + y, rect.r() + x, rect.b() + y};
 }

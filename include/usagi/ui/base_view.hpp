@@ -23,6 +23,8 @@ public:
   using rect_type = typename view_interface_type::rect_type;
   /// Size type using `value_type`.
   using size_type = typename view_interface_type::size_type;
+  /// Transform type using `value_type`.
+  using transform_type = typename usagi::geometry::geometry_traits<value_type>::transform_type;
   /// Mutable drawing context type.
   using draw_context_type = typename view_interface_type::draw_context_type;
   /// Draw and event offset type.
@@ -165,8 +167,54 @@ public:
   /// @return Current ignore-events value.
   [[nodiscard]] bool is_ignoring_events() const { return ignore_events; }
 
+  /// Returns the layout-after transform.
+  ///
+  /// @return Stored transform value.
+  [[nodiscard]] constexpr transform_type transform() const { return content_transform; }
+  /// Replaces the layout-after transform.
+  ///
+  /// @param t New transform value.
+  constexpr void set_transform(transform_type t) { content_transform = t; }
+
+  /// Returns the transform translation.
+  ///
+  /// @return Translation applied after frame placement.
+  [[nodiscard]] constexpr point_type translation() const {
+    return content_transform.translation();
+  }
+  /// Updates the transform translation.
+  ///
+  /// @param p New translation value.
+  constexpr void set_translation(point_type p) {
+    content_transform =
+        transform_type{p, content_transform.rotation(), content_transform.scale(),
+                       content_transform.origin()};
+  }
+
+  /// Returns the transform scale.
+  ///
+  /// @return Current x and y scale factors.
+  [[nodiscard]] constexpr point_type scale() const { return content_transform.scale(); }
+  /// Updates the transform scale without changing the current origin.
+  ///
+  /// @param s New x and y scale factors.
+  constexpr void set_scale(point_type s) {
+    content_transform =
+        transform_type{content_transform.translation(), content_transform.rotation(), s,
+                       content_transform.origin()};
+  }
+  /// Updates the transform scale and transform origin together.
+  ///
+  /// @param s New x and y scale factors.
+  /// @param origin Origin used by the scale operation.
+  constexpr void set_scale(point_type s, point_type origin) {
+    content_transform =
+        transform_type{content_transform.translation(), content_transform.rotation(), s, origin};
+  }
+
 private:
   rect_type content{};
+  transform_type content_transform{};
   bool ignore_events{false};
   bool enabled{true};
   bool parameter_downed{false};

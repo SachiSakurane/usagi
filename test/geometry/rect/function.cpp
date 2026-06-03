@@ -10,7 +10,7 @@ TEST(RectFunctionTest, MakeCase) {
 
 TEST(RectFunctionTest, TransformCase) {
   usagi::geometry::rect<float> r{0.f, 0.f, 40.f, 40.f};
-  ASSERT_EQ(usagi::geometry::transform(r, 2.f, 2.f),
+  ASSERT_EQ(usagi::geometry::translate(r, 2.f, 2.f),
             (usagi::geometry::rect<float>{2.f, 2.f, 42.f, 42.f}));
 }
 

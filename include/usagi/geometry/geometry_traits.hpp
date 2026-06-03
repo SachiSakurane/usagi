@@ -21,6 +21,6 @@ struct geometry_traits {
   /// Size type using `value_type`.
   using size_type = typename usagi::geometry::size<value_type>;
   /// Transform type using `value_type`.
-  using transform_type = typename usagi::geometry::transform<value_type>;
+  using transform_type = usagi::geometry::transform<value_type>;
 };
 } // namespace usagi::geometry

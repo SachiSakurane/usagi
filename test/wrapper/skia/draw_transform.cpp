@@ -19,7 +19,7 @@ namespace {
 constexpr auto pi = 3.14159265358979323846f;
 
 TEST(SkiaDrawTransformTest, ScalesAroundOffsetOrigin) {
-  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(5, 5));
+  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(50, 50));
 
   ASSERT_NE(surface, nullptr);
 
@@ -33,7 +33,7 @@ TEST(SkiaDrawTransformTest, ScalesAroundOffsetOrigin) {
   usagi::ui::draw_with_transform(*canvas, transform, usagi::geometry::point<float>{}, [&] {
     SkPaint paint;
     paint.setColor(SK_ColorRED);
-    canvas->drawRect(SkRect::MakeXYWH(1.f, 1.f, 1.f, 1.f), paint);
+    canvas->drawRect(SkRect::MakeXYWH(10.f, 10.f, 10.f, 10.f), paint);
   });
 
   SkPixmap pixmap;
@@ -42,28 +42,32 @@ TEST(SkiaDrawTransformTest, ScalesAroundOffsetOrigin) {
   usagi::test::skia::write_actual_image(pixmap,
                                         "SkiaDrawTransformTest.ScalesAroundOffsetOrigin.actual.ppm");
 
-  usagi::test::skia::expect_color(pixmap, 1, 1, SK_ColorWHITE);
-  usagi::test::skia::expect_color(pixmap, 2, 2, SK_ColorRED);
-  usagi::test::skia::expect_color(pixmap, 3, 3, SK_ColorRED);
-  usagi::test::skia::expect_color(pixmap, 4, 4, SK_ColorWHITE);
+  usagi::test::skia::expect_color(pixmap, 10, 10, SK_ColorWHITE);
+  usagi::test::skia::expect_color(pixmap, 20, 20, SK_ColorRED);
+  usagi::test::skia::expect_color(pixmap, 39, 39, SK_ColorRED);
+  usagi::test::skia::expect_color(pixmap, 45, 45, SK_ColorWHITE);
 }
 
 TEST(SkiaDrawTransformTest, RotatesAroundOffsetOrigin) {
-  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(5, 5));
+  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(60, 60));
 
   ASSERT_NE(surface, nullptr);
 
   SkCanvas *canvas = surface->getCanvas();
   canvas->clear(SK_ColorWHITE);
 
+  SkPaint guide_paint;
+  guide_paint.setColor(SK_ColorBLUE);
+  canvas->drawRect(SkRect::MakeXYWH(30.f, 15.f, 20.f, 10.f), guide_paint);
+
   const auto transform = usagi::geometry::transform<float>{
       usagi::geometry::point<float>{}, pi / 2.f, usagi::geometry::point<float>{1.f, 1.f},
-      usagi::geometry::point<float>{1.f, 1.f}};
+      usagi::geometry::point<float>{10.f, 10.f}};
 
-  usagi::ui::draw_with_transform(*canvas, transform, usagi::geometry::point<float>{1.f, 1.f}, [&] {
+  usagi::ui::draw_with_transform(*canvas, transform, usagi::geometry::point<float>{10.f, 10.f}, [&] {
     SkPaint paint;
     paint.setColor(SK_ColorRED);
-    canvas->drawRect(SkRect::MakeXYWH(3.f, 2.f, 1.f, 1.f), paint);
+    canvas->drawRect(SkRect::MakeXYWH(30.f, 15.f, 20.f, 10.f), paint);
   });
 
   SkPixmap pixmap;
@@ -72,12 +76,14 @@ TEST(SkiaDrawTransformTest, RotatesAroundOffsetOrigin) {
   usagi::test::skia::write_actual_image(
       pixmap, "SkiaDrawTransformTest.RotatesAroundOffsetOrigin.actual.ppm");
 
-  usagi::test::skia::expect_color(pixmap, 1, 3, SK_ColorRED);
-  usagi::test::skia::expect_color(pixmap, 3, 2, SK_ColorWHITE);
+  usagi::test::skia::expect_color(pixmap, 20, 40, SK_ColorRED);
+  usagi::test::skia::expect_color(pixmap, 24, 49, SK_ColorRED);
+  usagi::test::skia::expect_color(pixmap, 40, 20, SK_ColorBLUE);
+  usagi::test::skia::expect_color(pixmap, 30, 30, SK_ColorWHITE);
 }
 
 TEST(SkiaDrawTransformTest, RotatesFortyFiveDegreesAroundOffsetOrigin) {
-  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(9, 9));
+  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(90, 90));
 
   ASSERT_NE(surface, nullptr);
 
@@ -86,12 +92,12 @@ TEST(SkiaDrawTransformTest, RotatesFortyFiveDegreesAroundOffsetOrigin) {
 
   const auto transform = usagi::geometry::transform<float>{
       usagi::geometry::point<float>{}, pi / 4.f, usagi::geometry::point<float>{1.f, 1.f},
-      usagi::geometry::point<float>{4.f, 4.f}};
+      usagi::geometry::point<float>{40.f, 40.f}};
 
   usagi::ui::draw_with_transform(*canvas, transform, usagi::geometry::point<float>{}, [&] {
     SkPaint paint;
     paint.setColor(SK_ColorRED);
-    canvas->drawRect(SkRect::MakeXYWH(4.f, 1.f, 1.f, 6.f), paint);
+    canvas->drawRect(SkRect::MakeXYWH(40.f, 10.f, 10.f, 60.f), paint);
   });
 
   SkPixmap pixmap;
@@ -100,10 +106,10 @@ TEST(SkiaDrawTransformTest, RotatesFortyFiveDegreesAroundOffsetOrigin) {
   usagi::test::skia::write_actual_image(
       pixmap, "SkiaDrawTransformTest.RotatesFortyFiveDegreesAroundOffsetOrigin.actual.ppm");
 
-  usagi::test::skia::expect_color(pixmap, 5, 2, SK_ColorRED);
-  usagi::test::skia::expect_color(pixmap, 4, 4, SK_ColorRED);
-  usagi::test::skia::expect_color(pixmap, 2, 5, SK_ColorRED);
-  usagi::test::skia::expect_color(pixmap, 4, 1, SK_ColorWHITE);
-  usagi::test::skia::expect_color(pixmap, 4, 6, SK_ColorWHITE);
+  usagi::test::skia::expect_color(pixmap, 55, 25, SK_ColorRED);
+  usagi::test::skia::expect_color(pixmap, 40, 40, SK_ColorRED);
+  usagi::test::skia::expect_color(pixmap, 25, 55, SK_ColorRED);
+  usagi::test::skia::expect_color(pixmap, 40, 10, SK_ColorWHITE);
+  usagi::test::skia::expect_color(pixmap, 40, 70, SK_ColorWHITE);
 }
 } // namespace

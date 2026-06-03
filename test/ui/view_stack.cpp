@@ -23,22 +23,6 @@ struct DrawTransformCall {
 
 struct TransformDrawContext {
   std::vector<DrawTransformCall> calls;
-
-  void save() { calls.emplace_back(DrawTransformCall{DrawTransformCall::type::save}); }
-
-  void restore() { calls.emplace_back(DrawTransformCall{DrawTransformCall::type::restore}); }
-
-  void translate(float x, float y) {
-    calls.emplace_back(DrawTransformCall{DrawTransformCall::type::translate, x, y});
-  }
-
-  void rotate(float degrees) {
-    calls.emplace_back(DrawTransformCall{DrawTransformCall::type::rotate, degrees});
-  }
-
-  void scale(float x, float y) {
-    calls.emplace_back(DrawTransformCall{DrawTransformCall::type::scale, x, y});
-  }
 };
 
 class DrawnView final : public usagi::ui::base_view<float, DrawContext, GestureParameterType> {
@@ -235,6 +219,28 @@ private:
   int value;
 };
 } // namespace
+
+namespace usagi::ui {
+template <>
+struct draw_transform_traits<TransformDrawContext> {
+  static void draw(TransformDrawContext &context,
+                   const usagi::concepts::geometry::transform_concept auto &transform,
+                   const usagi::concepts::geometry::point_concept auto &offset, auto &&draw) {
+    const auto origin = offset + transform.origin();
+    context.calls.emplace_back(DrawTransformCall{DrawTransformCall::type::save});
+    context.calls.emplace_back(
+        DrawTransformCall{DrawTransformCall::type::translate, origin.x(), origin.y()});
+    context.calls.emplace_back(
+        DrawTransformCall{DrawTransformCall::type::rotate, transform.rotation() * 180.f / pi});
+    context.calls.emplace_back(DrawTransformCall{DrawTransformCall::type::scale,
+                                                transform.scale().x(), transform.scale().y()});
+    context.calls.emplace_back(
+        DrawTransformCall{DrawTransformCall::type::translate, -origin.x(), -origin.y()});
+    std::forward<decltype(draw)>(draw)();
+    context.calls.emplace_back(DrawTransformCall{DrawTransformCall::type::restore});
+  }
+};
+} // namespace usagi::ui
 
 TEST(ViewStackTest, DrawsOnlyChildren) {
   auto stamp = std::vector<int>{};

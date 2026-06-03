@@ -82,9 +82,8 @@ public:
   void Draw(IGraphics &g) override {
     SkCanvas *canvas = static_cast<SkCanvas *>(g.GetDrawContext());
     if (canvas) {
-      usagi::wrapper::skia::draw_with_transform(
-          *canvas, local_view.transform(), iplug_traits::offset_type{},
-          [&] { local_view.draw(*canvas, iplug_traits::offset_type{}); });
+      usagi::ui::draw_with_transform(*canvas, local_view.transform(), iplug_traits::offset_type{},
+                                     [&] { local_view.draw(*canvas, iplug_traits::offset_type{}); });
     }
   }
 

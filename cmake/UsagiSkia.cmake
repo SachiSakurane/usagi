@@ -3,6 +3,7 @@ include_guard(GLOBAL)
 option(USAGI_ENABLE_SKIA_TESTS "Build Skia-dependent tests" OFF)
 option(USAGI_FETCH_SKIA "Clone the pinned Skia checkout into the build directory" OFF)
 option(USAGI_BUILD_SKIA "Build the pinned Skia checkout with GN/Ninja" OFF)
+option(USAGI_SKIA_WRITE_IMAGES "Write Skia test result images" OFF)
 
 set(USAGI_SKIA_GIT_REPOSITORY "https://skia.googlesource.com/skia.git"
     CACHE STRING "Skia Git repository URL")
@@ -14,8 +15,10 @@ set(USAGI_SKIA_BUILD_DIR "${USAGI_SKIA_ROOT}/out/usagi-cpu"
     CACHE PATH "Skia build output directory")
 set(USAGI_SKIA_LIBRARY "${USAGI_SKIA_BUILD_DIR}/libskia.a"
     CACHE FILEPATH "Skia static library path")
+set(USAGI_SKIA_IMAGE_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/skia-images"
+    CACHE PATH "Directory for Skia test result images")
 set(USAGI_SKIA_GN_ARGS
-    "is_debug=false is_official_build=true skia_enable_gpu=false skia_use_gl=false skia_use_metal=false skia_use_vulkan=false skia_use_dng_sdk=false skia_use_expat=false skia_use_fontconfig=false skia_use_freetype=false skia_use_icu=false skia_use_libjpeg_turbo=false skia_use_libpng=false skia_use_libwebp=false"
+    "is_debug=false is_official_build=true skia_enable_gpu=false skia_enable_pdf=false skia_use_gl=false skia_use_metal=false skia_use_vulkan=false skia_use_dng_sdk=false skia_use_expat=false skia_use_fontconfig=false skia_use_freetype=false skia_use_icu=false skia_use_jpeg_gainmaps=false skia_use_libjpeg_turbo_decode=false skia_use_libjpeg_turbo_encode=false skia_use_no_jpeg_encode=true skia_use_libpng_decode=false skia_use_libpng_encode=false skia_use_no_png_encode=true skia_use_libwebp_decode=false skia_use_libwebp_encode=false skia_use_no_webp_encode=true"
     CACHE STRING "GN args used when USAGI_BUILD_SKIA is ON")
 
 function(usagi_fetch_skia)
@@ -119,6 +122,14 @@ function(usagi_configure_skia_target TARGET_NAME)
             "-framework CoreGraphics"
             "-framework CoreText"
             "-framework ImageIO"
+        )
+    endif ()
+
+    if (USAGI_SKIA_WRITE_IMAGES)
+        file(MAKE_DIRECTORY "${USAGI_SKIA_IMAGE_OUTPUT_DIR}")
+        target_compile_definitions(${TARGET_NAME} PRIVATE
+            USAGI_SKIA_WRITE_IMAGES=1
+            USAGI_SKIA_IMAGE_OUTPUT_DIR="${USAGI_SKIA_IMAGE_OUTPUT_DIR}"
         )
     endif ()
 

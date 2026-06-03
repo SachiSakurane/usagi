@@ -26,6 +26,8 @@ namespace detail {
                                            typename ViewType::gesture_parameter_type>;
 
   public:
+    /// Shared geometry value type.
+    using value_type = typename view_interface_type::value_type;
     /// Point type exposed by the interface.
     using point_type = typename view_interface_type::point_type;
     /// Rectangle type exposed by the interface.
@@ -104,6 +106,9 @@ namespace detail {
 
     point_type translation() const override { return holder.translation(); }
     void set_translation(point_type p) override { holder.set_translation(p); }
+
+    value_type rotation() const override { return holder.rotation(); }
+    void set_rotation(value_type r) override { holder.set_rotation(r); }
 
     point_type scale() const override { return holder.scale(); }
     void set_scale(point_type s) override { holder.set_scale(s); }
@@ -316,6 +321,21 @@ public:
   void set_translation(point_type p) {
     assert(holder);
     holder->set_translation(p);
+  }
+
+  /// Returns the contained view's transform rotation.
+  ///
+  /// @return Current rotation angle in radians.
+  [[nodiscard]] value_type rotation() const {
+    assert(holder);
+    return holder->rotation();
+  }
+  /// Updates the contained view's transform rotation without changing the current origin.
+  ///
+  /// @param r New rotation angle in radians.
+  void set_rotation(value_type r) {
+    assert(holder);
+    holder->set_rotation(r);
   }
 
   /// Returns the contained view's transform scale.

@@ -265,6 +265,15 @@ struct gesture {
   /// @param p New translation value.
   constexpr void set_translation(point_type p) { holder.set_translation(p); }
 
+  /// Returns the wrapped view's transform rotation.
+  ///
+  /// @return Current rotation angle in radians.
+  [[nodiscard]] constexpr value_type rotation() const { return holder.rotation(); }
+  /// Updates the wrapped view's transform rotation without changing the current origin.
+  ///
+  /// @param r New rotation angle in radians.
+  constexpr void set_rotation(value_type r) { holder.set_rotation(r); }
+
   /// Returns the wrapped view's transform scale.
   ///
   /// @return Current x and y scale factors.

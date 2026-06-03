@@ -57,9 +57,11 @@ TEST(ViewCommonTest, TransformCase) {
   ASSERT_EQ(v.transform().origin(), (decltype(v)::point_type{6.f, 7.f}));
 
   v.set_translation(decltype(v)::point_type{8.f, 9.f});
+  v.set_rotation(14.f);
   v.set_scale(decltype(v)::point_type{10.f, 11.f}, decltype(v)::point_type{12.f, 13.f});
 
   ASSERT_EQ(v.translation(), (decltype(v)::point_type{8.f, 9.f}));
+  ASSERT_EQ(v.rotation(), 14.f);
   ASSERT_EQ(v.scale(), (decltype(v)::point_type{10.f, 11.f}));
   ASSERT_EQ(v.transform().origin(), (decltype(v)::point_type{12.f, 13.f}));
 }

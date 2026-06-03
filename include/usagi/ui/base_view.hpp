@@ -193,6 +193,21 @@ public:
                        content_transform.origin()};
   }
 
+  /// Returns the transform rotation.
+  ///
+  /// @return Current rotation angle in radians.
+  [[nodiscard]] constexpr value_type rotation() const override {
+    return content_transform.rotation();
+  }
+  /// Updates the transform rotation without changing the current origin.
+  ///
+  /// @param r New rotation angle in radians.
+  constexpr void set_rotation(value_type r) override {
+    content_transform =
+        transform_type{content_transform.translation(), r, content_transform.scale(),
+                       content_transform.origin()};
+  }
+
   /// Returns the transform scale.
   ///
   /// @return Current x and y scale factors.

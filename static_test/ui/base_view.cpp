@@ -74,6 +74,14 @@ static_assert([]() consteval {
     return false;
   }
 
+  view.set_rotation(16.f);
+  if (view.rotation() != 16.f) {
+    return false;
+  }
+  if (view.transform().translation() != BaseViewType::point_type{1.f, 2.f}) {
+    return false;
+  }
+
   view.set_scale(BaseViewType::point_type{3.f, 4.f});
   if (view.scale() != BaseViewType::point_type{3.f, 4.f}) {
     return false;
@@ -87,7 +95,7 @@ static_assert([]() consteval {
   if (transform.translation() != BaseViewType::point_type{1.f, 2.f}) {
     return false;
   }
-  if (transform.rotation() != 11.f) {
+  if (transform.rotation() != 16.f) {
     return false;
   }
   if (transform.scale() != BaseViewType::point_type{5.f, 6.f}) {

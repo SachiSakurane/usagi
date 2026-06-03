@@ -338,8 +338,7 @@ TEST(ViewStackTest, SendsRotatedLocalGesturePositionToChild) {
   const auto key = stack.add_child_view(
       usagi::ui::make_view<EventView>(positions, offsets,
                                       usagi::geometry::rect<float>{20.f, 30.f, 50.f, 60.f}));
-  stack.get_child_view(key).set_transform(usagi::geometry::transform<float>{
-      point_type{0.f, 0.f}, pi / 2.f, point_type{1.f, 1.f}, point_type{0.f, 0.f}});
+  stack.get_child_view(key).set_rotation(pi / 2.f);
 
   const auto consumed =
       stack.event(usagi::type::gesture_traits<GestureParameterType>::on_down_type{

@@ -86,9 +86,11 @@ static_assert([]() consteval {
   }
 
   s.set_translation(decltype(s)::point_type{8, 9});
+  s.set_rotation(14);
   s.set_scale(decltype(s)::point_type{10, 11}, decltype(s)::point_type{12, 13});
 
   return s.translation() == decltype(s)::point_type{8, 9} &&
+      s.rotation() == 14 &&
       s.scale() == decltype(s)::point_type{10, 11} &&
       s.transform().origin() == decltype(s)::point_type{12, 13};
 }());

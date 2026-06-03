@@ -135,6 +135,15 @@ public:
   /// @param p New translation value.
   virtual constexpr void set_translation(point_type p) = 0;
 
+  /// Returns the transform rotation.
+  ///
+  /// @return Current rotation angle in radians.
+  [[nodiscard]] virtual constexpr value_type rotation() const = 0;
+  /// Updates the transform rotation without changing the current origin.
+  ///
+  /// @param r New rotation angle in radians.
+  virtual constexpr void set_rotation(value_type r) = 0;
+
   /// Returns the transform scale.
   ///
   /// @return Current x and y scale factors.

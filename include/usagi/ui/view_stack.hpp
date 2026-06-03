@@ -10,6 +10,7 @@
 #include <usagi/concepts/arithmetic.hpp>
 #include <usagi/concepts/geometry.hpp>
 #include <usagi/geometry.hpp>
+#include <usagi/geometry/transform/function.hpp>
 #include <usagi/ui/base_view.hpp>
 #include <usagi/ui/view.hpp>
 
@@ -307,13 +308,8 @@ private:
   }
 
   static point_type child_local_position(const child_view_type &child, point_type position) {
-    const auto scale = child.scale();
-    assert(scale.x() != static_cast<value_type>(0));
-    assert(scale.y() != static_cast<value_type>(0));
-
-    const auto origin = child.transform().origin();
-    const auto translated = position - child_origin(child);
-    return (translated - origin) / scale + origin;
+    const auto frame_origin = offset_type{child.frame().l(), child.frame().t()};
+    return usagi::geometry::inverse_transform_point(child.transform(), position - frame_origin);
   }
 
   /// Converts any gesture parameter payload to an out-event payload.

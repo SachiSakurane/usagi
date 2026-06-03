@@ -29,6 +29,8 @@ concept transformable = requires(TransformableType &t) {
 
   { t.rotation() } -> usagi::concepts::floating_point;
   t.set_rotation(std::declval<typename TransformableType::value_type>());
+  t.set_rotation(std::declval<typename TransformableType::value_type>(),
+                 std::declval<typename TransformableType::point_type>());
 
   { t.scale() } -> usagi::concepts::geometry::point_concept;
   t.set_scale(std::declval<typename TransformableType::point_type>());

@@ -143,6 +143,11 @@ public:
   ///
   /// @param r New rotation angle in radians.
   virtual constexpr void set_rotation(value_type r) = 0;
+  /// Updates the transform rotation and transform origin together.
+  ///
+  /// @param r New rotation angle in radians.
+  /// @param origin Origin used by the rotation operation.
+  virtual constexpr void set_rotation(value_type r, point_type origin) = 0;
 
   /// Returns the transform scale.
   ///

@@ -51,7 +51,7 @@ static_assert([]() consteval {
   }
 
   g.set_translation(decltype(g)::point_type{8.f, 9.f});
-  g.set_rotation(14.f);
+  g.set_rotation(14.f, decltype(g)::point_type{15.f, 16.f});
   g.set_scale(decltype(g)::point_type{10.f, 11.f}, decltype(g)::point_type{12.f, 13.f});
 
   return g.translation() == decltype(g)::point_type{8.f, 9.f} &&

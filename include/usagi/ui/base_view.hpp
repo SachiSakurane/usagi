@@ -207,6 +207,14 @@ public:
         transform_type{content_transform.translation(), r, content_transform.scale(),
                        content_transform.origin()};
   }
+  /// Updates the transform rotation and transform origin together.
+  ///
+  /// @param r New rotation angle in radians.
+  /// @param origin Origin used by the rotation operation.
+  constexpr void set_rotation(value_type r, point_type origin) override {
+    content_transform =
+        transform_type{content_transform.translation(), r, content_transform.scale(), origin};
+  }
 
   /// Returns the transform scale.
   ///

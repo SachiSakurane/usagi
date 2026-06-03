@@ -273,6 +273,13 @@ struct gesture {
   ///
   /// @param r New rotation angle in radians.
   constexpr void set_rotation(value_type r) { holder.set_rotation(r); }
+  /// Updates the wrapped view's transform rotation and transform origin together.
+  ///
+  /// @param r New rotation angle in radians.
+  /// @param origin Origin used by the rotation operation.
+  constexpr void set_rotation(value_type r, point_type origin) {
+    holder.set_rotation(r, origin);
+  }
 
   /// Returns the wrapped view's transform scale.
   ///

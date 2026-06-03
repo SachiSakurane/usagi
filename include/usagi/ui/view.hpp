@@ -109,6 +109,9 @@ namespace detail {
 
     value_type rotation() const override { return holder.rotation(); }
     void set_rotation(value_type r) override { holder.set_rotation(r); }
+    void set_rotation(value_type r, point_type origin) override {
+      holder.set_rotation(r, origin);
+    }
 
     point_type scale() const override { return holder.scale(); }
     void set_scale(point_type s) override { holder.set_scale(s); }
@@ -336,6 +339,14 @@ public:
   void set_rotation(value_type r) {
     assert(holder);
     holder->set_rotation(r);
+  }
+  /// Updates the contained view's transform rotation and transform origin together.
+  ///
+  /// @param r New rotation angle in radians.
+  /// @param origin Origin used by the rotation operation.
+  void set_rotation(value_type r, point_type origin) {
+    assert(holder);
+    holder->set_rotation(r, origin);
   }
 
   /// Returns the contained view's transform scale.

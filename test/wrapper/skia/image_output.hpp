@@ -8,7 +8,10 @@
 #include <gtest/gtest.h>
 
 #include "include/core/SkColor.h"
+#include "include/core/SkCanvas.h"
+#include "include/core/SkImageInfo.h"
 #include "include/core/SkPixmap.h"
+#include "include/core/SkSurface.h"
 
 namespace usagi::test::skia {
 inline constexpr std::string_view image_output_dir() {
@@ -45,6 +48,34 @@ inline void write_actual_image(const SkPixmap &pixmap, std::string_view name) {
 #else
   (void) pixmap;
   (void) name;
+#endif
+}
+
+inline void write_expected_image(const SkPixmap &pixmap, std::string_view name) {
+#if defined(USAGI_SKIA_WRITE_IMAGES)
+  write_ppm(pixmap, std::filesystem::path{std::string{image_output_dir()}} / name);
+#else
+  (void) pixmap;
+  (void) name;
+#endif
+}
+
+template <class DrawFunction>
+inline void write_expected_image(int width, int height, std::string_view name, DrawFunction &&draw) {
+#if defined(USAGI_SKIA_WRITE_IMAGES)
+  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(width, height));
+  ASSERT_NE(surface, nullptr);
+
+  draw(*surface->getCanvas());
+
+  SkPixmap pixmap;
+  ASSERT_TRUE(surface->peekPixels(&pixmap));
+  write_expected_image(pixmap, name);
+#else
+  (void) width;
+  (void) height;
+  (void) name;
+  (void) draw;
 #endif
 }
 

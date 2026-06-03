@@ -15,6 +15,12 @@
 #include "include/core/SkSurface.h"
 
 namespace {
+void fill_rect(SkCanvas &canvas, float x, float y, float width, float height, SkColor color) {
+  SkPaint paint;
+  paint.setColor(color);
+  canvas.drawRect(SkRect::MakeXYWH(x, y, width, height), paint);
+}
+
 TEST(SkiaDrawClipTest, ClipsPixelsOutsideRect) {
   auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(40, 40));
 
@@ -34,6 +40,11 @@ TEST(SkiaDrawClipTest, ClipsPixelsOutsideRect) {
 
   usagi::test::skia::write_actual_image(pixmap,
                                         "SkiaDrawClipTest.ClipsPixelsOutsideRect.actual.ppm");
+  usagi::test::skia::write_expected_image(
+      40, 40, "SkiaDrawClipTest.ClipsPixelsOutsideRect.expected.ppm", [](SkCanvas &expected) {
+        expected.clear(SK_ColorWHITE);
+        fill_rect(expected, 10.f, 10.f, 20.f, 20.f, SK_ColorRED);
+      });
 
   usagi::test::skia::expect_color(pixmap, 5, 5, SK_ColorWHITE);
   usagi::test::skia::expect_color(pixmap, 10, 10, SK_ColorRED);
@@ -64,6 +75,12 @@ TEST(SkiaDrawClipTest, RestoresClipAfterDraw) {
 
   usagi::test::skia::write_actual_image(pixmap,
                                         "SkiaDrawClipTest.RestoresClipAfterDraw.actual.ppm");
+  usagi::test::skia::write_expected_image(
+      50, 50, "SkiaDrawClipTest.RestoresClipAfterDraw.expected.ppm", [](SkCanvas &expected) {
+        expected.clear(SK_ColorWHITE);
+        fill_rect(expected, 10.f, 10.f, 30.f, 30.f, SK_ColorRED);
+        fill_rect(expected, 0.f, 0.f, 10.f, 10.f, SK_ColorBLUE);
+      });
 
   usagi::test::skia::expect_color(pixmap, 5, 5, SK_ColorBLUE);
   usagi::test::skia::expect_color(pixmap, 25, 25, SK_ColorRED);

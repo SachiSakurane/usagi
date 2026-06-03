@@ -18,6 +18,12 @@
 namespace {
 constexpr auto pi = 3.14159265358979323846f;
 
+void fill_rect(SkCanvas &canvas, float x, float y, float width, float height, SkColor color) {
+  SkPaint paint;
+  paint.setColor(color);
+  canvas.drawRect(SkRect::MakeXYWH(x, y, width, height), paint);
+}
+
 TEST(SkiaDrawTransformTest, ScalesAroundOffsetOrigin) {
   auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(50, 50));
 
@@ -41,6 +47,11 @@ TEST(SkiaDrawTransformTest, ScalesAroundOffsetOrigin) {
 
   usagi::test::skia::write_actual_image(pixmap,
                                         "SkiaDrawTransformTest.ScalesAroundOffsetOrigin.actual.ppm");
+  usagi::test::skia::write_expected_image(
+      50, 50, "SkiaDrawTransformTest.ScalesAroundOffsetOrigin.expected.ppm", [](SkCanvas &expected) {
+        expected.clear(SK_ColorWHITE);
+        fill_rect(expected, 20.f, 20.f, 20.f, 20.f, SK_ColorRED);
+      });
 
   usagi::test::skia::expect_color(pixmap, 10, 10, SK_ColorWHITE);
   usagi::test::skia::expect_color(pixmap, 20, 20, SK_ColorRED);
@@ -75,6 +86,13 @@ TEST(SkiaDrawTransformTest, RotatesAroundOffsetOrigin) {
 
   usagi::test::skia::write_actual_image(
       pixmap, "SkiaDrawTransformTest.RotatesAroundOffsetOrigin.actual.ppm");
+  usagi::test::skia::write_expected_image(
+      60, 60, "SkiaDrawTransformTest.RotatesAroundOffsetOrigin.expected.ppm",
+      [](SkCanvas &expected) {
+        expected.clear(SK_ColorWHITE);
+        fill_rect(expected, 30.f, 15.f, 20.f, 10.f, SK_ColorBLUE);
+        fill_rect(expected, 15.f, 30.f, 10.f, 20.f, SK_ColorRED);
+      });
 
   usagi::test::skia::expect_color(pixmap, 20, 40, SK_ColorRED);
   usagi::test::skia::expect_color(pixmap, 24, 49, SK_ColorRED);
@@ -105,6 +123,19 @@ TEST(SkiaDrawTransformTest, RotatesFortyFiveDegreesAroundOffsetOrigin) {
 
   usagi::test::skia::write_actual_image(
       pixmap, "SkiaDrawTransformTest.RotatesFortyFiveDegreesAroundOffsetOrigin.actual.ppm");
+  usagi::test::skia::write_expected_image(
+      90, 90, "SkiaDrawTransformTest.RotatesFortyFiveDegreesAroundOffsetOrigin.expected.ppm",
+      [](SkCanvas &expected) {
+        expected.clear(SK_ColorWHITE);
+        SkPaint paint;
+        paint.setColor(SK_ColorRED);
+        expected.save();
+        expected.translate(40.f, 40.f);
+        expected.rotate(45.f);
+        expected.translate(-40.f, -40.f);
+        expected.drawRect(SkRect::MakeXYWH(40.f, 10.f, 10.f, 60.f), paint);
+        expected.restore();
+      });
 
   usagi::test::skia::expect_color(pixmap, 55, 25, SK_ColorRED);
   usagi::test::skia::expect_color(pixmap, 40, 40, SK_ColorRED);

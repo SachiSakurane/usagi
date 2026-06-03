@@ -73,6 +73,13 @@ TEST(SkiaViewStackTest, DrawOffsetIncludesChildTranslation) {
 
   usagi::test::skia::write_actual_image(
       pixmap, "SkiaViewStackTest.DrawOffsetIncludesChildTranslation.actual.ppm");
+  usagi::test::skia::write_expected_image(
+      70, 70, "SkiaViewStackTest.DrawOffsetIncludesChildTranslation.expected.ppm",
+      [](SkCanvas &expected) {
+        expected.clear(background_color);
+        fill_rect(expected, 10.f, 10.f, 20.f, 20.f, guide_color);
+        fill_rect(expected, 30.f, 20.f, 20.f, 20.f, result_color);
+      });
 
   usagi::test::skia::expect_color(pixmap, 10, 10, guide_color);
   usagi::test::skia::expect_color(pixmap, 30, 20, result_color);
@@ -102,6 +109,13 @@ TEST(SkiaViewStackTest, DrawClippingClipsToStackBoundsWhenEnabled) {
 
   usagi::test::skia::write_actual_image(
       pixmap, "SkiaViewStackTest.DrawClippingClipsToStackBoundsWhenEnabled.actual.ppm");
+  usagi::test::skia::write_expected_image(
+      70, 70, "SkiaViewStackTest.DrawClippingClipsToStackBoundsWhenEnabled.expected.ppm",
+      [](SkCanvas &expected) {
+        expected.clear(background_color);
+        fill_rect(expected, 10.f, 10.f, 60.f, 60.f, attempted_color);
+        fill_rect(expected, 10.f, 10.f, 40.f, 40.f, result_color);
+      });
 
   usagi::test::skia::expect_color(pixmap, 5, 5, background_color);
   usagi::test::skia::expect_color(pixmap, 10, 10, result_color);
@@ -133,6 +147,13 @@ TEST(SkiaViewStackTest, DrawClippingAppliesOutsideChildTransform) {
 
   usagi::test::skia::write_actual_image(
       pixmap, "SkiaViewStackTest.DrawClippingAppliesOutsideChildTransform.actual.ppm");
+  usagi::test::skia::write_expected_image(
+      80, 80, "SkiaViewStackTest.DrawClippingAppliesOutsideChildTransform.expected.ppm",
+      [](SkCanvas &expected) {
+        expected.clear(background_color);
+        fill_rect(expected, 10.f, 10.f, 70.f, 70.f, attempted_color);
+        fill_rect(expected, 10.f, 10.f, 40.f, 40.f, result_color);
+      });
 
   usagi::test::skia::expect_color(pixmap, 10, 10, result_color);
   usagi::test::skia::expect_color(pixmap, 49, 49, result_color);

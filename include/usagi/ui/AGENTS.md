@@ -44,14 +44,31 @@ For UI views:
 
 - `frame()` is the view rectangle in the parent coordinate system.
 - `bounds()` is the view size in the view-local coordinate system.
-- `draw(..., offset)` receives the accumulated offset from the root.
+- `transform()` is applied after frame placement.
+- `translation()` is additional post-layout movement in the parent coordinate
+  system.
+- `rotation()` and `scale()` are applied around `transform().origin()` in the
+  view-local coordinate system.
+- `draw(..., offset)` receives the accumulated placed origin from the root,
+  including frame origin and translation.
 - `event(..., offset)` receives a gesture whose `position` is local to the
   receiving view.
 
 `view_stack` hit-tests children against `child.frame()` using the stack-local
 gesture position. Before dispatching to a child, it converts
-`gesture.position` to child-local coordinates and adds the child origin to the
-draw/event offset.
+`gesture.position` through the inverse child transform into child-local
+coordinates and adds the child origin to the draw/event offset.
+
+For a child, placement is:
+
+```text
+placed_origin = parent_offset + child.frame().origin + child.translation()
+local_point -> scale/rotation around transform.origin -> translation
+```
+
+Drawing receives `placed_origin` as `offset`. Draw context adapters apply scale
+and rotation around `offset + transform.origin()`. Translation remains expressed
+by the accumulated draw/event offset.
 
 ## View Stack Event Clipping
 

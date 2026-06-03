@@ -39,3 +39,14 @@ at the same time.
   over implementation details.
 - Keep comments synchronized with `static_test/` examples when compile-time
   behavior is part of the contract.
+
+## UI Coordinate And Drawing Specification
+
+When changing UI coordinate conversion, view transform order, draw offsets,
+event positions, or clipping behavior, update both:
+
+- `include/usagi/ui/AGENTS.md`
+- `docs/ui-coordinate-and-drawing.md`
+
+Keep README examples consistent with those specifications when they mention
+`frame()`, `bounds()`, `offset`, gestures, transforms, or clipping.

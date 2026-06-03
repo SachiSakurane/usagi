@@ -22,8 +22,9 @@ auto decorated_child =
     usagi::ui::surfaced(usagi::ui::on_draw(
         [](auto &context, auto offset, const auto &view) {
           // draw
-          // `offset` is the accumulated position from the root.
+          // `offset` is the accumulated placed origin from the root.
           // `view.frame()` is in the parent coordinate system.
+          // `view.bounds()` is the view-local size.
         })) |
     usagi::ui::gestured(usagi::ui::on_down(
         [](auto gesture, auto offset, auto &view) {
@@ -48,3 +49,7 @@ auto &child = local_view.get_child_view(child_key);
 local_view.send_child_to_back(child_key);
 local_view.remove_child_view(child_key);
 ```
+
+座標・描画仕様の詳細は
+[`docs/ui-coordinate-and-drawing.md`](docs/ui-coordinate-and-drawing.md)
+を参照してください。

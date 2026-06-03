@@ -295,14 +295,25 @@ private:
   }
 
   static bool contains_child_position(const child_view_type &child, point_type position) {
-    return usagi::geometry::contain(rect_type{child.bounds()}, position - child_origin(child));
+    return usagi::geometry::contain(rect_type{child.bounds()},
+                                    child_local_position(child, position));
   }
 
   /// Converts a stack-local gesture parameter to child-local coordinates.
   template <class ParameterType>
   static ParameterType local_parameter(ParameterType parameter, const child_view_type &child) {
-    parameter.position = parameter.position - child_origin(child);
+    parameter.position = child_local_position(child, parameter.position);
     return parameter;
+  }
+
+  static point_type child_local_position(const child_view_type &child, point_type position) {
+    const auto scale = child.scale();
+    assert(scale.x() != static_cast<value_type>(0));
+    assert(scale.y() != static_cast<value_type>(0));
+
+    const auto origin = child.transform().origin();
+    const auto translated = position - child_origin(child);
+    return (translated - origin) / scale + origin;
   }
 
   /// Converts any gesture parameter payload to an out-event payload.

@@ -279,4 +279,51 @@ TEST(SkiaViewStackTest, DrawsTransformedChildrenInZOrder) {
   usagi::test::skia::expect_color(pixmap, 111, 35, guide_color);
   usagi::test::skia::expect_color(pixmap, 85, 20, attempted_color);
 }
+
+TEST(SkiaViewStackTest, AppliesParentStackTransformToChildDrawing) {
+  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(80, 80));
+
+  ASSERT_NE(surface, nullptr);
+
+  SkCanvas *canvas = surface->getCanvas();
+  canvas->clear(background_color);
+  fill_rect(*canvas, 35.f, 20.f, 10.f, 35.f, guide_color);
+
+  auto inner = usagi::ui::view_stack<float, SkCanvas, GestureParameterType>{
+      usagi::geometry::rect<float>{20.f, 20.f, 60.f, 60.f}};
+  inner.add_child_view(usagi::ui::make_view<PaintView>(
+      usagi::geometry::rect<float>{15.f, 0.f, 25.f, 35.f}, result_color));
+
+  auto outer = usagi::ui::view_stack<float, SkCanvas, GestureParameterType>{
+      usagi::geometry::rect<float>{0.f, 0.f, 80.f, 80.f}};
+  const auto inner_key = outer.add_child_view(usagi::ui::make_view<decltype(inner)>(std::move(inner)));
+  outer.get_child_view(inner_key).set_rotation(3.14159265358979323846f / 4.f,
+                                               usagi::geometry::point<float>{20.f, 20.f});
+
+  outer.draw(*canvas, usagi::geometry::point<float>{});
+
+  SkPixmap pixmap;
+  ASSERT_TRUE(surface->peekPixels(&pixmap));
+
+  usagi::test::skia::write_actual_image(pixmap);
+  usagi::test::skia::write_expected_and_diff_image(
+      pixmap, 80, 80, [](SkCanvas &expected) {
+        expected.clear(background_color);
+        fill_rect(expected, 35.f, 20.f, 10.f, 35.f, guide_color);
+
+        SkPaint paint;
+        paint.setColor(result_color);
+        expected.save();
+        expected.translate(40.f, 40.f);
+        expected.rotate(45.f);
+        expected.translate(-40.f, -40.f);
+        expected.drawRect(SkRect::MakeXYWH(35.f, 20.f, 10.f, 35.f), paint);
+        expected.restore();
+      });
+
+  usagi::test::skia::expect_color(pixmap, 50, 25, result_color);
+  usagi::test::skia::expect_color(pixmap, 39, 39, result_color);
+  usagi::test::skia::expect_color(pixmap, 40, 52, guide_color);
+  usagi::test::skia::expect_color(pixmap, 55, 20, background_color);
+}
 } // namespace

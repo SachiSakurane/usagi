@@ -1,16 +1,17 @@
 #pragma once
 
-#include <usagi/concepts/arithmetic.hpp>
+#include <usagi/concepts/floating_point.hpp>
 #include <usagi/geometry/geometry_traits.hpp>
 #include <usagi/type/gesture.hpp>
 
 namespace usagi::ui {
 /// Abstract interface for drawable, gestural UI views.
 ///
-/// @tparam ValueType Arithmetic geometry value type.
+/// @tparam ValueType Floating-point geometry value type.
 /// @tparam DrawContextType Mutable drawing context type.
 /// @tparam GestureParameterType Raw gesture parameter payload type.
-template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
+template <usagi::concepts::floating_point ValueType, class DrawContextType,
+          class GestureParameterType>
 class view_interface {
 public:
   /// Shared geometry value type.

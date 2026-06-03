@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 
-#include <usagi/concepts/arithmetic.hpp>
+#include <usagi/concepts/floating_point.hpp>
 #include <usagi/concepts/geometry.hpp>
 #include <usagi/geometry.hpp>
 #include <usagi/geometry/transform/function.hpp>
@@ -19,10 +19,11 @@ namespace usagi::ui {
 ///
 /// Children are drawn from back to front and hit-tested from front to back.
 ///
-/// @tparam ValueType Arithmetic geometry value type.
+/// @tparam ValueType Floating-point geometry value type.
 /// @tparam DrawContextType Mutable drawing context type.
 /// @tparam GestureParameterType Raw gesture parameter payload type.
-template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
+template <usagi::concepts::floating_point ValueType, class DrawContextType,
+          class GestureParameterType>
 struct view_stack : public usagi::ui::base_view<ValueType, DrawContextType, GestureParameterType> {
   /// Base view type.
   using base_view_type = usagi::ui::base_view<ValueType, DrawContextType, GestureParameterType>;

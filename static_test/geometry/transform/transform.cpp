@@ -12,10 +12,10 @@ struct PointLike {
   constexpr ValueType y() const { return 2; }
 };
 
-static_assert(usagi::concepts::geometry::transform_concept<usagi::geometry::transform<int>>);
+static_assert(usagi::concepts::geometry::transform_concept<usagi::geometry::transform<float>>);
 
 static_assert([] {
-  constexpr auto t = usagi::geometry::transform<int>{};
+  constexpr auto t = usagi::geometry::transform<float>{};
 
   if (t.translation().x() != 0 || t.translation().y() != 0) {
     return false;
@@ -34,9 +34,9 @@ static_assert([] {
 
 static_assert([] {
   constexpr auto t =
-      usagi::geometry::transform<int>{usagi::geometry::point<int>{1, 2}, 3,
-                                      usagi::geometry::point<int>{4, 5},
-                                      usagi::geometry::point<int>{6, 7}};
+      usagi::geometry::transform<float>{usagi::geometry::point<float>{1.f, 2.f}, 3.f,
+                                        usagi::geometry::point<float>{4.f, 5.f},
+                                        usagi::geometry::point<float>{6.f, 7.f}};
   constexpr auto tuple = t();
   constexpr auto copy = t.duplicate();
 
@@ -62,7 +62,8 @@ static_assert([] {
 
 static_assert([] {
   constexpr auto t =
-      usagi::geometry::transform<int>{PointLike<int>{}, 3, PointLike<int>{}, PointLike<int>{}};
+      usagi::geometry::transform<float>{PointLike<float>{}, 3.f, PointLike<float>{},
+                                        PointLike<float>{}};
 
   if (t.translation().x() != 1 || t.translation().y() != 2) {
     return false;

@@ -15,7 +15,7 @@ private:
   int &stamp;
 };
 
-using base_view = usagi::ui::base_view<int, DrawContext, usagi::type::gesture_parameter<int>>;
+using base_view = usagi::ui::base_view<float, DrawContext, usagi::type::gesture_parameter<float>>;
 
 struct ContextFunctor final {
   constexpr void operator()(typename base_view::draw_context_type &d,

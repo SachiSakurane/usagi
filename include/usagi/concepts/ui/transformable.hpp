@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include <usagi/concepts/arithmetic.hpp>
+#include <usagi/concepts/floating_point.hpp>
 #include <usagi/concepts/geometry/point_concept.hpp>
 #include <usagi/concepts/geometry/transform_concept.hpp>
 
@@ -16,7 +16,7 @@ concept transformable = requires(TransformableType &t) {
   typename TransformableType::point_type;
   typename TransformableType::transform_type;
 
-  requires usagi::concepts::arithmetic<typename TransformableType::value_type>;
+  requires usagi::concepts::floating_point<typename TransformableType::value_type>;
   requires usagi::concepts::geometry::point_concept<typename TransformableType::point_type>;
   requires usagi::concepts::geometry::transform_concept<
       typename TransformableType::transform_type>;

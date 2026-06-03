@@ -1,6 +1,6 @@
 #pragma once
 
-#include <usagi/concepts/arithmetic.hpp>
+#include <usagi/concepts/floating_point.hpp>
 #include <usagi/geometry/point/point.hpp>
 #include <usagi/geometry/rect/rect.hpp>
 #include <usagi/geometry/size/size.hpp>
@@ -9,8 +9,8 @@
 namespace usagi::geometry {
 /// Bundles geometry types that share the same value type.
 ///
-/// @tparam ValueType Arithmetic value type used by point, rect, size, and transform.
-template <usagi::concepts::arithmetic ValueType>
+/// @tparam ValueType Floating-point value type used by point, rect, size, and transform.
+template <usagi::concepts::floating_point ValueType>
 struct geometry_traits {
   /// Shared geometry value type.
   using value_type = ValueType;

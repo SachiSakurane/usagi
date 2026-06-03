@@ -2,14 +2,14 @@
 
 #include <utility>
 
-#include <usagi/concepts/arithmetic.hpp>
+#include <usagi/concepts/floating_point.hpp>
 #include <usagi/ui/view.hpp>
 
 #include "draw_context.hpp"
 #include "drawable.hpp"
 #include "gestural.hpp"
 
-template <usagi::concepts::arithmetic ValueType>
+template <usagi::concepts::floating_point ValueType>
 struct Viewable : Gestural<ValueType>, Drawable<ValueType, DrawContext> {
   using value_type = ValueType;
   using size_type = typename usagi::geometry::size<value_type>;
@@ -24,7 +24,7 @@ struct Viewable : Gestural<ValueType>, Drawable<ValueType, DrawContext> {
   bool is_enabled() const;
 };
 
-template <usagi::concepts::arithmetic ValueType>
+template <usagi::concepts::floating_point ValueType>
 struct UnViewable : Gestural<ValueType>, Drawable<ValueType, DrawContext> {
   using value_type = ValueType;
   using size_type = typename usagi::geometry::size<value_type>;

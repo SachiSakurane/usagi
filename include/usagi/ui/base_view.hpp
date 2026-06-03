@@ -1,5 +1,6 @@
 #pragma once
 
+#include <usagi/concepts/floating_point.hpp>
 #include <usagi/concepts/geometry.hpp>
 #include <usagi/geometry/rect/function.hpp>
 #include <usagi/ui/view_interface.hpp>
@@ -7,10 +8,11 @@
 namespace usagi::ui {
 /// Basic view implementation with frame, enabled state, and simple hit tracking.
 ///
-/// @tparam ValueType Arithmetic geometry value type.
+/// @tparam ValueType Floating-point geometry value type.
 /// @tparam DrawContextType Mutable drawing context type.
 /// @tparam GestureParameterType Raw gesture parameter payload type.
-template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
+template <usagi::concepts::floating_point ValueType, class DrawContextType,
+          class GestureParameterType>
 class base_view : public view_interface<ValueType, DrawContextType, GestureParameterType> {
   using view_interface_type = view_interface<ValueType, DrawContextType, GestureParameterType>;
 

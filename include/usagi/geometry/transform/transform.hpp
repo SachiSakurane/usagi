@@ -1,6 +1,6 @@
 #pragma once
 
-#include <usagi/concepts/arithmetic.hpp>
+#include <usagi/concepts/floating_point.hpp>
 #include <usagi/concepts/geometry/point_concept.hpp>
 #include <usagi/geometry/point/point.hpp>
 #include <usagi/tuple/mono.hpp>
@@ -8,8 +8,8 @@
 namespace usagi::geometry {
 /// Two-dimensional transform with translation, rotation, scale, and transform origin.
 ///
-/// @tparam Type Arithmetic value type used for coordinates and the rotation angle.
-template <usagi::concepts::arithmetic Type>
+/// @tparam Type Floating-point value type used for coordinates and the rotation angle.
+template <usagi::concepts::floating_point Type>
 struct transform {
   /// Transform value type.
   using value_type = Type;

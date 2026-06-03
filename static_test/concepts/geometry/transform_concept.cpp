@@ -24,6 +24,7 @@ struct UnTransformed {
   // point_type origin() const;
 };
 
-static_assert(usagi::concepts::geometry::transform_concept<Transformed<int>>);
-static_assert(!usagi::concepts::geometry::transform_concept<UnTransformed<int>>);
+static_assert(usagi::concepts::geometry::transform_concept<Transformed<float>>);
+static_assert(!usagi::concepts::geometry::transform_concept<Transformed<int>>);
+static_assert(!usagi::concepts::geometry::transform_concept<UnTransformed<float>>);
 } // namespace

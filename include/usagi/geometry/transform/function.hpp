@@ -1,19 +1,35 @@
 #pragma once
 
 #include <cassert>
+#include <cmath>
 #include <type_traits>
 
+#include <usagi/concepts/floating_point.hpp>
 #include <usagi/concepts/geometry/point_concept.hpp>
 #include <usagi/concepts/geometry/transform_concept.hpp>
 #include <usagi/geometry/point/operator.hpp>
 #include <usagi/geometry/point/point.hpp>
 
 namespace usagi::geometry {
+namespace detail {
+  template <usagi::concepts::floating_point ValueType>
+  inline constexpr usagi::geometry::point<ValueType>
+  rotate_transform_offset(const usagi::geometry::point<ValueType> &point, ValueType rotation) {
+    if (rotation == static_cast<ValueType>(0)) {
+      return point;
+    }
+
+    const auto sin = std::sin(rotation);
+    const auto cos = std::cos(rotation);
+    return usagi::geometry::point<ValueType>{point.x() * cos - point.y() * sin,
+                                             point.x() * sin + point.y() * cos};
+  }
+} // namespace detail
+
 /// Applies a transform to a point.
 ///
-/// The point is scaled around `transform.origin()`, then translated by
-/// `transform.translation()`. Rotation is stored on the transform type but is not
-/// applied by this helper yet.
+/// The point is scaled and rotated around `transform.origin()`, then translated
+/// by `transform.translation()`.
 ///
 /// @param transform Transform-like object to apply.
 /// @param point Point-like object in local coordinates.
@@ -26,13 +42,14 @@ transform_point(const usagi::concepts::geometry::transform_concept auto &transfo
 
   const auto origin = transform.origin();
   const auto local = point_type{point.x(), point.y()};
-  return (local - origin) * transform.scale() + origin + transform.translation();
+  const auto transformed =
+      detail::rotate_transform_offset((local - origin) * transform.scale(), transform.rotation());
+  return transformed + origin + transform.translation();
 }
 
 /// Applies the inverse of a transform to a point.
 ///
-/// This reverses `transform_point` for translation and scale. Rotation is stored
-/// on the transform type but is not applied by this helper yet.
+/// This reverses `transform_point` for translation, rotation, scale, and origin.
 ///
 /// @param transform Transform-like object to invert.
 /// @param point Point-like object in transformed coordinates.
@@ -49,6 +66,9 @@ inverse_transform_point(const usagi::concepts::geometry::transform_concept auto 
 
   const auto origin = transform.origin();
   const auto transformed = point_type{point.x(), point.y()};
-  return (transformed - transform.translation() - origin) / scale + origin;
+  const auto local =
+      detail::rotate_transform_offset(transformed - transform.translation() - origin,
+                                      -transform.rotation());
+  return local / scale + origin;
 }
 } // namespace usagi::geometry

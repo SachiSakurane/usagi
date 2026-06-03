@@ -4,6 +4,7 @@
 #include <memory>
 #include <utility>
 
+#include <usagi/concepts/floating_point.hpp>
 #include <usagi/concepts/ui/transformable.hpp>
 #include <usagi/concepts/ui/viewable.hpp>
 #include <usagi/ui/view_interface.hpp>
@@ -115,10 +116,11 @@ namespace detail {
 
 /// Move-only owning handle for a type-erased viewable object.
 ///
-/// @tparam ValueType Arithmetic geometry value type.
+/// @tparam ValueType Floating-point geometry value type.
 /// @tparam DrawContextType Mutable drawing context type.
 /// @tparam GestureParameterType Raw gesture parameter payload type.
-template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
+template <usagi::concepts::floating_point ValueType, class DrawContextType,
+          class GestureParameterType>
 class view final {
   using base_view_type =
       usagi::ui::view_interface<ValueType, DrawContextType, GestureParameterType>;

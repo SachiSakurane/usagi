@@ -7,7 +7,7 @@
 namespace {
 using GestureParameterType = usagi::type::gesture_parameter<float>;
 
-template <usagi::concepts::arithmetic ValueType>
+template <usagi::concepts::floating_point ValueType>
 struct SpecificView final : usagi::ui::base_view<ValueType, int, GestureParameterType> {
   using value_type = ValueType;
   using draw_context_type = int;

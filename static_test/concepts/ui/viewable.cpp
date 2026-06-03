@@ -3,6 +3,6 @@
 #include "../../mocks/viewable.hpp"
 
 namespace {
-static_assert(usagi::concepts::ui::viewable<Viewable<int>>);
-static_assert(!usagi::concepts::ui::viewable<UnViewable<int>>);
+static_assert(usagi::concepts::ui::viewable<Viewable<float>>);
+static_assert(!usagi::concepts::ui::viewable<UnViewable<float>>);
 } // namespace

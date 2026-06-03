@@ -3,7 +3,7 @@
 #include <concepts>
 #include <utility>
 
-#include <usagi/concepts/arithmetic.hpp>
+#include <usagi/concepts/floating_point.hpp>
 #include <usagi/concepts/geometry/rect_concept.hpp>
 #include <usagi/concepts/geometry/size_concept.hpp>
 #include <usagi/concepts/ui/drawable.hpp>
@@ -11,7 +11,8 @@
 
 namespace usagi::ui {
 /// Forward declaration for the owning UI view handle.
-template <usagi::concepts::arithmetic ValueType, class DrawContextType, class GestureParameterType>
+template <usagi::concepts::floating_point ValueType, class DrawContextType,
+          class GestureParameterType>
 class view;
 }
 

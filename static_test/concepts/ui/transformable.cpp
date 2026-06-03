@@ -37,6 +37,23 @@ struct UnTransformable {
   // void set_scale(point_type, point_type);
 };
 
-static_assert(usagi::concepts::ui::transformable<Transformable<int>>);
-static_assert(!usagi::concepts::ui::transformable<UnTransformable<int>>);
+struct NonFloatingTransformable {
+  using value_type = int;
+  using point_type = usagi::geometry::point<float>;
+  using transform_type = usagi::geometry::transform<float>;
+
+  transform_type transform() const;
+  void set_transform(transform_type);
+
+  point_type translation() const;
+  void set_translation(point_type);
+
+  point_type scale() const;
+  void set_scale(point_type);
+  void set_scale(point_type, point_type);
+};
+
+static_assert(usagi::concepts::ui::transformable<Transformable<float>>);
+static_assert(!usagi::concepts::ui::transformable<NonFloatingTransformable>);
+static_assert(!usagi::concepts::ui::transformable<UnTransformable<float>>);
 } // namespace

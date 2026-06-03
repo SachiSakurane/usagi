@@ -15,7 +15,7 @@ private:
   std::vector<int> &stamp;
 };
 
-template <usagi::concepts::arithmetic ValueType, class DrawContextType>
+template <usagi::concepts::floating_point ValueType, class DrawContextType>
 struct SpecificView final
     : usagi::ui::base_view<ValueType, DrawContextType, usagi::type::gesture_parameter<ValueType>> {
   using value_type = ValueType;
@@ -34,7 +34,7 @@ private:
   std::vector<int> &stamp;
 };
 
-using local_view_type = SpecificView<int, DrawContext>;
+using local_view_type = SpecificView<float, DrawContext>;
 } // namespace
 
 TEST(SurfaceTest, SequentialCase) {

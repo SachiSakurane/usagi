@@ -2,6 +2,7 @@
 
 #include <usagi/geometry/point/point.hpp>
 #include <usagi/geometry/transform/transform.hpp>
+#include <usagi/math/constants.hpp>
 #include <usagi/ui/draw_transform.hpp>
 #include <usagi/wrapper/skia/draw_transform.hpp>
 
@@ -17,7 +18,6 @@
 #include "include/core/SkSurface.h"
 
 namespace {
-constexpr auto pi = 3.14159265358979323846f;
 using usagi::test::skia::background_color;
 using usagi::test::skia::fill_rect;
 using usagi::test::skia::guide_color;
@@ -70,7 +70,8 @@ TEST(SkiaDrawTransformTest, RotatesAroundOffsetOrigin) {
   canvas->drawRect(SkRect::MakeXYWH(30.f, 15.f, 20.f, 10.f), guide_paint);
 
   const auto transform = usagi::geometry::transform<float>{
-      usagi::geometry::point<float>{}, pi / 2.f, usagi::geometry::point<float>{1.f, 1.f},
+      usagi::geometry::point<float>{}, usagi::math::half_pi<float>,
+      usagi::geometry::point<float>{1.f, 1.f},
       usagi::geometry::point<float>{10.f, 10.f}};
 
   usagi::ui::draw_with_transform(*canvas, transform, usagi::geometry::point<float>{10.f, 10.f}, [&] {
@@ -105,7 +106,8 @@ TEST(SkiaDrawTransformTest, RotatesFortyFiveDegreesAroundOffsetOrigin) {
   canvas->clear(SK_ColorWHITE);
 
   const auto transform = usagi::geometry::transform<float>{
-      usagi::geometry::point<float>{}, pi / 4.f, usagi::geometry::point<float>{1.f, 1.f},
+      usagi::geometry::point<float>{}, usagi::math::quarter_pi<float>,
+      usagi::geometry::point<float>{1.f, 1.f},
       usagi::geometry::point<float>{40.f, 40.f}};
 
   usagi::ui::draw_with_transform(*canvas, transform, usagi::geometry::point<float>{}, [&] {
@@ -148,7 +150,8 @@ TEST(SkiaDrawTransformTest, AppliesOffsetScaleAndRotationAroundOrigin) {
   fill_rect(*canvas, 25.f, 20.f, 10.f, 10.f, guide_color);
 
   const auto transform = usagi::geometry::transform<float>{
-      usagi::geometry::point<float>{}, pi / 4.f, usagi::geometry::point<float>{2.f, 1.f},
+      usagi::geometry::point<float>{}, usagi::math::quarter_pi<float>,
+      usagi::geometry::point<float>{2.f, 1.f},
       usagi::geometry::point<float>{10.f, 10.f}};
   const auto offset = usagi::geometry::point<float>{20.f, 5.f};
 

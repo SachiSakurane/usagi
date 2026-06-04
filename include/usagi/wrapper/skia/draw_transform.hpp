@@ -7,6 +7,7 @@
 #include <usagi/concepts/geometry/point_concept.hpp>
 #include <usagi/concepts/geometry/transform_concept.hpp>
 #include <usagi/geometry/point/operator.hpp>
+#include <usagi/math/constants.hpp>
 #include <usagi/ui/draw_transform.hpp>
 
 #include "include/core/SkCanvas.h"
@@ -16,8 +17,7 @@ namespace detail {
   template <usagi::concepts::floating_point ValueType>
   inline constexpr ValueType radians_to_degrees(ValueType radians) {
     constexpr auto half_turn = static_cast<ValueType>(180);
-    constexpr auto pi = static_cast<ValueType>(3.14159265358979323846);
-    return radians * half_turn / pi;
+    return radians * half_turn / usagi::math::pi<ValueType>;
   }
 } // namespace detail
 

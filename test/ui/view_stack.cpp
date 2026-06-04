@@ -4,13 +4,12 @@
 #include <gtest/gtest.h>
 #include <usagi/geometry/point/operator.hpp>
 #include <usagi/geometry/rect/operator.hpp>
+#include <usagi/math/constants.hpp>
 #include <usagi/ui/base_view.hpp>
 #include <usagi/ui/view.hpp>
 #include <usagi/ui/view_stack.hpp>
 
 namespace {
-constexpr auto pi = 3.14159265358979323846f;
-
 struct DrawContext {};
 using GestureParameterType = usagi::type::gesture_parameter<float>;
 
@@ -255,7 +254,8 @@ struct draw_transform_traits<TransformDrawContext> {
     context.calls.emplace_back(
         DrawTransformCall{DrawTransformCall::type::translate, origin.x(), origin.y()});
     context.calls.emplace_back(
-        DrawTransformCall{DrawTransformCall::type::rotate, rotation * 180.f / pi});
+        DrawTransformCall{DrawTransformCall::type::rotate,
+                          rotation * 180.f / usagi::math::pi<float>});
     context.calls.emplace_back(
         DrawTransformCall{DrawTransformCall::type::scale, scale.x(), scale.y()});
     context.calls.emplace_back(
@@ -411,7 +411,7 @@ TEST(ViewStackTest, SendsRotatedLocalGesturePositionToChild) {
   const auto key = stack.add_child_view(
       usagi::ui::make_view<EventView>(positions, offsets,
                                       usagi::geometry::rect<float>{20.f, 30.f, 50.f, 60.f}));
-  stack.get_child_view(key).set_rotation(pi / 2.f);
+  stack.get_child_view(key).set_rotation(usagi::math::half_pi<float>);
 
   const auto consumed =
       stack.event(usagi::type::gesture_traits<GestureParameterType>::on_down_type{
@@ -436,7 +436,7 @@ TEST(ViewStackTest, HitTestUsesRotationOrigin) {
   const auto key = stack.add_child_view(
       usagi::ui::make_view<EventView>(positions, offsets,
                                       usagi::geometry::rect<float>{20.f, 30.f, 50.f, 60.f}));
-  stack.get_child_view(key).set_rotation(pi / 2.f, point_type{10.f, 10.f});
+  stack.get_child_view(key).set_rotation(usagi::math::half_pi<float>, point_type{10.f, 10.f});
 
   const auto consumed =
       stack.event(usagi::type::gesture_traits<GestureParameterType>::on_down_type{
@@ -477,7 +477,7 @@ TEST(ViewStackTest, AppliesChildTransformToDrawContext) {
       usagi::geometry::rect<float>{20.f, 30.f, 50.f, 60.f}));
   auto &child = stack.get_child_view(key);
   child.set_translation(point_type{10.f, 20.f});
-  child.set_rotation(pi / 2.f, point_type{5.f, 7.f});
+  child.set_rotation(usagi::math::half_pi<float>, point_type{5.f, 7.f});
   child.set_scale(point_type{2.f, 3.f});
 
   auto context = TransformDrawContext{};
@@ -538,7 +538,7 @@ TEST(ViewStackTest, DrawClippingAppliesOutsideChildTransform) {
   const auto key = stack.add_child_view(usagi::ui::make_view<TransformDrawView>(
       usagi::geometry::rect<float>{20.f, 30.f, 50.f, 60.f}));
   auto &child = stack.get_child_view(key);
-  child.set_rotation(pi / 2.f, point_type{5.f, 7.f});
+  child.set_rotation(usagi::math::half_pi<float>, point_type{5.f, 7.f});
   child.set_scale(point_type{2.f, 3.f});
 
   auto context = TransformDrawContext{};

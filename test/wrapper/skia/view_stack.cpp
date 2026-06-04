@@ -2,6 +2,7 @@
 
 #include <usagi/geometry/point/point.hpp>
 #include <usagi/geometry/rect/rect.hpp>
+#include <usagi/math/constants.hpp>
 #include <usagi/type/gesture.hpp>
 #include <usagi/ui/base_view.hpp>
 #include <usagi/ui/view.hpp>
@@ -235,7 +236,7 @@ TEST(SkiaViewStackTest, DrawsTransformedChildrenInZOrder) {
       usagi::geometry::rect<float>{0.f, 0.f, 60.f, 60.f}};
   const auto transformed = stack.add_child_view(usagi::ui::make_view<PaintView>(
       usagi::geometry::rect<float>{20.f, 15.f, 50.f, 25.f}, result_color));
-  stack.get_child_view(transformed).set_rotation(3.14159265358979323846f / 4.f,
+  stack.get_child_view(transformed).set_rotation(usagi::math::quarter_pi<float>,
                                                  usagi::geometry::point<float>{15.f, 5.f});
   stack.add_child_view(usagi::ui::make_view<PaintView>(
       usagi::geometry::rect<float>{32.f, 18.f, 52.f, 38.f}, guide_color));
@@ -297,7 +298,7 @@ TEST(SkiaViewStackTest, AppliesParentStackTransformToChildDrawing) {
   auto outer = usagi::ui::view_stack<float, SkCanvas, GestureParameterType>{
       usagi::geometry::rect<float>{0.f, 0.f, 80.f, 80.f}};
   const auto inner_key = outer.add_child_view(usagi::ui::make_view<decltype(inner)>(std::move(inner)));
-  outer.get_child_view(inner_key).set_rotation(3.14159265358979323846f / 4.f,
+  outer.get_child_view(inner_key).set_rotation(usagi::math::quarter_pi<float>,
                                                usagi::geometry::point<float>{20.f, 20.f});
 
   outer.draw(*canvas, usagi::geometry::point<float>{});
